@@ -7,8 +7,10 @@ import { Pay } from "./pages/wallet/Pay";
 import { Paid } from "./pages/wallet/Paid";
 import { Share } from "./pages/wallet/Share";
 import { About } from "./pages/About";
+import { Settings } from "./pages/Settings";
+import { TipPage } from "./pages/wallet/Tip";
 import React from "react";
-import { localStorageKeys } from "./constants";
+import { localStorageKeys } from "./config";
 
 function App() {
   return (
@@ -20,9 +22,11 @@ function App() {
             <Route path="new" Component={New} />
             <Route path="pay/:invoice" Component={Pay} />
             <Route path="paid" Component={Paid} />
+            <Route path="tip/:invoice" Component={TipPage} />
             <Route path="share" Component={Share} />
             <Route path=":legacyWallet/new" Component={LegacyWalletRedirect} />
           </Route>
+          <Route path="/settings" Component={Settings} />
           <Route path="/about" Component={About} />
           <Route path="/*" Component={NotFound} />
         </Routes>

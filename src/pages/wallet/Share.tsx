@@ -1,7 +1,7 @@
 import QRCode from "qrcode.react";
 import { useEffect, useState } from "react";
 import { Backbar } from "../../components/Backbar";
-import { localStorageKeys } from "../../constants";
+import { localStorageKeys } from "../../config";
 import { PopiconsClipboardCheckDuotone, PopiconsClipboardDuotone } from "@popicons/react";
 
 export function Share() {
@@ -16,7 +16,7 @@ export function Share() {
       setShareURI(
         window.location.href.replace(
           "/wallet/share",
-          `?nwc=${nwcEncoded}&name=${localStorage.getItem(localStorageKeys.label) || ""}&currency=${localStorage.getItem(localStorageKeys.currency) || ""}`
+          `?nwc=${nwcEncoded}&name=${localStorage.getItem(localStorageKeys.label) || ""}&currency=${localStorage.getItem(localStorageKeys.currency) || "USD"}`
         )
       );
     }
@@ -35,7 +35,7 @@ export function Share() {
   }
 
   return (
-    <>
+    <div className="h-full bg-black text-white" data-theme="dark">
       <Backbar />
       <div className="flex flex-grow gap-5 flex-col justify-center items-center">
         Let your co-workers scan this QR code
@@ -43,14 +43,15 @@ export function Share() {
           <QRCode value={shareURI} size={256} />
         </div>
         or share this URI with them:
-        <div className="flex border-2 rounded-lg">
+        <div className="flex border-2 border-gray-700 rounded-lg bg-gray-900">
           <input
             type="text"
             value={shareURI}
-            className="input overflow-ellipsis w-full max-w-xs text-sm"
+            className="input overflow-ellipsis w-full max-w-xs text-sm bg-gray-900 text-white"
+            readOnly
           />
-          <div className="w-1 h-full border-l-base-200 border-l-2"></div>
-          <button className="p-4" onClick={copy}>
+          <div className="w-1 h-full border-l-gray-700 border-l-2"></div>
+          <button className="p-4 text-white" onClick={copy}>
             {copied ? (
               <PopiconsClipboardCheckDuotone className="w-4 h-4" />
             ) : (
@@ -59,6 +60,6 @@ export function Share() {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

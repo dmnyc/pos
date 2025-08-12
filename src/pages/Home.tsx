@@ -7,15 +7,23 @@ import {
 } from "@getalby/bitcoin-connect-react";
 import React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { BuzzPay } from "../components/icons/BuzzPay";
-import { localStorageKeys } from "../constants";
+import { MerchantLogo } from "../components/MerchantLogo";
+import { 
+  localStorageKeys, 
+  getMerchantConfig,
+  applyMerchantConfigFromUrl 
+} from "../config";
 import { Footer } from "../components/Footer";
 
 export function Home() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const config = getMerchantConfig();
 
   React.useEffect(() => {
+    // Apply merchant configuration from URL parameters
+    applyMerchantConfigFromUrl(params);
+
     const label = params.get("label") || params.get("name");
     if (label) {
       localStorage.setItem(localStorageKeys.label, label); // Save the label to local storage
@@ -24,6 +32,9 @@ export function Home() {
     const currency = params.get("currency");
     if (currency) {
       localStorage.setItem(localStorageKeys.currency, currency); // Save the currency to local storage
+    } else {
+      // Set USD as default if not specified
+      localStorage.setItem(localStorageKeys.currency, "USD");
     }
 
     // Load label from query parameter and save it to local storage
@@ -47,8 +58,8 @@ export function Home() {
 
   React.useEffect(() => {
     init({
-      appName: "BuzzPay PoS",
-      appIcon: "https://pos.albylabs.com/icon.png",
+      appName: config.displayName,
+      appIcon: config.logoUrl,
       filters: ["nwc"],
       showBalance: false,
       providerConfig: {
@@ -57,26 +68,30 @@ export function Home() {
             requestMethods: ["get_info", "make_invoice", "lookup_invoice"],
             isolated: true,
             metadata: {
-              app_store_app_id: "buzzpay",
+              app_store_app_id: "lightningpos",
             },
           },
         },
       },
     });
     disconnect();
-  }, [navigate]);
+  }, [config]);
 
   return (
     <>
       <div
-        className="flex flex-col justify-center items-center w-full h-full bg-primary"
-        // force light theme on the home/welcome page because it has a yellow background
-        data-theme="light"
+        className="flex flex-col justify-center items-center w-full h-full bg-black"
+        data-theme="dark"
       >
-        <div className="flex flex-1 flex-col justify-center items-center max-w-lg">
-          <BuzzPay className="mb-8" />
+        <div className="flex flex-1 flex-col justify-center items-center max-w-lg w-full px-4">
+          {/* Doubled the size of the logo (600px instead of 300px) */}
+          <div className="flex justify-center w-full mb-8">
+            <MerchantLogo style={{ width: '600px', height: 'auto', maxWidth: '90vw' }} />
+          </div>
 
-          <p className="text-center mb-24">Point-of-Sale for bitcoin lightning payments</p>
+          <p className="text-center mb-24 text-white">
+            {config.description}
+          </p>
           <Button
             onConnected={async (provider) => {
               try {
@@ -116,7 +131,7 @@ export function Home() {
               }
             }}
           />
-          <button className="btn btn-outline mt-8 btn-sm btn-secondary" onClick={importWallet}>
+          <button className="btn mt-8 btn-sm text-black bg-white hover:bg-gray-200" onClick={importWallet}>
             Import wallet URL
           </button>
         </div>
@@ -129,8 +144,9 @@ export function Home() {
 // Needed on iOS because PWA localStorage is not shared with Safari.
 // PWA can only be installed with a static URL (e.g. "/pos/").
 function importWallet() {
+  const config = getMerchantConfig();
   const url = prompt(
-    "On BuzzPay in another browser, go to the sidebar menu -> Share with a co-worker, copy the share URL and paste it here."
+    `On ${config.displayName} in another browser, go to the sidebar menu -> Share with a co-worker, copy the share URL and paste it here.`
   );
   if (url) {
     window.location.href = url;

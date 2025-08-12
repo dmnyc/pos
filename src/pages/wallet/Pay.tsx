@@ -1,17 +1,19 @@
 import { Invoice } from "@getalby/lightning-tools";
 import QRCode from "qrcode.react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Backbar } from "../../components/Backbar";
 import useStore from "../../state/store";
 
 export function Pay() {
   const { invoice } = useParams();
   const navigate = useNavigate();
-  const { provider } = useStore();
+  const location = useLocation();
+  const { provider, setLastInvoiceData } = useStore();
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
   const [hasCopied, setCopied] = useState(false);
+  const isTipPayment = location.state?.isTipPayment || false;
 
   function copyQr() {
     try {
@@ -37,6 +39,17 @@ export function Pay() {
       if (description) {
         setDescription(description);
       }
+      
+      // Save invoice data for potential tip
+      if (!isTipPayment) {
+        // Get the current currency
+        const currency = localStorage.getItem("pos:currency") || "SATS";
+        setLastInvoiceData({ 
+          amount: satoshi, 
+          description,
+          currency 
+        });
+      }
 
       const interval = setInterval(async () => {
         console.log("Checking invoice", invoice);
@@ -44,14 +57,15 @@ export function Pay() {
           paymentRequest: invoice,
         });
         if (response.paid) {
-          navigate("../paid");
+          // Pass through whether this was a tip payment
+          navigate("../paid", { state: { isTipPayment } });
         }
       }, 3000);
       return () => {
         clearInterval(interval);
       };
     }
-  }, [invoice, navigate, provider]);
+  }, [invoice, navigate, provider, setLastInvoiceData, isTipPayment]);
 
   if (!invoice) {
     return null;
@@ -59,25 +73,27 @@ export function Pay() {
 
   return (
     <>
-      <Backbar />
-      <div className="flex grow flex-col items-center justify-center gap-5">
-        <span className="text-4xl font-bold">{new Intl.NumberFormat().format(amount)} sats</span>
-        <span className="font-semibold">{description}</span>
-        <div className="relative flex items-center justify-center p-4 bg-white" onClick={copyQr}>
-          <QRCode value={invoice} size={256} />
+      <div className="bg-black text-white h-full" data-theme="dark">
+        <Backbar />
+        <div className="flex grow flex-col items-center justify-center gap-5">
+          <span className="text-4xl font-bold">{new Intl.NumberFormat().format(amount)} sats</span>
+          <span className="font-semibold">{description}</span>
+          <div className="relative flex items-center justify-center p-4 bg-white" onClick={copyQr}>
+            <QRCode value={invoice} size={256} />
+          </div>
+          <p className="mb-4 flex flex-row items-center justify-center gap-2">
+            {!hasCopied && <span className="loading loading-spinner text-white"></span>}
+            {hasCopied ? "✅ Invoice Copied!" : "Waiting for payment..."}
+          </p>
+          <button
+            onClick={() => {
+              navigate("../new");
+            }}
+            className="btn bg-white text-black hover:bg-gray-200"
+          >
+            Cancel
+          </button>
         </div>
-        <p className="mb-4 flex flex-row items-center justify-center gap-2">
-          {!hasCopied && <span className="loading loading-spinner text-primary"></span>}
-          {hasCopied ? "✅ Invoice Copied!" : "Waiting for payment..."}
-        </p>
-        <button
-          onClick={() => {
-            navigate("../new");
-          }}
-          className="btn"
-        >
-          Cancel
-        </button>
       </div>
     </>
   );

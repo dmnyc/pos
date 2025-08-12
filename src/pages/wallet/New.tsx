@@ -1,26 +1,27 @@
 import React, { FormEvent, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Import useLocation
+import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar";
 import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
-import { localStorageKeys } from "../../constants";
+import { localStorageKeys } from "../../config";
 import { PopiconsChevronBottomDuotone, PopiconsEditPencilDuotone } from "@popicons/react";
 
-export const DEFAULT_LABEL = "BuzzPay";
+export const DEFAULT_LABEL = "Lightning POS";
 
 export function New() {
   const [amount, setAmount] = React.useState(0); // Current input
   const [total, setTotal] = React.useState(0); // Total amount
   const [totalInSats, setTotalInSats] = React.useState(0); // Total amount in sats
   const [isLoading, setLoading] = React.useState(false);
-  const [currency, setCurrency] = React.useState("SATS"); // State for currency selection
+  const [currency, setCurrency] = React.useState("USD"); // Default to USD instead of SATS
   const navigate = useNavigate();
   const provider = useStore((store) => store.provider);
   const location = useLocation(); // Get the current location
   const [label, setLabel] = React.useState(
     localStorage.getItem(localStorageKeys.label) || DEFAULT_LABEL
   );
-  const [currencies, setCurrencies] = React.useState<string[]>(["SATS"]);
+  const [currencies, setCurrencies] = React.useState<string[]>(["USD", "SATS"]); // Default list with USD first
+
   useEffect(() => {
     async function fetchCurrencies() {
       try {
@@ -31,7 +32,12 @@ export function New() {
 
         mappedCurrencies.sort((a, b) => a[1].priority - b[1].priority);
 
-        setCurrencies(["SATS", ...mappedCurrencies.map((currency) => currency[0].toUpperCase())]);
+        // Make sure USD and SATS are included, with USD first
+        const allCurrencies = ["USD", "SATS", ...mappedCurrencies
+          .map((currency) => currency[0].toUpperCase())
+          .filter(curr => curr !== "USD" && curr !== "SATS")];
+        
+        setCurrencies(allCurrencies);
       } catch (error) {
         console.error(error);
       }
@@ -45,6 +51,9 @@ export function New() {
     const savedCurrency = localStorage.getItem(localStorageKeys.currency);
     if (savedCurrency) {
       setCurrency(savedCurrency);
+    } else {
+      // Set USD as default if no saved currency
+      localStorage.setItem(localStorageKeys.currency, "USD");
     }
   }, []); // Run once on mount
 
@@ -87,9 +96,17 @@ export function New() {
         throw new Error("wallet not loaded");
       }
       setLoading(true);
+      
+      // Create memo with store name and include fiat price if not using SATS
+      let memo = label;
+      if (currency !== "SATS") {
+        const formattedAmount = formatNumber(total);
+        memo += ` - ${formattedAmount}`;
+      }
+      
       const invoice = await provider.makeInvoice({
         amount: totalInSats.toString(), // Use total for the invoice
-        defaultMemo: label,
+        defaultMemo: memo,
       });
       navigate(`../pay/${invoice.paymentRequest}`);
     } catch (error) {
@@ -101,35 +118,33 @@ export function New() {
 
   const handleNumberClick = (num: string) => {
     const newAmount = parseInt(amount.toString() + num); // Concatenate the new number without leading zero
-    const newTotal = total - amount + newAmount;
     setAmount(newAmount);
-    setTotal(newTotal);
+    setTotal(newAmount); // Total is now the same as amount since we removed the "+" feature
   };
 
   const handleCurrencyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCurrency = e.target.value;
     setCurrency(newCurrency);
     localStorage.setItem(localStorageKeys.currency, newCurrency); // Save currency to local storage
+    
+    // Update totalInSats based on the new currency
     if (newCurrency !== "SATS") {
-      const newTotalInSats = await fiat.getSatoshiValue({ amount: total, currency: newCurrency }); // Convert total to sats
+      const newTotalInSats = await fiat.getSatoshiValue({ amount: total / 100, currency: newCurrency });
       setTotalInSats(newTotalInSats);
+    } else {
+      setTotalInSats(total); // If currency is SATS, totalInSats is just total
     }
   };
 
   const handleDelete = () => {
     const newAmount = parseInt(amount.toString().slice(0, -1)) || 0; // Remove the last character
-    const newTotal = total - amount + newAmount; // Update the total directly
     setAmount(newAmount);
-    setTotal(newTotal);
+    setTotal(newAmount); // Total is now the same as amount
   };
 
   const handleClear = () => {
     setAmount(0);
     setTotal(0);
-  };
-
-  const handlePlus = () => {
-    setAmount(0);
   };
 
   const formatNumber = (num: number, numberOnly = false) => {
@@ -160,14 +175,15 @@ export function New() {
   return (
     <>
       <Navbar />
-      <div className="flex w-full h-full flex-col items-center justify-between">
+      <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme="dark">
         <form
           onSubmit={onSubmit}
           className="flex flex-col items-center justify-center w-full flex-1 pb-2"
         >
           <div className="flex flex-col items-center justify-center w-full flex-1 mb-4">
+            {/* Amount display section */}
             <div className="flex flex-1 flex-col mb-4 items-center justify-center">
-              <p className="text-7xl pb-2 whitespace-nowrap text-center mx-auto">
+              <p className="text-7xl pb-2 whitespace-nowrap text-center mx-auto text-white">
                 {formatNumber(amount, true)}
               </p>
               <div className="flex items-center justify-center">
@@ -182,19 +198,23 @@ export function New() {
                     </option>
                   ))}
                 </select>
-                <PopiconsChevronBottomDuotone className="h-4 w-4 -ml-4 pointer-events-none" />
+                <PopiconsChevronBottomDuotone className="h-4 w-4 -ml-4 pointer-events-none text-gray-400" />
               </div>
             </div>
+            
+            {/* Merchant name/label */}
             <button type="button" className="flex items-center gap-2 mb-8" onClick={handleSetLabel}>
               <p className="text-gray-400 text-sm">{label}</p>
-              <PopiconsEditPencilDuotone className="h-4 w-4" />
+              <PopiconsEditPencilDuotone className="h-4 w-4 text-gray-400" />
             </button>
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full">
+            
+            {/* Keypad - with constrained width similar to screenshot */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-xs mx-auto">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <button
                   key={num}
                   type="button" // Prevent form submission
-                  className="btn btn-primary w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
+                  className="btn bg-white text-black hover:bg-gray-200 w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
                   onClick={() => handleNumberClick(`${num}`)}
                 >
                   {num}
@@ -205,7 +225,7 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn btn-primary w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
                 onClick={() => handleNumberClick(`0`)}
               >
                 0
@@ -213,7 +233,7 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn btn-primary w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
                 onClick={() => handleNumberClick(`00`)}
                 disabled={currency === "SATS"}
               >
@@ -222,7 +242,7 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn btn-light w-full h-6 sm:h-8 flex-grow text-l flex items-center justify-center text-gray-400"
+                className="btn btn-ghost w-full h-6 sm:h-8 flex-grow text-l flex items-center justify-center text-gray-400"
                 onClick={handleClear}
               >
                 Clear
@@ -230,30 +250,29 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn btn-light w-full h-6 sm:h-8 flex-grow text-l flex items-center justify-center text-gray-400"
+                className="btn btn-ghost w-full h-6 sm:h-8 flex-grow text-l flex items-center justify-center text-gray-400"
                 onClick={handleDelete}
               >
                 Del
               </button>
 
-              <button
-                type="button" // Prevent form submission
-                className="btn btn-light w-full h-6 sm:h-8 flex-grow text-2xl font-bold flex items-center justify-center"
-                onClick={handlePlus} // Add to total
-              >
-                +
-              </button>
+              {/* Removed the + button as requested */}
+              <span className="w-full h-6 sm:h-8"></span>
             </div>
           </div>
-          <button
-            className="btn btn-primary w-full h-16 text-xl font-bold flex-grow-0"
-            type="submit"
-            disabled={isLoading || total <= 0} // Disable if total is 0
-          >
-            Charge {new Intl.NumberFormat().format(totalInSats)} sats
-            {currency !== "SATS" && ` (${formatNumber(total)})`}
-            {isLoading && <span className="loading loading-spinner"></span>}
-          </button>
+          
+          {/* Charge button - keeping max width same as keypad */}
+          <div className="w-full max-w-xs mx-auto">
+            <button
+              className="btn bg-charge-green text-white hover:bg-green-500 w-full h-16 text-xl font-bold flex-grow-0"
+              type="submit"
+              disabled={isLoading || total <= 0} // Disable if total is 0
+            >
+              Charge {new Intl.NumberFormat().format(totalInSats)} sats
+              {currency !== "SATS" && ` (${formatNumber(total)})`}
+              {isLoading && <span className="loading loading-spinner"></span>}
+            </button>
+          </div>
         </form>
       </div>
     </>

@@ -1,33 +1,43 @@
 import { Link } from "react-router-dom";
-import { BuzzPay } from "./icons/BuzzPay";
+import { MerchantLogo } from "./MerchantLogo";
 import {
   PopiconsBulbDuotone,
   PopiconsLeftSidebarTopNavDuotone,
   PopiconsLogoutDuotone,
   PopiconsShareDuotone,
+  PopiconsSettingsDuotone,
 } from "@popicons/react";
-import { localStorageKeys } from "../constants";
+import { localStorageKeys } from "../config";
+import { getMerchantConfig } from "../config";
 
 export function Navbar() {
+  const config = getMerchantConfig();
+  
   return (
-    <div className="navbar bg-base-100">
-      <div className="flex-none">
+    <div className="navbar bg-black text-white" data-theme="dark">
+      {/* Left section with menu button */}
+      <div className="w-10 flex justify-start">
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost m-1">
+          <div tabIndex={0} role="button" className="btn btn-ghost btn-sm m-1 text-white">
             <PopiconsLeftSidebarTopNavDuotone className="h-6 w-6" />
           </div>
           <ul
             tabIndex={0}
-            className="dropdown-content menu bg-base-100 rounded-box z-[1] w-60 p-2 shadow"
+            className="dropdown-content menu bg-black rounded-box z-[1] w-60 p-2 shadow text-white"
           >
             <li key="share">
-              <Link to="../share">
+              <Link to="../share" className="text-white">
                 <PopiconsShareDuotone className="w-4 h-4" /> Share with a co-worker
               </Link>
             </li>
+            <li key="settings">
+              <Link to="/settings" className="text-white">
+                <PopiconsSettingsDuotone className="h-4 w-4" /> Settings
+              </Link>
+            </li>
             <li key="about">
-              <Link to="/about">
-                <PopiconsBulbDuotone className="h-4 w-4" /> About BuzzPay
+              <Link to="/about" className="text-white">
+                <PopiconsBulbDuotone className="h-4 w-4" /> About {config.displayName}
               </Link>
             </li>
             <li key="logout">
@@ -40,7 +50,7 @@ export function Navbar() {
                   }
                   window.localStorage.removeItem(localStorageKeys.nwcUrl);
                 }}
-                className="text-error"
+                className="text-red-500"
               >
                 <PopiconsLogoutDuotone className="h-4 w-4" /> Log out
               </Link>
@@ -48,10 +58,14 @@ export function Navbar() {
           </ul>
         </div>
       </div>
-      <div className="flex-1 justify-center">
-        <BuzzPay className="mt-2 h-6 w-24" style={{ marginLeft: "-66px" }} />
+      
+      {/* Center section with logo - smaller size, matches screenshot */}
+      <div className="flex-1 flex justify-center">
+        <MerchantLogo style={{ height: '30px', width: 'auto', maxWidth: '160px' }} />
       </div>
-      <div className="flex-none"></div>
+      
+      {/* Empty space to balance the navbar */}
+      <div className="w-10"></div>
     </div>
   );
 }
