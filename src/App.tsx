@@ -9,12 +9,26 @@ import { Share } from "./pages/wallet/Share";
 import { About } from "./pages/About";
 import { Settings } from "./pages/Settings";
 import { TipPage } from "./pages/wallet/Tip";
-import React from "react";
-import { localStorageKeys } from "./config";
+import React, { useEffect } from "react";
+import { localStorageKeys, getMerchantConfig } from "./config";
 
 function App() {
+  // Apply the theme from merchant config
+  const config = getMerchantConfig();
+  
+  // Set the theme when the app loads
+  useEffect(() => {
+    // Valid themes are "standard" and "industrial"
+    const validTheme = config.theme === "standard" || config.theme === "industrial" 
+      ? config.theme 
+      : "standard";
+      
+    // Apply the theme to the root element for DaisyUI
+    document.documentElement.setAttribute("data-theme", validTheme);
+  }, [config.theme]);
+
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center font-sans">
+    <div className="flex h-full w-full flex-col items-center justify-center font-sans py-2 md:py-4">
       <Router>
         <Routes>
           <Route path="/" Component={Home} />

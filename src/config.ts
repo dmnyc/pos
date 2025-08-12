@@ -2,9 +2,8 @@ export interface MerchantConfig {
   name: string;
   displayName: string;
   logoUrl: string;
-  primaryColor: string;
-  secondaryColor: string;
   description: string;
+  theme: "standard" | "industrial";
 }
 
 export interface TipSettings {
@@ -13,14 +12,13 @@ export interface TipSettings {
   allowCustom: boolean;
 }
 
-// Default configuration with updated color scheme
+// Default configuration
 export const defaultMerchantConfig: MerchantConfig = {
   name: "Lightning POS",
   displayName: "Lightning POS",
   logoUrl: "/images/satsfactory_logo.svg", 
-  primaryColor: "#000000", // Black background
-  secondaryColor: "#FFFFFF", // White text
-  description: "Point-of-Sale for bitcoin lightning payments"
+  description: "Point-of-Sale for bitcoin lightning payments",
+  theme: "standard"
 };
 
 // Default tip settings
@@ -36,7 +34,21 @@ export function loadMerchantConfig(): MerchantConfig {
   
   if (storedConfig) {
     try {
-      return JSON.parse(storedConfig);
+      // Handle migration from old config format with primaryColor/secondaryColor
+      const parsedConfig = JSON.parse(storedConfig);
+      
+      // If the old format is found (has primaryColor but no theme)
+      if (parsedConfig.primaryColor && !parsedConfig.theme) {
+        // Copy everything except primaryColor and secondaryColor
+        const { primaryColor, secondaryColor, ...rest } = parsedConfig;
+        // Add theme property
+        return { 
+          ...rest, 
+          theme: "standard" // Default to standard theme for migrated configs
+        };
+      }
+      
+      return parsedConfig;
     } catch (e) {
       console.error("Failed to parse stored merchant config", e);
     }
@@ -104,17 +116,10 @@ export function applyMerchantConfigFromUrl(searchParams: URLSearchParams): void 
     updated = true;
   }
 
-  // Check for primary color
-  const primaryColor = searchParams.get("primary_color");
-  if (primaryColor) {
-    config.primaryColor = primaryColor;
-    updated = true;
-  }
-
-  // Check for secondary color
-  const secondaryColor = searchParams.get("secondary_color");
-  if (secondaryColor) {
-    config.secondaryColor = secondaryColor;
+  // Check for theme
+  const theme = searchParams.get("theme");
+  if (theme === "standard" || theme === "industrial") {
+    config.theme = theme;
     updated = true;
   }
 

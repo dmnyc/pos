@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Backbar } from "../../components/Backbar";
 import useStore from "../../state/store";
+import { getMerchantConfig } from "../../config";
 
 export function Pay() {
   const { invoice } = useParams();
@@ -14,6 +15,7 @@ export function Pay() {
   const [description, setDescription] = useState("");
   const [hasCopied, setCopied] = useState(false);
   const isTipPayment = location.state?.isTipPayment || false;
+  const config = getMerchantConfig();
 
   function copyQr() {
     try {
@@ -73,7 +75,7 @@ export function Pay() {
 
   return (
     <>
-      <div className="bg-black text-white h-full" data-theme="dark">
+      <div className="bg-black text-white h-full" data-theme={config.theme}>
         <Backbar />
         <div className="flex grow flex-col items-center justify-center gap-5">
           <span className="text-4xl font-bold">{new Intl.NumberFormat().format(amount)} sats</span>

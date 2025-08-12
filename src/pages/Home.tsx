@@ -81,7 +81,7 @@ export function Home() {
     <>
       <div
         className="flex flex-col justify-center items-center w-full h-full bg-black"
-        data-theme="dark"
+        data-theme={config.theme}
       >
         <div className="flex flex-1 flex-col justify-center items-center max-w-lg w-full px-4">
           {/* Doubled the size of the logo (600px instead of 300px) */}

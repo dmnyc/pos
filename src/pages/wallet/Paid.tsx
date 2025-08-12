@@ -2,12 +2,14 @@ import { PopiconsCircleCheckDuotone } from "@popicons/react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useStore from "../../state/store";
+import { getMerchantConfig } from "../../config";
 
 export function Paid() {
   const navigate = useNavigate();
   const location = useLocation();
   const { lastInvoiceData } = useStore();
   const [showTipButton, setShowTipButton] = useState(true);
+  const config = getMerchantConfig();
   
   // Check if we're coming from a tip payment
   useEffect(() => {
@@ -51,8 +53,13 @@ export function Paid() {
     }
   };
 
+  // Action button class based on theme
+  const actionButtonClass = config.theme === "standard" 
+    ? "btn bg-charge-green text-white hover:bg-green-500 w-full"
+    : "btn btn-industrial-gradient w-full";
+
   return (
-    <div className="bg-black text-white h-full flex flex-col" data-theme="dark">
+    <div className="bg-black text-white h-full flex flex-col" data-theme={config.theme}>
       <div className="flex flex-col justify-between items-center h-full py-4">
         <div className="flex flex-col gap-5 justify-center items-center grow">
           <div className="text-center">
@@ -63,7 +70,7 @@ export function Paid() {
           {showTipButton && (
             <button 
               onClick={handleTip} 
-              className="btn bg-charge-green text-white hover:bg-green-500 w-full"
+              className={actionButtonClass}
             >
               Add a tip
             </button>

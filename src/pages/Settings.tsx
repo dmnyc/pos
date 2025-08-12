@@ -21,7 +21,12 @@ export function Settings() {
     }
   }, [saved]);
 
-  const handleMerchantConfigChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Update the theme when changed in settings
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', merchantConfig.theme);
+  }, [merchantConfig.theme]);
+
+  const handleMerchantConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setMerchantConfig(prev => ({ ...prev, [name]: value }));
   };
@@ -57,7 +62,7 @@ export function Settings() {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto p-4 bg-black text-white" data-theme="dark">
+    <div className="w-full max-w-lg mx-auto p-4 bg-black text-white" data-theme={merchantConfig.theme}>
       <Backbar />
       <h1 className="text-2xl font-bold mb-6">Merchant Settings</h1>
       
@@ -116,44 +121,31 @@ export function Settings() {
             </div>
             
             <div>
-              <label className="block text-white mb-2">Primary Color</label>
-              <div className="flex items-center">
-                <input
-                  type="color"
-                  name="primaryColor"
-                  value={merchantConfig.primaryColor}
-                  onChange={handleMerchantConfigChange}
-                  className="mr-2 h-10 w-10 cursor-pointer"
-                />
-                <input
-                  type="text"
-                  name="primaryColor"
-                  value={merchantConfig.primaryColor}
-                  onChange={handleMerchantConfigChange}
-                  className="input input-bordered flex-1 bg-gray-900 text-white"
-                  placeholder="#000000"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-white mb-2">Secondary Color</label>
-              <div className="flex items-center">
-                <input
-                  type="color"
-                  name="secondaryColor"
-                  value={merchantConfig.secondaryColor}
-                  onChange={handleMerchantConfigChange}
-                  className="mr-2 h-10 w-10 cursor-pointer"
-                />
-                <input
-                  type="text"
-                  name="secondaryColor"
-                  value={merchantConfig.secondaryColor}
-                  onChange={handleMerchantConfigChange}
-                  className="input input-bordered flex-1 bg-gray-900 text-white"
-                  placeholder="#FFFFFF"
-                />
+              <label className="block text-white mb-2">Theme</label>
+              <select
+                name="theme"
+                value={merchantConfig.theme}
+                onChange={handleMerchantConfigChange}
+                className="select select-bordered w-full bg-gray-900 text-white"
+              >
+                <option value="standard">Standard</option>
+                <option value="industrial">Industrial</option>
+              </select>
+              
+              {/* Preview of current theme buttons */}
+              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+                <p className="text-sm text-gray-400 mb-2">Theme Preview:</p>
+                <div className="flex gap-2">
+                  {merchantConfig.theme === "standard" ? (
+                    <button type="button" className="btn bg-charge-green text-white hover:bg-green-500">
+                      Standard Button
+                    </button>
+                  ) : (
+                    <button type="button" className="btn btn-industrial-gradient">
+                      Industrial Button
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -220,7 +212,13 @@ export function Settings() {
         )}
         
         <div className="pt-4">
-          <button type="submit" className="btn bg-charge-green text-white hover:bg-green-500 w-full">
+          <button 
+            type="submit" 
+            className={merchantConfig.theme === "standard" 
+              ? "btn bg-charge-green text-white hover:bg-green-500 w-full" 
+              : "btn btn-industrial-gradient w-full"
+            }
+          >
             Save Settings
           </button>
         </div>

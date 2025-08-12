@@ -4,10 +4,27 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
+        sans: ["Space Mono", "monospace"],
       },
       colors: {
         'charge-green': '#00cc66', // Define a custom green color for the charge button
+      },
+      fontSize: {
+        'xs': '0.7rem',     // Adjusted downward
+        'sm': '0.8rem',     // Adjusted downward
+        'base': '0.925rem', // Adjusted downward from 1rem
+        'lg': '1.025rem',   // Adjusted downward
+        'xl': '1.125rem',   // Adjusted downward
+        '2xl': '1.375rem',  // Adjusted downward
+        '3xl': '1.675rem',  // Adjusted downward
+        '4xl': '2rem',      // Adjusted downward
+        // Keep larger sizes similar to maintain readability for numbers
+        '5xl': '3rem',
+        '6xl': '3.75rem',
+        '7xl': '4.5rem',    // For keypad numbers
+      },
+      backgroundImage: {
+        'industrial-gradient': 'linear-gradient(to right, #81726d, #e7b7a0, #ffffff, #e9be93, #cccccc, #858585)',
       },
     },
     screens: {
@@ -19,7 +36,7 @@ export default {
   daisyui: {
     themes: [
       {
-        light: {
+        standard: {
           // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
           ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
           primary: "#FFFFFF", // White buttons
@@ -34,15 +51,15 @@ export default {
         },
       },
       {
-        dark: {
+        industrial: {
           // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
           ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
           primary: "#FFFFFF", // White buttons
           "primary-content": "#000000", // Black text on primary buttons
           secondary: "#FFFFFF", // White for secondary elements
           "secondary-content": "#000000", // Black text on secondary elements
-          accent: "#00cc66", // Green for accent elements (charge button)
-          "accent-content": "#FFFFFF", // White text on accent elements
+          accent: "#81726d", // Just a base color for the accent (will use gradient in components)
+          "accent-content": "#000000", // Black text on accent elements
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background
           "base-content": "#FFFFFF", // White text on base elements

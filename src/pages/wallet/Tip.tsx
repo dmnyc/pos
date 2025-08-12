@@ -212,17 +212,22 @@ export function TipPage() {
     }).format(amount);
   };
 
-  // Debug info
-  console.log("Current state:", { 
-    selectedTip, 
-    customTipValue, 
-    tipAmount, 
-    currency, 
-    baseAmount 
-  });
+  // Button styling based on theme
+  const getButtonClass = (isSelected: boolean) => {
+    if (isSelected) {
+      return "btn bg-white text-black";
+    } else {
+      return "btn btn-outline text-white";
+    }
+  };
+
+  // Action button class based on theme
+  const actionButtonClass = config.theme === "standard" 
+    ? "btn bg-charge-green text-white hover:bg-green-500 w-full"
+    : "btn btn-industrial-gradient w-full";
 
   return (
-    <div className="bg-black text-white h-full" data-theme="dark">
+    <div className="bg-black text-white h-full" data-theme={config.theme}>
       <Backbar />
       <div className="flex grow flex-col items-center justify-center gap-5 p-4">
         <h2 className="text-2xl font-bold text-center">Would you like to add a tip?</h2>
@@ -239,7 +244,7 @@ export function TipPage() {
         
         <div className="grid grid-cols-2 gap-2 w-full max-w-md">
           <button
-            className={`btn ${selectedTip === NO_TIP ? 'bg-white text-black' : 'btn-outline text-white'}`}
+            className={getButtonClass(selectedTip === NO_TIP)}
             onClick={() => handleTipSelection(NO_TIP)}
           >
             No Tip
@@ -248,7 +253,7 @@ export function TipPage() {
           {tipSettings.defaultPercentages.map(tip => (
             <button
               key={tip}
-              className={`btn ${selectedTip === tip ? 'bg-white text-black' : 'btn-outline text-white'}`}
+              className={getButtonClass(selectedTip === tip)}
               onClick={() => handleTipSelection(tip)}
             >
               {tip}%
@@ -257,7 +262,7 @@ export function TipPage() {
           
           {tipSettings.allowCustom && (
             <button
-              className={`btn col-span-2 ${selectedTip === CUSTOM_TIP ? 'bg-white text-black' : 'btn-outline text-white'}`}
+              className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)}`}
               onClick={() => handleTipSelection(CUSTOM_TIP)}
             >
               Custom Tip
@@ -323,7 +328,7 @@ export function TipPage() {
         <div className="w-full max-w-md flex flex-col gap-2 mt-6">
           {tipAmount > 0 ? (
             <button
-              className="btn bg-charge-green text-white hover:bg-green-500 w-full"
+              className={actionButtonClass}
               onClick={handleSubmit}
               disabled={isLoading}
             >

@@ -7,14 +7,13 @@ import {
   PopiconsShareDuotone,
   PopiconsSettingsDuotone,
 } from "@popicons/react";
-import { localStorageKeys } from "../config";
-import { getMerchantConfig } from "../config";
+import { localStorageKeys, getMerchantConfig } from "../config";
 
 export function Navbar() {
   const config = getMerchantConfig();
   
   return (
-    <div className="navbar bg-black text-white" data-theme="dark">
+    <div className="navbar bg-black text-white" data-theme={config.theme}>
       {/* Left section with menu button */}
       <div className="w-10 flex justify-start">
         <div className="dropdown">

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar";
 import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
-import { localStorageKeys } from "../../config";
+import { localStorageKeys, getMerchantConfig } from "../../config";
 import { PopiconsChevronBottomDuotone, PopiconsEditPencilDuotone } from "@popicons/react";
 
 export const DEFAULT_LABEL = "Lightning POS";
@@ -21,6 +21,7 @@ export function New() {
     localStorage.getItem(localStorageKeys.label) || DEFAULT_LABEL
   );
   const [currencies, setCurrencies] = React.useState<string[]>(["USD", "SATS"]); // Default list with USD first
+  const config = getMerchantConfig();
 
   useEffect(() => {
     async function fetchCurrencies() {
@@ -172,10 +173,15 @@ export function New() {
     }
   };
 
+  // Choose the charge button class based on the theme
+  const chargeButtonClass = config.theme === "standard" 
+    ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-16 text-xl font-bold flex-grow-0"
+    : "btn btn-industrial-gradient w-full h-16 text-xl font-bold flex-grow-0";
+
   return (
     <>
       <Navbar />
-      <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme="dark">
+      <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
         <form
           onSubmit={onSubmit}
           className="flex flex-col items-center justify-center w-full flex-1 pb-2"
@@ -264,7 +270,7 @@ export function New() {
           {/* Charge button - keeping max width same as keypad */}
           <div className="w-full max-w-xs mx-auto">
             <button
-              className="btn bg-charge-green text-white hover:bg-green-500 w-full h-16 text-xl font-bold flex-grow-0"
+              className={chargeButtonClass}
               type="submit"
               disabled={isLoading || total <= 0} // Disable if total is 0
             >

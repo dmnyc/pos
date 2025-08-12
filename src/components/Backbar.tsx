@@ -1,5 +1,6 @@
 import { PopiconsArrowLeftDuotone } from "@popicons/react";
 import { To, useLocation, useNavigate } from "react-router-dom";
+import { getMerchantConfig } from "../config";
 
 type BackbarProps = {
   navigateTo?: string | -1;
@@ -8,6 +9,7 @@ type BackbarProps = {
 export function Backbar({ navigateTo }: BackbarProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const config = getMerchantConfig();
   
   const handleBack = () => {
     // Check current location and handle it appropriately
@@ -26,7 +28,7 @@ export function Backbar({ navigateTo }: BackbarProps) {
   };
   
   return (
-    <div className="navbar bg-black text-white">
+    <div className="navbar bg-black text-white" data-theme={config.theme}>
       <div className="flex-none">
         <button
           className="btn btn-ghost m-1 text-white"
