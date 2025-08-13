@@ -1,4 +1,3 @@
-import { PopiconsArrowLeftDuotone } from "@popicons/react";
 import { To, useLocation, useNavigate } from "react-router-dom";
 import { getMerchantConfig } from "../config";
 

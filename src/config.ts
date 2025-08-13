@@ -3,7 +3,7 @@ export interface MerchantConfig {
   displayName: string;
   logoUrl: string;
   description: string;
-  theme: "standard" | "industrial" | "orangepill";
+  theme: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "safari" | "blocktron";
 }
 
 export interface TipSettings {

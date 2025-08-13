@@ -41,8 +41,8 @@ export default {
         'nostrich-hover': 'linear-gradient(to bottom, #c253b4, #a9186a)',
         'safari-gradient': 'linear-gradient(to bottom, #4d8c2f, #94b639, #f5b735, #ea8829, #d6492b)',
         'safari-hover': 'linear-gradient(to bottom, #3d7c1f, #84a629, #e5a725, #da7819, #c6391b)',
-        'blocktron-gradient': 'linear-gradient(to right, #ff9900, #ff7a30, #ff00aa, #00abefff, #7b00ff)',
-        'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #00abefff, #6b00ef)',
+        'blocktron-gradient': 'linear-gradient(to right, #ff9900, #ff7a30, #ff00aa, #7b00ff, #00FFFF)',
+        'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #6b00ef, #00FFFF)',
       },
     },
     screens: {

@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 interface InvoiceData {
   amount: number;
-  description: string;
+  description: string | null;
   currency?: string; // Added currency field
 }
 

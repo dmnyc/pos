@@ -14,9 +14,10 @@ export function Pay() {
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
   const [hasCopied, setCopied] = useState(false);
-  const [fiatAmount, setFiatAmount] = useState<string | null>(null);
+  const [fiatAmount, setFiatAmount] = useState<string>("");
   const isTipPayment = location.state?.isTipPayment || false;
-  const passedFiatAmount = location.state?.fiatAmount;
+  // Safely convert passedFiatAmount to string or empty string
+  const passedFiatAmount = location.state?.fiatAmount ? String(location.state.fiatAmount) : "";
   const config = getMerchantConfig();
   const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
 
@@ -54,7 +55,7 @@ export function Pay() {
         setDescription(description);
         
         // For tip payments, use the fiat amount passed through navigation state if available
-        if (isTipPayment && passedFiatAmount) {
+        if (isTipPayment && passedFiatAmount.length > 0) {
           setFiatAmount(passedFiatAmount);
         } else {
           // Otherwise, extract fiat amount from description if available (regular payments)
@@ -144,7 +145,7 @@ export function Pay() {
               </div>
               
               {/* Show fiat amount if available */}
-              {fiatAmount && (
+              {fiatAmount && fiatAmount.length > 0 && (
                 <p className="text-xs text-gray-400">
                   {fiatAmount}
                 </p>

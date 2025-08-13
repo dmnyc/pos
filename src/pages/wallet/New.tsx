@@ -4,7 +4,6 @@ import { Navbar } from "../../components/Navbar";
 import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
 import { localStorageKeys, getMerchantConfig } from "../../config";
-import { PopiconsChevronBottomDuotone } from "@popicons/react";
 
 export function New() {
   const [amount, setAmount] = React.useState(0); // Current input

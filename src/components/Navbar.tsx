@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { MerchantLogo } from "./MerchantLogo";
 import {
   PopiconsBulbDuotone,
-  PopiconsLeftSidebarTopNavDuotone,
   PopiconsLogoutDuotone,
   PopiconsShareDuotone,
   PopiconsSettingsDuotone,
