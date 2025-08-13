@@ -227,7 +227,14 @@ export function New() {
                 </button>
               ))}
 
-              <span className="w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"></span>
+              <button
+                type="button" // Prevent form submission
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
+                onClick={() => handleNumberClick(`00`)}
+                disabled={currency === "SATS"}
+              >
+                00
+              </button>
 
               <button
                 type="button" // Prevent form submission
@@ -239,36 +246,20 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
-                onClick={() => handleNumberClick(`00`)}
-                disabled={currency === "SATS"}
-              >
-                .00
-              </button>
-
-              <button
-                type="button" // Prevent form submission
-                className="btn btn-ghost w-full h-5 sm:h-6 flex-grow text-xs flex items-center justify-center text-gray-400"
-                onClick={handleClear}
-              >
-                Clear
-              </button>
-
-              <button
-                type="button" // Prevent form submission
-                className="btn btn-ghost w-full h-5 sm:h-6 flex-grow text-xs flex items-center justify-center text-gray-400"
+                className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
                 onClick={handleDelete}
               >
-                Del
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                  <line x1="18" y1="9" x2="12" y2="15"></line>
+                  <line x1="12" y1="9" x2="18" y2="15"></line>
+                </svg>
               </button>
-
-              {/* Removed the + button as requested */}
-              <span className="w-full h-5 sm:h-6"></span>
             </div>
           </div>
           
           {/* Charge button - keeping max width same as keypad */}
-          <div className="w-full max-w-xs mx-auto">
+          <div className="w-full max-w-xs mx-auto flex flex-col gap-4 mt-4 mb-2">
             <button
               className={`${chargeButtonClass} h-14`}
               type="submit"
@@ -277,6 +268,14 @@ export function New() {
               Charge {new Intl.NumberFormat().format(totalInSats)} sats
               {currency !== "SATS" && ` (${formatNumber(total)})`}
               {isLoading && <span className="loading loading-spinner"></span>}
+            </button>
+            
+            <button
+              type="button" // Prevent form submission
+              className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 text-sm"
+              onClick={handleClear}
+            >
+              Clear
             </button>
           </div>
         </form>
