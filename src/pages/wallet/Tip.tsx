@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Backbar } from '../../components/Backbar';
 import useStore from '../../state/store';
 import { getMerchantConfig, getTipSettings } from '../../config';
 import { fiat } from "@getalby/lightning-tools";
+import { Navbar } from '../../components/Navbar';
 
 const CUSTOM_TIP = 'custom';
 const NO_TIP = 'none';
@@ -21,6 +21,7 @@ export function TipPage() {
   const [fiatRate, setFiatRate] = useState<number | null>(null);
   const [baseAmountInFiat, setBaseAmountInFiat] = useState<number>(0);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [customTipCurrency, setCustomTipCurrency] = useState<string>("FIAT"); // "FIAT" or "SATS"
   const config = getMerchantConfig();
   const tipSettings = getTipSettings();
   const customInputRef = useRef<HTMLInputElement>(null);
@@ -97,23 +98,28 @@ export function TipPage() {
       const calculatedTip = Math.round(baseAmount * (selectedTip / 100));
       setTipAmount(calculatedTip);
     } else if (selectedTip === CUSTOM_TIP) {
-      // Custom tip - convert from fiat to sats if needed
-      if (customTipValue && fiatRate && currency !== "SATS") {
-        // Convert fiat value to sats (fiatValue * satsPerUnit)
-        const fiatValue = parseFloat(customTipValue);
-        if (!isNaN(fiatValue)) {
-          const satValue = Math.round(fiatValue * fiatRate);
-          setTipAmount(satValue);
+      // Custom tip - handle based on selected currency format
+      if (customTipValue) {
+        if (customTipCurrency === "FIAT" && fiatRate && currency !== "SATS") {
+          // Convert fiat value to sats (fiatValue * satsPerUnit)
+          const fiatValue = parseFloat(customTipValue);
+          if (!isNaN(fiatValue)) {
+            const satValue = Math.round(fiatValue * fiatRate);
+            setTipAmount(satValue);
+          } else {
+            setTipAmount(0);
+          }
         } else {
-          setTipAmount(0);
+          // Using SATS directly
+          setTipAmount(parseInt(customTipValue) || 0);
         }
-      } else if (currency === "SATS") {
-        setTipAmount(parseInt(customTipValue) || 0);
+      } else {
+        setTipAmount(0);
       }
     } else if (selectedTip === NO_TIP) {
       setTipAmount(0);
     }
-  }, [selectedTip, baseAmount, customTipValue, fiatRate, currency]);
+  }, [selectedTip, baseAmount, customTipValue, fiatRate, currency, customTipCurrency]);
 
   // Handle tip selection - memoized to prevent unnecessary re-renders
   const handleTipSelection = useCallback((tip: number | string) => {
@@ -122,15 +128,25 @@ export function TipPage() {
     
     // If selecting custom, prepare a default value
     if (tip === CUSTOM_TIP) {
+      // Set default currency for custom tip - use fiat when available
+      if (currency !== "SATS" && fiatRate) {
+        setCustomTipCurrency("FIAT");
+      } else {
+        setCustomTipCurrency("SATS");
+      }
+      
       // Only set a default value if the current value is empty
-      if (!customTipValue && fiatRate && currency !== "SATS") {
-        const defaultTipPercentage = 0.15; // 15%
-        const defaultTip = (baseAmount * defaultTipPercentage) / fiatRate;
-        setCustomTipValue(defaultTip.toFixed(2));
-      } else if (!customTipValue && currency === "SATS") {
-        // For SATS, default to 15% of the base amount
-        const defaultTip = Math.round(baseAmount * 0.15);
-        setCustomTipValue(defaultTip.toString());
+      if (!customTipValue) {
+        // Default to 15% tip
+        if (customTipCurrency === "FIAT" && fiatRate && currency !== "SATS") {
+          const defaultTipPercentage = 0.15; // 15%
+          const defaultTip = (baseAmount * defaultTipPercentage) / fiatRate;
+          setCustomTipValue(defaultTip.toFixed(2));
+        } else {
+          // For SATS, default to 15% of the base amount
+          const defaultTip = Math.round(baseAmount * 0.15);
+          setCustomTipValue(defaultTip.toString());
+        }
       }
       
       // Focus the input field after a short delay to ensure it's rendered
@@ -140,13 +156,13 @@ export function TipPage() {
         }
       }, 100);
     }
-  }, [customTipValue, fiatRate, currency, baseAmount]);
+  }, [customTipValue, fiatRate, currency, baseAmount, customTipCurrency]);
 
   const handleCustomTipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     
     // For fiat currencies, allow decimal points
-    if (currency !== "SATS") {
+    if (customTipCurrency === "FIAT" && currency !== "SATS") {
       // Remove anything that's not a digit or decimal point
       value = value.replace(/[^0-9.]/g, '');
       
@@ -166,6 +182,35 @@ export function TipPage() {
     }
     
     setCustomTipValue(value);
+  };
+  
+  // Handle toggle between fiat and sats for custom tip
+  const handleCurrencyToggle = () => {
+    if (customTipCurrency === "FIAT" && fiatRate) {
+      // Switch from FIAT to SATS
+      setCustomTipCurrency("SATS");
+      
+      // Convert the current value to sats if it exists and is valid
+      if (customTipValue) {
+        const fiatValue = parseFloat(customTipValue);
+        if (!isNaN(fiatValue) && fiatRate) {
+          const satValue = Math.round(fiatValue * fiatRate);
+          setCustomTipValue(satValue.toString());
+        }
+      }
+    } else {
+      // Switch from SATS to FIAT
+      setCustomTipCurrency("FIAT");
+      
+      // Convert the current value to fiat if it exists and is valid
+      if (customTipValue && fiatRate) {
+        const satValue = parseInt(customTipValue);
+        if (!isNaN(satValue)) {
+          const fiatValue = satValue / fiatRate;
+          setCustomTipValue(fiatValue.toFixed(2));
+        }
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -240,124 +285,162 @@ export function TipPage() {
                   : "btn btn-industrial-gradient w-full";
 
   return (
-    <div className="bg-black text-white h-full" data-theme={config.theme}>
-      <Backbar />
-      <div className="flex grow flex-col items-center justify-center gap-3 p-2">
-        <h2 className="text-xl font-bold text-center">Would you like to add a tip?</h2>
-        
-        <div className="text-center mb-2">
-          {currency !== "SATS" && fiatRate ? (
-            <p className="text-gray-400 text-xs">
-              Base amount: {formatCurrency(baseAmountInFiat)} ({baseAmount} sats)
-            </p>
-          ) : (
-            <p className="text-gray-400 text-xs">Base amount: {baseAmount} sats</p>
-          )}
-        </div>
-        
-        <div className="grid grid-cols-2 gap-1 w-full max-w-md">
-          <button
-            className={`${getButtonClass(selectedTip === NO_TIP)} text-xs h-8`}
-            onClick={() => handleTipSelection(NO_TIP)}
-          >
-            No Tip
-          </button>
+    <>
+      {/* Use Navbar component for consistent logo placement */}
+      <Navbar />
+      <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
+        <div className="flex flex-col items-center justify-center w-full flex-1 p-2 pt-8">
+          <h2 className="text-xl font-bold text-center mb-6">Would you like to add a tip?</h2>
           
-          {tipSettings.defaultPercentages.map(tip => (
-            <button
-              key={tip}
-              className={`${getButtonClass(selectedTip === tip)} text-xs h-8`}
-              onClick={() => handleTipSelection(tip)}
-            >
-              {tip}%
-            </button>
-          ))}
-          
-          {tipSettings.allowCustom && (
-            <button
-              className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-xs h-8`}
-              onClick={() => handleTipSelection(CUSTOM_TIP)}
-            >
-              Custom Tip
-            </button>
-          )}
-        </div>
-        
-        {selectedTip === CUSTOM_TIP && (
-          <div className="w-full max-w-md mt-1">
-            <label className="label py-1">
-              <span className="label-text text-white text-xs">
-                Enter custom tip amount {currency !== "SATS" ? `(in ${currency})` : "(in sats)"}
-              </span>
-            </label>
-            <div className="relative">
-              {currency !== "SATS" && (
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
-                  {currency === "USD" ? "$" : currency + " "}
-                </span>
-              )}
-              <input
-                ref={customInputRef}
-                type="text"
-                className={`input input-bordered w-full bg-gray-900 text-white h-8 text-sm ${currency !== "SATS" ? "pl-8" : ""}`}
-                value={customTipValue}
-                onChange={handleCustomTipChange}
-                placeholder={currency !== "SATS" ? "0.00" : "Enter amount in sats"}
-              />
-            </div>
-          </div>
-        )}
-        
-        {tipAmount > 0 && (
-          <div className="text-center mt-2">
-            {currency !== "SATS" && fiatRate && selectedTip === CUSTOM_TIP ? (
+          <div className="text-center mb-6">
+            {currency !== "SATS" && fiatRate ? (
               <>
-                <p className="text-lg font-semibold">
-                  Tip amount: {formatCurrency(parseFloat(customTipValue) || 0)}
+                <p className="text-white text-lg font-medium mb-1">
+                  {formatCurrency(baseAmountInFiat)}
                 </p>
-                <p className="text-xs text-gray-400">
-                  {tipAmount} sats
-                </p>
-              </>
-            ) : currency !== "SATS" && fiatRate ? (
-              <>
-                <p className="text-lg font-semibold">
-                  Tip amount: {formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}
-                </p>
-                <p className="text-xs text-gray-400">
-                  {tipAmount} sats
+                <p className="text-gray-400 text-xs">
+                  {baseAmount} sats
                 </p>
               </>
             ) : (
-              <p className="text-lg font-semibold">Tip amount: {tipAmount} sats</p>
+              <p className="text-white text-lg font-medium">
+                {baseAmount} sats
+              </p>
             )}
-            
-            <p className="text-xs text-gray-400 mt-1">
-              Total with tip: {baseAmount + tipAmount} sats
-            </p>
           </div>
-        )}
-        
-        <div className="w-full max-w-md flex flex-col gap-2 mt-3">
-          {tipAmount > 0 ? (
-            <button
-              className={`${actionButtonClass} h-10 text-sm`}
-              onClick={handleSubmit}
-              disabled={isLoading}
-            >
-              Add Tip
-              {isLoading && <span className="loading loading-spinner ml-2"></span>}
-            </button>
-          ) : (
-            <button
-              className="btn bg-white text-black hover:bg-gray-200 w-full h-10 text-sm"
-              onClick={handleSkip}
-            >
-              Skip
-            </button>
+          
+          <div className="grid grid-cols-2 gap-2 w-full max-w-md mb-5">
+            {tipSettings.defaultPercentages.map(tip => (
+              <button
+                key={tip}
+                className={`${getButtonClass(selectedTip === tip)} text-xs h-10`}
+                onClick={() => handleTipSelection(tip)}
+              >
+                {tip}%
+              </button>
+            ))}
+            
+            {tipSettings.allowCustom && (
+              <button
+                className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-xs h-10 mt-1`}
+                onClick={() => handleTipSelection(CUSTOM_TIP)}
+              >
+                Custom Tip
+              </button>
+            )}
+          </div>
+          
+          {selectedTip === CUSTOM_TIP && (
+            <div className="w-full max-w-md mb-5">
+              <div className="flex justify-between items-center mb-1">
+                <label className="label-text text-white text-xs">
+                  Enter custom tip amount
+                </label>
+                {currency !== "SATS" && fiatRate && (
+                  <div className="join">
+                    <button 
+                      type="button"
+                      className={`join-item btn btn-xs ${customTipCurrency === "FIAT" ? 'btn-active' : 'btn-outline'}`}
+                      onClick={() => {
+                        if (customTipCurrency !== "FIAT") handleCurrencyToggle();
+                      }}
+                    >
+                      {currency}
+                    </button>
+                    <button 
+                      type="button"
+                      className={`join-item btn btn-xs ${customTipCurrency === "SATS" ? 'btn-active' : 'btn-outline'}`}
+                      onClick={() => {
+                        if (customTipCurrency !== "SATS") handleCurrencyToggle();
+                      }}
+                    >
+                      SATS
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="relative">
+                {customTipCurrency === "FIAT" && currency !== "SATS" && (
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
+                    {currency === "USD" ? "$" : currency + " "}
+                  </span>
+                )}
+                <input
+                  ref={customInputRef}
+                  type="text"
+                  className={`input input-bordered w-full bg-gray-900 text-white h-10 text-sm ${customTipCurrency === "FIAT" && currency !== "SATS" ? "pl-8" : ""}`}
+                  value={customTipValue}
+                  onChange={handleCustomTipChange}
+                  placeholder={customTipCurrency === "FIAT" && currency !== "SATS" ? "0.00" : "Enter amount in sats"}
+                />
+              </div>
+            </div>
           )}
+          
+          {tipAmount > 0 && (
+            <div className="text-center mb-8">
+              {selectedTip === CUSTOM_TIP ? (
+                customTipCurrency === "FIAT" && currency !== "SATS" && fiatRate ? (
+                  <>
+                    <p className="text-lg font-semibold">
+                      Tip amount: {formatCurrency(parseFloat(customTipValue) || 0)}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {tipAmount} sats
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg font-semibold">
+                      Tip amount: {tipAmount} sats
+                    </p>
+                    {currency !== "SATS" && fiatRate && (
+                      <p className="text-xs text-gray-400">
+                        {formatCurrency(tipAmount / fiatRate)}
+                      </p>
+                    )}
+                  </>
+                )
+              ) : currency !== "SATS" && fiatRate ? (
+                <>
+                  <p className="text-lg font-semibold">
+                    Tip amount: {formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {tipAmount} sats
+                  </p>
+                </>
+              ) : (
+                <p className="text-lg font-semibold">Tip amount: {tipAmount} sats</p>
+              )}
+              
+              <p className="text-xs text-gray-400 mt-3">
+                Total with tip: {baseAmount + tipAmount} sats
+              </p>
+            </div>
+          )}
+          
+          <div className="w-full max-w-md flex flex-col gap-2 mt-auto mb-8">
+            {tipAmount > 0 ? (
+              <button
+                className={`${actionButtonClass} h-12 text-sm`}
+                onClick={handleSubmit}
+                disabled={isLoading}
+              >
+                Add Tip
+                {isLoading && <span className="loading loading-spinner ml-2"></span>}
+              </button>
+            ) : (
+              <button
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-12 text-sm"
+                onClick={handleSkip}
+              >
+                No Tip
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

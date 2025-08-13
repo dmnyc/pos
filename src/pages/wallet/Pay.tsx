@@ -17,6 +17,7 @@ export function Pay() {
   const [fiatAmount, setFiatAmount] = useState<string | null>(null);
   const isTipPayment = location.state?.isTipPayment || false;
   const config = getMerchantConfig();
+  const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
 
   function copyQr() {
     try {
@@ -30,6 +31,13 @@ export function Pay() {
       console.error(error);
     }
   }
+
+  // Format the countdown time as mm:ss
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
 
   useEffect(() => {
     if (!provider) {
@@ -61,18 +69,42 @@ export function Pay() {
         });
       }
 
-      const interval = setInterval(async () => {
+      // Check invoice status every 3 seconds
+      const paymentCheckInterval = setInterval(async () => {
         console.log("Checking invoice", invoice);
-        const response = await provider.lookupInvoice({
-          paymentRequest: invoice,
-        });
-        if (response.paid) {
-          // Pass through whether this was a tip payment
-          navigate("../paid", { state: { isTipPayment } });
+        try {
+          const response = await provider.lookupInvoice({
+            paymentRequest: invoice,
+          });
+          if (response.paid) {
+            // Clear both intervals when paid
+            clearInterval(paymentCheckInterval);
+            // Pass through whether this was a tip payment
+            navigate("../paid", { state: { isTipPayment } });
+          }
+        } catch (error) {
+          console.error("Error checking invoice:", error);
         }
       }, 3000);
+      
+      // Countdown timer
+      const countdownInterval = setInterval(() => {
+        setCountdown(prevCountdown => {
+          if (prevCountdown <= 1) {
+            // Clear both intervals when countdown ends
+            clearInterval(countdownInterval);
+            clearInterval(paymentCheckInterval);
+            // Navigate back to new payment screen
+            navigate("../new");
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+
       return () => {
-        clearInterval(interval);
+        clearInterval(paymentCheckInterval);
+        clearInterval(countdownInterval);
       };
     }
   }, [invoice, navigate, provider, setLastInvoiceData, isTipPayment]);
@@ -112,16 +144,21 @@ export function Pay() {
             
             {/* QR Code */}
             <div 
-              className="relative flex items-center justify-center p-4 bg-white rounded-lg mb-6" 
+              className="relative flex items-center justify-center p-4 bg-white rounded-lg mb-4" 
               onClick={copyQr}
             >
               <QRCode value={invoice} size={230} />
             </div>
             
-            {/* Payment status */}
-            <div className="flex items-center justify-center gap-2 mb-8">
-              {!hasCopied && <span className="loading loading-spinner loading-xs text-white mr-2"></span>}
-              <p className="text-base">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
+            {/* Payment status and countdown timer */}
+            <div className="flex flex-col items-center gap-1 mb-8">
+              <div className="flex items-center justify-center">
+                {!hasCopied && <span className="loading loading-spinner loading-xs text-white mr-2"></span>}
+                <p className="text-sm">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
+              </div>
+              <div className="text-sm text-gray-400">
+                Expires in: <span className="font-mono">{formatTime(countdown)}</span>
+              </div>
             </div>
             
             {/* Bottom section with smaller, red cancel button that matches the keypad delete button style */}
