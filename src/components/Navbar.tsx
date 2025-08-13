@@ -13,7 +13,7 @@ export function Navbar() {
   const config = getMerchantConfig();
   
   return (
-    <div className="navbar bg-black text-white h-10" data-theme={config.theme}>
+    <div className="navbar bg-black text-white h-14" data-theme={config.theme}>
       {/* Left section with menu button */}
       <div className="w-8 flex justify-start">
         <div className="dropdown">
@@ -60,8 +60,8 @@ export function Navbar() {
         </div>
       </div>
       
-      {/* Center section with logo - smaller size */}
-      <div className="flex-1 flex justify-center">
+      {/* Center section with logo */}
+      <div className="flex-1 flex justify-center items-center min-h-[56px]">
         <MerchantLogo style={{ height: '24px', width: 'auto', maxWidth: '140px' }} />
       </div>
       

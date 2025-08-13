@@ -27,7 +27,7 @@ export function Backbar({ navigateTo }: BackbarProps) {
   };
   
   return (
-    <div className="navbar bg-black text-white h-10" data-theme={config.theme}>
+    <div className="navbar bg-black text-white h-14" data-theme={config.theme}>
       <div className="w-8 flex justify-start">
         <button
           className="text-gray-400 flex items-center justify-center h-8 w-8"

@@ -4,7 +4,9 @@ import {
   getMerchantConfig, 
   saveMerchantConfig, 
   getTipSettings, 
-  saveTipSettings 
+  saveTipSettings,
+  defaultMerchantConfig,
+  defaultTipSettings
 } from '../config';
 
 export function Settings() {
@@ -86,6 +88,33 @@ export function Settings() {
     }
   };
 
+  // Reset settings to default values
+  const handleResetDefaults = () => {
+    if (confirm("Are you sure you want to restore default settings? This will reset your store name, logo, and tip settings, and switch to the Standard theme.")) {
+      // Set merchant config to default values, including standard theme
+      setMerchantConfig({
+        ...defaultMerchantConfig
+      });
+      
+      // Reset tip settings
+      setTipSettings({...defaultTipSettings});
+      
+      // Reset tip percentages input field
+      setTipPercentagesInput(defaultTipSettings.defaultPercentages.join(', '));
+      
+      // Save changes to localStorage
+      saveMerchantConfig({
+        ...defaultMerchantConfig
+      });
+      saveTipSettings(defaultTipSettings);
+      
+      // Apply the standard theme immediately
+      document.documentElement.setAttribute('data-theme', 'standard');
+      
+      setSaved(true);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full bg-black text-white" data-theme={merchantConfig.theme}>
       <Backbar />
@@ -132,6 +161,17 @@ export function Settings() {
                 className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
                 placeholder="https://example.com/logo.png"
               />
+              {/* Logo preview */}
+              <div className="mt-2 p-2 bg-gray-800 rounded-lg flex justify-center items-center">
+                <div className="p-2 bg-black rounded inline-block">
+                  <img 
+                    src={merchantConfig.logoUrl} 
+                    alt="Logo Preview" 
+                    onError={(e) => { (e.target as HTMLImageElement).src = "/images/satsfactory_logo.svg"; }}
+                    style={{ maxHeight: '60px', maxWidth: '240px', objectFit: 'contain' }} 
+                  />
+                </div>
+              </div>
             </div>
             
             <div>
@@ -213,7 +253,7 @@ export function Settings() {
           </div>
         )}
         
-        <div className="pt-2">
+        <div className="pt-2 space-y-2">
           <button 
             type="submit" 
             className={merchantConfig.theme === "standard" 
@@ -222,6 +262,14 @@ export function Settings() {
             }
           >
             Save Settings
+          </button>
+          
+          <button 
+            type="button"
+            onClick={handleResetDefaults}
+            className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 text-sm"
+          >
+            Restore Default Settings
           </button>
         </div>
         

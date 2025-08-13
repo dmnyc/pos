@@ -145,7 +145,9 @@ export function New() {
       num / 100
     );
     if (numberOnly) {
-      result = result.replace(/[^0-9\\.,]/g, ""); // e.g. remove "THB " prefix as it takes too much space
+      // For fiat currencies in the main display, remove the currency symbol but add it after the number
+      const numericPart = result.replace(/[^0-9\\.,]/g, "");
+      return numericPart;
     }
     return result;
   };
@@ -166,22 +168,41 @@ export function New() {
           <div className="flex flex-col items-center justify-center w-full flex-1 mb-2">
             {/* Amount display section */}
             <div className="flex flex-1 flex-col mb-2 items-center justify-center">
-              <p className="text-6xl pb-1 whitespace-nowrap text-center mx-auto text-white">
+              <p className="text-6xl whitespace-nowrap text-center mx-auto text-white">
                 {formatNumber(amount, true)}
               </p>
-              <div className="flex items-center justify-center">
-                <select
-                  className="m-1 w-16 whitespace-nowrap mx-auto bg-transparent text-gray-400 cursor-pointer appearance-none"
-                  value={currency}
-                  onChange={handleCurrencyChange}
-                >
-                  {currencies.map((currency) => (
-                    <option key={currency} value={currency}>
-                      {currency}
-                    </option>
-                  ))}
-                </select>
-                <PopiconsChevronBottomDuotone className="h-3 w-3 -ml-4 pointer-events-none text-gray-400" />
+              
+              {/* Secondary display showing the sats value when using fiat */}
+              {currency !== "SATS" && totalInSats > 0 && (
+                <p className="text-sm whitespace-nowrap text-center mx-auto text-gray-400 mb-2">
+                  {new Intl.NumberFormat().format(totalInSats)} sats
+                </p>
+              )}
+              
+              <div className="flex items-center justify-center mt-1 mb-2">
+                <div className="relative flex items-center hover:bg-gray-800 bg-gray-900 rounded-md px-3 py-1.5 border border-gray-800">
+                  <select
+                    className="pr-6 whitespace-nowrap mx-auto bg-transparent text-gray-300 cursor-pointer appearance-none z-10"
+                    value={currency}
+                    onChange={handleCurrencyChange}
+                  >
+                    {currencies.map((currency) => (
+                      <option key={currency} value={currency}>
+                        {currency}
+                      </option>
+                    ))}
+                  </select>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-4 w-4 pointer-events-none text-gray-500 absolute right-2" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
             </div>
             
@@ -242,7 +263,6 @@ export function New() {
               disabled={isLoading || total <= 0} // Disable if total is 0
             >
               Charge {new Intl.NumberFormat().format(totalInSats)} sats
-              {currency !== "SATS" && ` (${formatNumber(total)})`}
               {isLoading && <span className="loading loading-spinner"></span>}
             </button>
             
