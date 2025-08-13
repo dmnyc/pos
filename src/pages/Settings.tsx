@@ -188,6 +188,7 @@ export function Settings() {
                 <option value="nostrich">Nostrich</option>
                 <option value="beehive">Beehive</option>
                 <option value="safari">Safari</option>
+                <option value="blocktron">Blocktron</option>
               </select>
               
               {/* Preview of current theme buttons */}
@@ -211,8 +212,12 @@ export function Settings() {
                       Beehive Button
                     </button>
                   ) : merchantConfig.theme === "safari" ? (
-                    <button type="button" className="btn bg-safari-gradient text-white hover:bg-safari-hover h-8 text-xs">
+                    <button type="button" className="btn bg-safari-gradient text-black hover:bg-safari-hover h-8 text-xs">
                       Safari Button
+                    </button>
+                  ) : merchantConfig.theme === "blocktron" ? (
+                    <button type="button" className="btn bg-blocktron-gradient text-white hover:bg-blocktron-hover h-8 text-xs">
+                      Blocktron Button
                     </button>
                   ) : (
                     <button type="button" className="btn btn-industrial-gradient h-8 text-xs">
@@ -285,8 +290,10 @@ export function Settings() {
                   : merchantConfig.theme === "beehive"
                     ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-10 text-sm"
                     : merchantConfig.theme === "safari"
-                      ? "btn bg-safari-gradient text-white hover:bg-safari-hover w-full h-10 text-sm"
-                      : "btn btn-industrial-gradient w-full h-10 text-sm"
+                      ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-10 text-sm"
+                      : merchantConfig.theme === "blocktron"
+                        ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10 text-sm"
+                        : "btn btn-industrial-gradient w-full h-10 text-sm"
             }
           >
             Save Settings

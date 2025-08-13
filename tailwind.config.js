@@ -39,8 +39,10 @@ export default {
         'orange-pill-hover': 'linear-gradient(to bottom, #ff8800, #ff4800)',
         'nostrich-gradient': 'linear-gradient(to bottom, #d463c4, #b9287a)',
         'nostrich-hover': 'linear-gradient(to bottom, #c253b4, #a9186a)',
-        'safari-gradient': 'linear-gradient(to bottom, #6c7f00, #777f00, #7f7d00, #7f7200, #7f5d00)',
-        'safari-hover': 'linear-gradient(to bottom, #5c6f00, #676f00, #6f6d00, #6f6200, #6f4d00)',
+        'safari-gradient': 'linear-gradient(to bottom, #4d8c2f, #94b639, #f5b735, #ea8829, #d6492b)',
+        'safari-hover': 'linear-gradient(to bottom, #3d7c1f, #84a629, #e5a725, #da7819, #c6391b)',
+        'blocktron-gradient': 'linear-gradient(to right, #ff9900, #ff7a30, #ff00aa, #00abefff, #7b00ff)',
+        'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #00abefff, #6b00ef)',
       },
     },
     screens: {
@@ -134,7 +136,22 @@ export default {
           "primary-content": "#000000", // Black text on primary buttons
           secondary: "#FFFFFF", // White for secondary elements
           "secondary-content": "#000000", // Black text on secondary elements
-          accent: "#6c7f00", // Green-brown for accent elements (charge button)
+          accent: "#4d8c2f", // Green for accent elements (charge button)
+          "accent-content": "#000000", // Black text on buttons for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        blocktron: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#ff00aa", // Neon pink for accent elements (charge button)
           "accent-content": "#FFFFFF", // White text on buttons for better contrast
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background

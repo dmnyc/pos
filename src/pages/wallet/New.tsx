@@ -165,8 +165,10 @@ export function New() {
             : config.theme === "beehive"
               ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-16 text-xl font-bold flex-grow-0"
               : config.theme === "safari"
-                ? "btn bg-safari-gradient text-white hover:bg-safari-hover w-full h-16 text-xl font-bold flex-grow-0"
-                : "btn btn-industrial-gradient w-full h-16 text-xl font-bold flex-grow-0";
+                ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-16 text-xl font-bold flex-grow-0"
+                : config.theme === "blocktron"
+                  ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-16 text-xl font-bold flex-grow-0"
+                  : "btn btn-industrial-gradient w-full h-16 text-xl font-bold flex-grow-0";
 
   return (
     <>

@@ -234,8 +234,10 @@ export function TipPage() {
             : config.theme === "beehive"
               ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full"
               : config.theme === "safari"
-                ? "btn bg-safari-gradient text-white hover:bg-safari-hover w-full"
-                : "btn btn-industrial-gradient w-full";
+                ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
+                : config.theme === "blocktron"
+                  ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
+                  : "btn btn-industrial-gradient w-full";
 
   return (
     <div className="bg-black text-white h-full" data-theme={config.theme}>
