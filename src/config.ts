@@ -3,7 +3,7 @@ export interface MerchantConfig {
   displayName: string;
   logoUrl: string;
   description: string;
-  theme: "standard" | "industrial";
+  theme: "standard" | "industrial" | "orangepill";
 }
 
 export interface TipSettings {
@@ -14,7 +14,7 @@ export interface TipSettings {
 
 // Default configuration
 export const defaultMerchantConfig: MerchantConfig = {
-  name: "Lightning POS",
+  name: "Sats Factory",
   displayName: "Sats Factory POS",
   logoUrl: "/images/satsfactory_logo.svg", 
   description: "Point-of-Sale for bitcoin lightning payments",

@@ -184,6 +184,10 @@ export function Settings() {
               >
                 <option value="standard">Standard</option>
                 <option value="industrial">Industrial</option>
+                <option value="orangepill">Orange Pill</option>
+                <option value="nostrich">Nostrich</option>
+                <option value="beehive">Beehive</option>
+                <option value="safari">Safari</option>
               </select>
               
               {/* Preview of current theme buttons */}
@@ -193,6 +197,22 @@ export function Settings() {
                   {merchantConfig.theme === "standard" ? (
                     <button type="button" className="btn bg-charge-green text-white hover:bg-green-500 h-8 text-xs">
                       Standard Button
+                    </button>
+                  ) : merchantConfig.theme === "orangepill" ? (
+                    <button type="button" className="btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover h-8 text-xs">
+                      Orange Pill Button
+                    </button>
+                  ) : merchantConfig.theme === "nostrich" ? (
+                    <button type="button" className="btn bg-nostrich-gradient text-white hover:bg-nostrich-hover h-8 text-xs">
+                      Nostrich Button
+                    </button>
+                  ) : merchantConfig.theme === "beehive" ? (
+                    <button type="button" className="btn bg-beehive-yellow text-black hover:bg-beehive-hover h-8 text-xs">
+                      Beehive Button
+                    </button>
+                  ) : merchantConfig.theme === "safari" ? (
+                    <button type="button" className="btn bg-safari-gradient text-white hover:bg-safari-hover h-8 text-xs">
+                      Safari Button
                     </button>
                   ) : (
                     <button type="button" className="btn btn-industrial-gradient h-8 text-xs">
@@ -258,7 +278,15 @@ export function Settings() {
             type="submit" 
             className={merchantConfig.theme === "standard" 
               ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-10 text-sm" 
-              : "btn btn-industrial-gradient w-full h-10 text-sm"
+              : merchantConfig.theme === "orangepill"
+                ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full h-10 text-sm"
+                : merchantConfig.theme === "nostrich"
+                  ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full h-10 text-sm"
+                  : merchantConfig.theme === "beehive"
+                    ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-10 text-sm"
+                    : merchantConfig.theme === "safari"
+                      ? "btn bg-safari-gradient text-white hover:bg-safari-hover w-full h-10 text-sm"
+                      : "btn btn-industrial-gradient w-full h-10 text-sm"
             }
           >
             Save Settings

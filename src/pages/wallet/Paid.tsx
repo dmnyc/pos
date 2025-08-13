@@ -56,7 +56,15 @@ export function Paid() {
   // Action button class based on theme
   const actionButtonClass = config.theme === "standard" 
     ? "btn bg-charge-green text-white hover:bg-green-500 w-full"
-    : "btn btn-industrial-gradient w-full";
+    : config.theme === "orangepill"
+      ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full"
+      : config.theme === "nostrich"
+        ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full"
+        : config.theme === "beehive"
+          ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full"
+          : config.theme === "safari"
+            ? "btn bg-safari-gradient text-white hover:bg-safari-hover w-full"
+            : "btn btn-industrial-gradient w-full";
 
   return (
     <div className="bg-black text-white h-full flex flex-col" data-theme={config.theme}>

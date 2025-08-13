@@ -153,9 +153,20 @@ export function New() {
   };
 
   // Choose the charge button class based on the theme
-  const chargeButtonClass = config.theme === "standard" 
-    ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-16 text-xl font-bold flex-grow-0"
-    : "btn btn-industrial-gradient w-full h-16 text-xl font-bold flex-grow-0";
+  const chargeButtonClass = 
+    isLoading || total <= 0 
+      ? "btn bg-gray-600 text-white w-full h-16 text-xl font-bold flex-grow-0" // Inactive state for all themes
+      : config.theme === "standard" 
+        ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-16 text-xl font-bold flex-grow-0"
+        : config.theme === "orangepill"
+          ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full h-16 text-xl font-bold flex-grow-0"
+          : config.theme === "nostrich"
+            ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full h-16 text-xl font-bold flex-grow-0"
+            : config.theme === "beehive"
+              ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-16 text-xl font-bold flex-grow-0"
+              : config.theme === "safari"
+                ? "btn bg-safari-gradient text-white hover:bg-safari-hover w-full h-16 text-xl font-bold flex-grow-0"
+                : "btn btn-industrial-gradient w-full h-16 text-xl font-bold flex-grow-0";
 
   return (
     <>
@@ -260,7 +271,7 @@ export function New() {
             <button
               className={`${chargeButtonClass} h-14`}
               type="submit"
-              disabled={isLoading || total <= 0} // Disable if total is 0
+              disabled={isLoading || total <= 0} // Disabled state for accessibility and preventing submissions
             >
               Charge {new Intl.NumberFormat().format(totalInSats)} sats
               {isLoading && <span className="loading loading-spinner"></span>}

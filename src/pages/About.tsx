@@ -12,10 +12,10 @@ export function About() {
         <p className="text-center">{config.description}</p>
         <div className="text-center">
           <p className="mb-4">
-            Sats Factory POS ⚡️🏭 is powered by Alby and NWC. 🐝💜
+            Sats Factory POS ⚡️🏭 is powered by Nostr Wallet Connect. 
           </p>
           <p className="mb-4">
-            Based on the open-source Lightning POS by Alby.
+            Based on the open-source Lightning POS by Alby. 🐝💜
           </p>
           <p className="mb-4">
             <a href="https://satsfactory.com" className="text-gray-600 hover:text-gray-500">satsfactory.com</a>
