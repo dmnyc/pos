@@ -4,9 +4,7 @@ import { Navbar } from "../../components/Navbar";
 import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
 import { localStorageKeys, getMerchantConfig } from "../../config";
-import { PopiconsChevronBottomDuotone, PopiconsEditPencilDuotone } from "@popicons/react";
-
-export const DEFAULT_LABEL = "Lightning POS";
+import { PopiconsChevronBottomDuotone } from "@popicons/react";
 
 export function New() {
   const [amount, setAmount] = React.useState(0); // Current input
@@ -17,9 +15,6 @@ export function New() {
   const navigate = useNavigate();
   const provider = useStore((store) => store.provider);
   const location = useLocation(); // Get the current location
-  const [label, setLabel] = React.useState(
-    localStorage.getItem(localStorageKeys.label) || DEFAULT_LABEL
-  );
   const [currencies, setCurrencies] = React.useState<string[]>(["USD", "SATS"]); // Default list with USD first
   const config = getMerchantConfig();
 
@@ -60,17 +55,11 @@ export function New() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    // Load label from query parameter and save it to local storage
-    const labelFromQuery = queryParams.get("label") || queryParams.get("name");
-    if (labelFromQuery) {
-      localStorage.setItem(localStorageKeys.label, labelFromQuery); // Save the label to local storage
-      setLabel(labelFromQuery);
-    }
     // Load currency from query parameter and save it to local storage
     const currencyFromQuery = queryParams.get("currency");
     if (currencyFromQuery) {
-      localStorage.setItem(localStorageKeys.currency, currencyFromQuery); // Save the label to local storage
-      setLabel(currencyFromQuery);
+      localStorage.setItem(localStorageKeys.currency, currencyFromQuery);
+      setCurrency(currencyFromQuery);
     }
   }, [location]); // Run once on mount and when location changes
 
@@ -99,7 +88,7 @@ export function New() {
       setLoading(true);
       
       // Create memo with store name and include fiat price if not using SATS
-      let memo = label;
+      let memo = config.name;
       if (currency !== "SATS") {
         const formattedAmount = formatNumber(total);
         memo += ` - ${formattedAmount}`;
@@ -161,18 +150,6 @@ export function New() {
     return result;
   };
 
-  const handleSetLabel = () => {
-    const newLabel = prompt(
-      "Enter a label (the label will be added to the payment request and is visible to the customer):",
-      localStorage.getItem(localStorageKeys.label) || DEFAULT_LABEL
-    );
-    if (newLabel) {
-      // Save currency to local storage
-      localStorage.setItem(localStorageKeys.label, newLabel);
-      setLabel(newLabel);
-    }
-  };
-
   // Choose the charge button class based on the theme
   const chargeButtonClass = config.theme === "standard" 
     ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-16 text-xl font-bold flex-grow-0"
@@ -208,11 +185,10 @@ export function New() {
               </div>
             </div>
             
-            {/* Merchant name/label */}
-            <button type="button" className="flex items-center gap-2 mb-4" onClick={handleSetLabel}>
-              <p className="text-gray-400 text-xs">{label}</p>
-              <PopiconsEditPencilDuotone className="h-3 w-3 text-gray-400" />
-            </button>
+            {/* Merchant name/label - non-editable, displays store name from settings */}
+            <div className="flex items-center gap-2 mb-4">
+              <p className="text-gray-400 text-xs">{config.name}</p>
+            </div>
             
             {/* Keypad - with constrained width similar to screenshot */}
             <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full max-w-xs mx-auto">

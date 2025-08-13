@@ -106,13 +106,6 @@ export function Settings() {
             </div>
             
             <div>
-              <label className="block text-white mb-1 text-xs">Display Name (Fixed)</label>
-              <div className="h-8 w-full bg-gray-800 text-gray-400 rounded-md flex items-center px-3 text-sm">
-                Sats Factory POS
-              </div>
-            </div>
-            
-            <div>
               <label className="block text-white mb-1 text-xs">Logo URL</label>
               <input
                 type="text"
@@ -150,13 +143,6 @@ export function Settings() {
                     </button>
                   )}
                 </div>
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-white mb-1 text-xs">Description (Fixed)</label>
-              <div className="h-8 w-full bg-gray-800 text-gray-400 rounded-md flex items-center px-3 text-sm">
-                Point-of-Sale for bitcoin lightning payments
               </div>
             </div>
           </div>
@@ -223,11 +209,11 @@ export function Settings() {
         </div>
         
         {saved && (
-          <div className="alert bg-charge-green text-white shadow-lg py-1">
-            <div>
-              <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span className="text-xs">Settings saved successfully!</span>
-            </div>
+          <div className="text-charge-green text-center mt-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="text-xs">Settings saved successfully!</span>
           </div>
         )}
       </form>

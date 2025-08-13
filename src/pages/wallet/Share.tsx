@@ -38,11 +38,11 @@ export function Share() {
     <div className="h-full bg-black text-white" data-theme="dark">
       <Backbar />
       <div className="flex flex-grow gap-5 flex-col justify-center items-center">
-        Let your co-workers scan this QR code
+        Scan to connect another device:
         <div className="relative flex items-center justify-center p-4 bg-white">
           <QRCode value={shareURI} size={256} />
         </div>
-        or share this URI with them:
+        or copy the link below:
         <div className="flex border-2 border-gray-700 rounded-lg bg-gray-900">
           <input
             type="text"
