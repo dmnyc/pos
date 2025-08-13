@@ -14,8 +14,11 @@ export function About() {
           <p className="mb-4">
             Sats Factory POS ⚡️🏭 is powered by Alby and NWC. 🐝💜
           </p>
-          <p>
-            Based on the open-source Lightning POS by Alby
+          <p className="mb-4">
+            Based on the open-source Lightning POS by Alby.
+          </p>
+          <p className="mb-4">
+            <a href="https://satsfactory.com" className="text-gray-600 hover:text-gray-500">satsfactory.com</a>
           </p>
         </div>
       </div>

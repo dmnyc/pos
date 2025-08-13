@@ -17,8 +17,10 @@ export function Navbar() {
       {/* Left section with menu button */}
       <div className="w-8 flex justify-start">
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-xs m-1 text-white p-0">
-            <PopiconsLeftSidebarTopNavDuotone className="h-5 w-5" />
+          <div tabIndex={0} role="button" className="text-white flex items-center justify-center h-8 w-8">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2.5">
+              <path strokeLinecap="square" strokeLinejoin="miter" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </div>
           <ul
             tabIndex={0}

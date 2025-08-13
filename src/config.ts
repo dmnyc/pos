@@ -15,7 +15,7 @@ export interface TipSettings {
 // Default configuration
 export const defaultMerchantConfig: MerchantConfig = {
   name: "Lightning POS",
-  displayName: "Lightning POS",
+  displayName: "Sats Factory POS",
   logoUrl: "/images/satsfactory_logo.svg", 
   description: "Point-of-Sale for bitcoin lightning payments",
   theme: "standard"
@@ -87,7 +87,14 @@ export function saveTipSettings(settings: TipSettings): void {
 // Function to get merchant configuration with defaults applied for missing values
 export function getMerchantConfig(): MerchantConfig {
   const savedConfig = loadMerchantConfig();
-  return { ...defaultMerchantConfig, ...savedConfig };
+  // Always enforce certain fixed values
+  return { 
+    ...defaultMerchantConfig, 
+    ...savedConfig,
+    // Always override these specific fields
+    displayName: "Sats Factory POS",
+    description: "Point-of-Sale for bitcoin lightning payments" 
+  };
 }
 
 // Function to get tip settings with defaults applied for missing values

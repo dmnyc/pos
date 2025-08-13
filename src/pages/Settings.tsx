@@ -56,15 +56,24 @@ export function Settings() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    saveMerchantConfig(merchantConfig);
+    
+    // Ensure the fixed fields are preserved with their default values
+    const updatedConfig = {
+      ...merchantConfig,
+      displayName: "Sats Factory POS",
+      description: "Point-of-Sale for bitcoin lightning payments"
+    };
+    
+    saveMerchantConfig(updatedConfig);
     saveTipSettings(tipSettings);
     setSaved(true);
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto p-2 bg-black text-white" data-theme={merchantConfig.theme}>
+    <div className="flex flex-col w-full h-full bg-black text-white" data-theme={merchantConfig.theme}>
       <Backbar />
-      <h1 className="text-xl font-bold mb-3">Merchant Settings</h1>
+      <div className="w-full max-w-lg mx-auto p-2">
+        <h1 className="text-xl font-bold mb-3">Merchant Settings</h1>
       
       <div className="tabs tabs-boxed mb-3 bg-gray-900">
         <a 
@@ -97,15 +106,10 @@ export function Settings() {
             </div>
             
             <div>
-              <label className="block text-white mb-1 text-xs">Display Name</label>
-              <input
-                type="text"
-                name="displayName"
-                value={merchantConfig.displayName}
-                onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
-                placeholder="Display Name"
-              />
+              <label className="block text-white mb-1 text-xs">Display Name (Fixed)</label>
+              <div className="h-8 w-full bg-gray-800 text-gray-400 rounded-md flex items-center px-3 text-sm">
+                Sats Factory POS
+              </div>
             </div>
             
             <div>
@@ -150,15 +154,10 @@ export function Settings() {
             </div>
             
             <div>
-              <label className="block text-white mb-1 text-xs">Description</label>
-              <input
-                type="text"
-                name="description"
-                value={merchantConfig.description}
-                onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
-                placeholder="Point-of-Sale for bitcoin lightning payments"
-              />
+              <label className="block text-white mb-1 text-xs">Description (Fixed)</label>
+              <div className="h-8 w-full bg-gray-800 text-gray-400 rounded-md flex items-center px-3 text-sm">
+                Point-of-Sale for bitcoin lightning payments
+              </div>
             </div>
           </div>
         )}
@@ -232,6 +231,7 @@ export function Settings() {
           </div>
         )}
       </form>
+      </div>
     </div>
   );
 }

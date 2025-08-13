@@ -12,9 +12,8 @@ export function Backbar({ navigateTo }: BackbarProps) {
   const config = getMerchantConfig();
   
   const handleBack = () => {
-    // Check current location and handle it appropriately
-    if (location.pathname === "/settings") {
-      // If on settings page, go back to home or wallet
+    // For root-level pages like settings and about, go to home or wallet
+    if (location.pathname === "/settings" || location.pathname === "/about") {
       const hasWallet = window.localStorage.getItem("pos:nwcUrl");
       if (hasWallet) {
         navigate("/wallet/new");
@@ -29,14 +28,18 @@ export function Backbar({ navigateTo }: BackbarProps) {
   
   return (
     <div className="navbar bg-black text-white h-10" data-theme={config.theme}>
-      <div className="flex-none">
+      <div className="w-8 flex justify-start">
         <button
-          className="btn btn-ghost btn-xs m-1 text-white p-0"
+          className="text-white flex items-center justify-center h-8 w-8"
           onClick={handleBack}
         >
-          <PopiconsArrowLeftDuotone className="h-5 w-5" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2.5">
+            <path strokeLinecap="square" strokeLinejoin="miter" d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
       </div>
+      <div className="flex-1"></div>
+      <div className="w-8"></div>
     </div>
   );
 }
