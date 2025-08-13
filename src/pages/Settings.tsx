@@ -31,6 +31,16 @@ export function Settings() {
     setMerchantConfig(prev => ({ ...prev, [name]: value }));
   };
 
+  // Add state for the raw percentage input as a controlled input
+  const [tipPercentagesInput, setTipPercentagesInput] = useState(() => {
+    return tipSettings.defaultPercentages.join(', ');
+  });
+
+  useEffect(() => {
+    // Initialize the input state when tipSettings are first loaded
+    setTipPercentagesInput(tipSettings.defaultPercentages.join(', '));
+  }, []); // Empty dependency array means this runs once on mount
+
   const handleTipToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTipSettings(prev => ({ ...prev, enabled: e.target.checked }));
   };
@@ -40,33 +50,40 @@ export function Settings() {
   };
 
   const handlePercentagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const percentagesString = e.target.value;
-    try {
-      // Parse comma-separated list of percentages
-      const percentages = percentagesString
-        .split(',')
-        .map(p => parseInt(p.trim()))
-        .filter(p => !isNaN(p) && p > 0);
-      
-      setTipSettings(prev => ({ ...prev, defaultPercentages: percentages }));
-    } catch (error) {
-      console.error('Invalid tip percentages format', error);
-    }
+    // Only store the raw input, don't try to parse it yet
+    setTipPercentagesInput(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Ensure the fixed fields are preserved with their default values
-    const updatedConfig = {
-      ...merchantConfig,
-      displayName: "Sats Factory POS",
-      description: "Point-of-Sale for bitcoin lightning payments"
-    };
-    
-    saveMerchantConfig(updatedConfig);
-    saveTipSettings(tipSettings);
-    setSaved(true);
+    // Parse the tip percentages from the raw input
+    try {
+      const percentages = tipPercentagesInput
+        .split(',')
+        .map(p => parseInt(p.trim()))
+        .filter(p => !isNaN(p) && p > 0);
+      
+      // Update the tip settings with the parsed percentages
+      const updatedTipSettings = {
+        ...tipSettings,
+        defaultPercentages: percentages.length > 0 ? percentages : [10, 15, 20, 25] // fallback to defaults if empty
+      };
+      
+      // Ensure the fixed fields are preserved with their default values
+      const updatedConfig = {
+        ...merchantConfig,
+        displayName: "Sats Factory POS",
+        description: "Point-of-Sale for bitcoin lightning payments"
+      };
+      
+      saveMerchantConfig(updatedConfig);
+      saveTipSettings(updatedTipSettings);
+      setSaved(true);
+    } catch (error) {
+      console.error('Invalid tip percentages format', error);
+      alert('Please check your tip percentages format. Use numbers separated by commas (e.g., 10, 15, 20, 25)');
+    }
   };
 
   return (
@@ -171,7 +188,7 @@ export function Settings() {
                   <input
                     type="text"
                     className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
-                    value={tipSettings.defaultPercentages.join(', ')}
+                    value={tipPercentagesInput}
                     onChange={handlePercentagesChange}
                     placeholder="10, 15, 20, 25"
                   />
