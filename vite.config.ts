@@ -4,19 +4,27 @@ import react from "@vitejs/plugin-react-swc";
 
 const pwaConfig: Partial<VitePWAOptions> = {
   includeAssets: ["shortcut-icon.png", "icon.png"],
+  registerType: 'autoUpdate',
+  workbox: {
+    navigateFallback: 'index.html',
+    globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+  },
   manifest: {
-    name: "BuzzPay PoS",
-    short_name: "BuzzPay",
-    description: "Alby's super simple self-custodial PoS",
+    name: "Sats Factory POS",
+    short_name: "Sats Factory",
+    description: "Sats Factory's super simple self-custodial PoS",
     scope: "/",
     background_color: "#000000",
     theme_color: "#000000",
     display: "standalone",
+    orientation: "portrait",
+    start_url: "/",
     icons: [
       {
         src: "shortcut-icon.png",
         type: "image/png",
         sizes: "256x256", // TODO: replace with 512x512 image
+        purpose: "any maskable"
       },
     ],
   },
