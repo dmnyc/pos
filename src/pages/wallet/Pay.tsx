@@ -16,6 +16,7 @@ export function Pay() {
   const [hasCopied, setCopied] = useState(false);
   const [fiatAmount, setFiatAmount] = useState<string | null>(null);
   const isTipPayment = location.state?.isTipPayment || false;
+  const passedFiatAmount = location.state?.fiatAmount;
   const config = getMerchantConfig();
   const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
 
@@ -47,14 +48,21 @@ export function Pay() {
       const inv = new Invoice({ pr: invoice });
       const { satoshi, description } = inv;
       setAmount(satoshi);
+      
+      // Set description and determine fiat amount
       if (description) {
         setDescription(description);
         
-        // Extract fiat amount from description if available
-        // Format is typically "Store Name - $X.XX"
-        const fiatMatch = description.match(/\s-\s(\$[\d,.]+)/);
-        if (fiatMatch && fiatMatch[1]) {
-          setFiatAmount(fiatMatch[1]);
+        // For tip payments, use the fiat amount passed through navigation state if available
+        if (isTipPayment && passedFiatAmount) {
+          setFiatAmount(passedFiatAmount);
+        } else {
+          // Otherwise, extract fiat amount from description if available (regular payments)
+          // Format is typically "Store Name - $X.XX"
+          const fiatMatch = description.match(/\s-\s(\$[\d,.]+|\w+\s[\d,.]+)/);
+          if (fiatMatch && fiatMatch[1]) {
+            setFiatAmount(fiatMatch[1]);
+          }
         }
       }
       
@@ -124,27 +132,31 @@ export function Pay() {
         <div className="flex flex-col items-center justify-center w-full flex-1">
           {/* Main content section */}
           <div className="flex flex-1 flex-col items-center justify-center py-4">
-            {/* Amount display - sats amount with smaller font for large numbers and smaller "sats" label */}
-            <div className="flex items-baseline justify-center mb-2">
-              <span className="text-4xl md:text-5xl font-mono tracking-wide">
-                {new Intl.NumberFormat().format(amount)}
-              </span>
-              <span className="text-lg md:text-xl text-gray-400 ml-2 font-mono">
-                sats
-              </span>
+            {/* Amount display - consistent with Tip page */}
+            <div className="text-center mb-6">
+              <div className="flex items-center justify-center">
+                <span className="text-gray-400 text-sm mr-1">
+                  {isTipPayment ? "Tip amount:" : "Amount:"}
+                </span>
+                <span className="text-white text-lg font-medium">
+                  {new Intl.NumberFormat().format(amount)} sats
+                </span>
+              </div>
+              
+              {/* Show fiat amount if available */}
+              {fiatAmount && (
+                <p className="text-xs text-gray-400">
+                  {fiatAmount}
+                </p>
+              )}
             </div>
-            
-            {/* Show fiat amount if available - smaller than sats */}
-            {fiatAmount && (
-              <p className="text-xl text-gray-400 mb-4 font-mono">{fiatAmount}</p>
-            )}
             
             {/* Merchant name */}
             <p className="text-sm text-gray-400 mb-6">{merchantName}</p>
             
             {/* QR Code */}
             <div 
-              className="relative flex items-center justify-center p-4 bg-white rounded-lg mb-4" 
+              className="relative flex items-center justify-center p-4 bg-white rounded-lg mb-6" 
               onClick={copyQr}
             >
               <QRCode value={invoice} size={230} />

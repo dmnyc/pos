@@ -223,8 +223,20 @@ export function TipPage() {
       setIsLoading(true);
       
       let tipMemo = `${config.displayName} - Tip`;
-      if (currency !== "SATS" && customTipValue) {
-        tipMemo += ` (${currency} ${customTipValue})`;
+      
+      // Include fiat amount in the memo for display on the payment screen
+      let fiatDisplay = "";
+      if (currency !== "SATS" && fiatRate) {
+        if (customTipCurrency === "FIAT" && customTipValue) {
+          // If user entered amount in fiat, use that directly
+          fiatDisplay = `${currency} ${customTipValue}`;
+          tipMemo += ` (${fiatDisplay})`;
+        } else {
+          // Otherwise calculate fiat equivalent
+          const fiatValue = tipAmount / fiatRate;
+          fiatDisplay = `${currency} ${fiatValue.toFixed(2)}`;
+          tipMemo += ` (${fiatDisplay})`;
+        }
       }
       
       const invoice = await provider.makeInvoice({
@@ -232,8 +244,13 @@ export function TipPage() {
         defaultMemo: tipMemo,
       });
       
-      // Pass state indicating this is a tip payment
-      navigate(`../pay/${invoice.paymentRequest}`, { state: { isTipPayment: true } });
+      // Pass state indicating this is a tip payment along with the fiat amount
+      navigate(`../pay/${invoice.paymentRequest}`, { 
+        state: { 
+          isTipPayment: true,
+          fiatAmount: fiatDisplay
+        }
+      });
     } catch (error) {
       console.error('Failed to create tip invoice:', error);
       alert(`Failed to create tip invoice: ${error}`);
@@ -295,17 +312,19 @@ export function TipPage() {
           <div className="text-center mb-6">
             {currency !== "SATS" && fiatRate ? (
               <>
-                <p className="text-white text-lg font-medium mb-1">
-                  {formatCurrency(baseAmountInFiat)}
-                </p>
+                <div className="flex items-center justify-center">
+                  <span className="text-gray-400 text-sm mr-1">Base amount:</span>
+                  <span className="text-white text-lg font-medium">{formatCurrency(baseAmountInFiat)}</span>
+                </div>
                 <p className="text-gray-400 text-xs">
                   {baseAmount} sats
                 </p>
               </>
             ) : (
-              <p className="text-white text-lg font-medium">
-                {baseAmount} sats
-              </p>
+              <div className="flex items-center justify-center">
+                <span className="text-gray-400 text-sm mr-1">Base amount:</span>
+                <span className="text-white text-lg font-medium">{baseAmount} sats</span>
+              </div>
             )}
           </div>
           
@@ -337,10 +356,12 @@ export function TipPage() {
                   Enter custom tip amount
                 </label>
                 {currency !== "SATS" && fiatRate && (
-                  <div className="join">
+                  <div className="join border border-gray-600 rounded-md">
                     <button 
                       type="button"
-                      className={`join-item btn btn-xs ${customTipCurrency === "FIAT" ? 'btn-active' : 'btn-outline'}`}
+                      className={`join-item px-3 py-1 text-xs font-medium ${customTipCurrency === "FIAT" 
+                        ? 'bg-white text-black' 
+                        : 'bg-transparent text-gray-300'}`}
                       onClick={() => {
                         if (customTipCurrency !== "FIAT") handleCurrencyToggle();
                       }}
@@ -349,7 +370,9 @@ export function TipPage() {
                     </button>
                     <button 
                       type="button"
-                      className={`join-item btn btn-xs ${customTipCurrency === "SATS" ? 'btn-active' : 'btn-outline'}`}
+                      className={`join-item px-3 py-1 text-xs font-medium ${customTipCurrency === "SATS" 
+                        ? 'bg-white text-black' 
+                        : 'bg-transparent text-gray-300'}`}
                       onClick={() => {
                         if (customTipCurrency !== "SATS") handleCurrencyToggle();
                       }}
@@ -382,18 +405,20 @@ export function TipPage() {
               {selectedTip === CUSTOM_TIP ? (
                 customTipCurrency === "FIAT" && currency !== "SATS" && fiatRate ? (
                   <>
-                    <p className="text-lg font-semibold">
-                      Tip amount: {formatCurrency(parseFloat(customTipValue) || 0)}
-                    </p>
+                    <div className="flex items-center justify-center">
+                      <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
+                      <span className="text-white text-lg font-medium">{formatCurrency(parseFloat(customTipValue) || 0)}</span>
+                    </div>
                     <p className="text-xs text-gray-400">
                       {tipAmount} sats
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-lg font-semibold">
-                      Tip amount: {tipAmount} sats
-                    </p>
+                    <div className="flex items-center justify-center">
+                      <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
+                      <span className="text-white text-lg font-medium">{tipAmount} sats</span>
+                    </div>
                     {currency !== "SATS" && fiatRate && (
                       <p className="text-xs text-gray-400">
                         {formatCurrency(tipAmount / fiatRate)}
@@ -403,15 +428,19 @@ export function TipPage() {
                 )
               ) : currency !== "SATS" && fiatRate ? (
                 <>
-                  <p className="text-lg font-semibold">
-                    Tip amount: {formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}
-                  </p>
+                  <div className="flex items-center justify-center">
+                    <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
+                    <span className="text-white text-lg font-medium">{formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}</span>
+                  </div>
                   <p className="text-xs text-gray-400">
                     {tipAmount} sats
                   </p>
                 </>
               ) : (
-                <p className="text-lg font-semibold">Tip amount: {tipAmount} sats</p>
+                <div className="flex items-center justify-center">
+                  <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
+                  <span className="text-white text-lg font-medium">{tipAmount} sats</span>
+                </div>
               )}
               
               <p className="text-xs text-gray-400 mt-3">
