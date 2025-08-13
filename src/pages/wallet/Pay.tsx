@@ -77,13 +77,13 @@ export function Pay() {
     <>
       <div className="bg-black text-white h-full" data-theme={config.theme}>
         <Backbar />
-        <div className="flex grow flex-col items-center justify-center gap-5">
-          <span className="text-4xl font-bold">{new Intl.NumberFormat().format(amount)} sats</span>
-          <span className="font-semibold">{description}</span>
-          <div className="relative flex items-center justify-center p-4 bg-white" onClick={copyQr}>
-            <QRCode value={invoice} size={256} />
+        <div className="flex grow flex-col items-center justify-center gap-3">
+          <span className="text-3xl font-bold">{new Intl.NumberFormat().format(amount)} sats</span>
+          <span className="font-semibold text-sm">{description}</span>
+          <div className="relative flex items-center justify-center p-3 bg-white" onClick={copyQr}>
+            <QRCode value={invoice} size={200} />
           </div>
-          <p className="mb-4 flex flex-row items-center justify-center gap-2">
+          <p className="mb-2 flex flex-row items-center justify-center gap-2 text-sm">
             {!hasCopied && <span className="loading loading-spinner text-white"></span>}
             {hasCopied ? "✅ Invoice Copied!" : "Waiting for payment..."}
           </p>
@@ -91,7 +91,7 @@ export function Pay() {
             onClick={() => {
               navigate("../new");
             }}
-            className="btn bg-white text-black hover:bg-gray-200"
+            className="btn bg-white text-black hover:bg-gray-200 h-10 text-sm"
           >
             Cancel
           </button>

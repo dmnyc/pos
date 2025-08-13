@@ -184,17 +184,17 @@ export function New() {
       <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
         <form
           onSubmit={onSubmit}
-          className="flex flex-col items-center justify-center w-full flex-1 pb-2"
+          className="flex flex-col items-center justify-center w-full flex-1 pb-1"
         >
-          <div className="flex flex-col items-center justify-center w-full flex-1 mb-4">
+          <div className="flex flex-col items-center justify-center w-full flex-1 mb-2">
             {/* Amount display section */}
-            <div className="flex flex-1 flex-col mb-4 items-center justify-center">
-              <p className="text-7xl pb-2 whitespace-nowrap text-center mx-auto text-white">
+            <div className="flex flex-1 flex-col mb-2 items-center justify-center">
+              <p className="text-6xl pb-1 whitespace-nowrap text-center mx-auto text-white">
                 {formatNumber(amount, true)}
               </p>
               <div className="flex items-center justify-center">
                 <select
-                  className="m-2 w-16 whitespace-nowrap mx-auto bg-transparent text-gray-400 cursor-pointer appearance-none"
+                  className="m-1 w-16 whitespace-nowrap mx-auto bg-transparent text-gray-400 cursor-pointer appearance-none"
                   value={currency}
                   onChange={handleCurrencyChange}
                 >
@@ -204,34 +204,34 @@ export function New() {
                     </option>
                   ))}
                 </select>
-                <PopiconsChevronBottomDuotone className="h-4 w-4 -ml-4 pointer-events-none text-gray-400" />
+                <PopiconsChevronBottomDuotone className="h-3 w-3 -ml-4 pointer-events-none text-gray-400" />
               </div>
             </div>
             
             {/* Merchant name/label */}
-            <button type="button" className="flex items-center gap-2 mb-8" onClick={handleSetLabel}>
-              <p className="text-gray-400 text-sm">{label}</p>
-              <PopiconsEditPencilDuotone className="h-4 w-4 text-gray-400" />
+            <button type="button" className="flex items-center gap-2 mb-4" onClick={handleSetLabel}>
+              <p className="text-gray-400 text-xs">{label}</p>
+              <PopiconsEditPencilDuotone className="h-3 w-3 text-gray-400" />
             </button>
             
             {/* Keypad - with constrained width similar to screenshot */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-xs mx-auto">
+            <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full max-w-xs mx-auto">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <button
                   key={num}
                   type="button" // Prevent form submission
-                  className="btn bg-white text-black hover:bg-gray-200 w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
+                  className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
                   onClick={() => handleNumberClick(`${num}`)}
                 >
                   {num}
                 </button>
               ))}
 
-              <span className="w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"></span>
+              <span className="w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"></span>
 
               <button
                 type="button" // Prevent form submission
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
                 onClick={() => handleNumberClick(`0`)}
               >
                 0
@@ -239,7 +239,7 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-12 sm:h-16 flex-grow text-2xl flex items-center justify-center"
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
                 onClick={() => handleNumberClick(`00`)}
                 disabled={currency === "SATS"}
               >
@@ -248,7 +248,7 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn btn-ghost w-full h-6 sm:h-8 flex-grow text-l flex items-center justify-center text-gray-400"
+                className="btn btn-ghost w-full h-5 sm:h-6 flex-grow text-xs flex items-center justify-center text-gray-400"
                 onClick={handleClear}
               >
                 Clear
@@ -256,21 +256,21 @@ export function New() {
 
               <button
                 type="button" // Prevent form submission
-                className="btn btn-ghost w-full h-6 sm:h-8 flex-grow text-l flex items-center justify-center text-gray-400"
+                className="btn btn-ghost w-full h-5 sm:h-6 flex-grow text-xs flex items-center justify-center text-gray-400"
                 onClick={handleDelete}
               >
                 Del
               </button>
 
               {/* Removed the + button as requested */}
-              <span className="w-full h-6 sm:h-8"></span>
+              <span className="w-full h-5 sm:h-6"></span>
             </div>
           </div>
           
           {/* Charge button - keeping max width same as keypad */}
           <div className="w-full max-w-xs mx-auto">
             <button
-              className={chargeButtonClass}
+              className={`${chargeButtonClass} h-14`}
               type="submit"
               disabled={isLoading || total <= 0} // Disable if total is 0
             >

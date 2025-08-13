@@ -28,7 +28,7 @@ function App() {
   }, [config.theme]);
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center font-sans py-2 md:py-4">
+    <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-1 md:py-2">
       <Router>
         <Routes>
           <Route path="/" Component={Home} />

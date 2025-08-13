@@ -60,17 +60,17 @@ export function Paid() {
 
   return (
     <div className="bg-black text-white h-full flex flex-col" data-theme={config.theme}>
-      <div className="flex flex-col justify-between items-center h-full py-4">
-        <div className="flex flex-col gap-5 justify-center items-center grow">
+      <div className="flex flex-col justify-between items-center h-full py-2">
+        <div className="flex flex-col gap-3 justify-center items-center grow">
           <div className="text-center">
-            <PopiconsCircleCheckDuotone className="w-56 h-56 text-charge-green" />
-            <span className="text-xl">Payment received</span>
+            <PopiconsCircleCheckDuotone className="w-40 h-40 text-charge-green" />
+            <span className="text-lg">Payment received</span>
           </div>
           
           {showTipButton && (
             <button 
               onClick={handleTip} 
-              className={actionButtonClass}
+              className={`${actionButtonClass} h-12 text-sm`}
             >
               Add a tip
             </button>
@@ -78,9 +78,9 @@ export function Paid() {
         </div>
         
         {/* New payment button moved to the bottom of the screen */}
-        <div className="w-full px-4 mt-8">
+        <div className="w-full px-4 mt-4">
           <Link to="../new" className="w-full">
-            <button className="btn bg-white text-black hover:bg-gray-200 w-full">
+            <button className="btn bg-white text-black hover:bg-gray-200 w-full h-12 text-sm">
               New payment
             </button>
           </Link>

@@ -229,22 +229,22 @@ export function TipPage() {
   return (
     <div className="bg-black text-white h-full" data-theme={config.theme}>
       <Backbar />
-      <div className="flex grow flex-col items-center justify-center gap-5 p-4">
-        <h2 className="text-2xl font-bold text-center">Would you like to add a tip?</h2>
+      <div className="flex grow flex-col items-center justify-center gap-3 p-2">
+        <h2 className="text-xl font-bold text-center">Would you like to add a tip?</h2>
         
-        <div className="text-center mb-4">
+        <div className="text-center mb-2">
           {currency !== "SATS" && fiatRate ? (
-            <p className="text-gray-400">
+            <p className="text-gray-400 text-xs">
               Base amount: {formatCurrency(baseAmountInFiat)} ({baseAmount} sats)
             </p>
           ) : (
-            <p className="text-gray-400">Base amount: {baseAmount} sats</p>
+            <p className="text-gray-400 text-xs">Base amount: {baseAmount} sats</p>
           )}
         </div>
         
-        <div className="grid grid-cols-2 gap-2 w-full max-w-md">
+        <div className="grid grid-cols-2 gap-1 w-full max-w-md">
           <button
-            className={getButtonClass(selectedTip === NO_TIP)}
+            className={`${getButtonClass(selectedTip === NO_TIP)} text-xs h-8`}
             onClick={() => handleTipSelection(NO_TIP)}
           >
             No Tip
@@ -253,7 +253,7 @@ export function TipPage() {
           {tipSettings.defaultPercentages.map(tip => (
             <button
               key={tip}
-              className={getButtonClass(selectedTip === tip)}
+              className={`${getButtonClass(selectedTip === tip)} text-xs h-8`}
               onClick={() => handleTipSelection(tip)}
             >
               {tip}%
@@ -262,7 +262,7 @@ export function TipPage() {
           
           {tipSettings.allowCustom && (
             <button
-              className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)}`}
+              className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-xs h-8`}
               onClick={() => handleTipSelection(CUSTOM_TIP)}
             >
               Custom Tip
@@ -271,22 +271,22 @@ export function TipPage() {
         </div>
         
         {selectedTip === CUSTOM_TIP && (
-          <div className="w-full max-w-md mt-2">
-            <label className="label">
-              <span className="label-text text-white">
+          <div className="w-full max-w-md mt-1">
+            <label className="label py-1">
+              <span className="label-text text-white text-xs">
                 Enter custom tip amount {currency !== "SATS" ? `(in ${currency})` : "(in sats)"}
               </span>
             </label>
             <div className="relative">
               {currency !== "SATS" && (
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
                   {currency === "USD" ? "$" : currency + " "}
                 </span>
               )}
               <input
                 ref={customInputRef}
                 type="text"
-                className={`input input-bordered w-full bg-gray-900 text-white ${currency !== "SATS" ? "pl-8" : ""}`}
+                className={`input input-bordered w-full bg-gray-900 text-white h-8 text-sm ${currency !== "SATS" ? "pl-8" : ""}`}
                 value={customTipValue}
                 onChange={handleCustomTipChange}
                 placeholder={currency !== "SATS" ? "0.00" : "Enter amount in sats"}
@@ -296,39 +296,39 @@ export function TipPage() {
         )}
         
         {tipAmount > 0 && (
-          <div className="text-center mt-4">
+          <div className="text-center mt-2">
             {currency !== "SATS" && fiatRate && selectedTip === CUSTOM_TIP ? (
               <>
-                <p className="text-xl font-semibold">
+                <p className="text-lg font-semibold">
                   Tip amount: {formatCurrency(parseFloat(customTipValue) || 0)}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-xs text-gray-400">
                   {tipAmount} sats
                 </p>
               </>
             ) : currency !== "SATS" && fiatRate ? (
               <>
-                <p className="text-xl font-semibold">
+                <p className="text-lg font-semibold">
                   Tip amount: {formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-xs text-gray-400">
                   {tipAmount} sats
                 </p>
               </>
             ) : (
-              <p className="text-xl font-semibold">Tip amount: {tipAmount} sats</p>
+              <p className="text-lg font-semibold">Tip amount: {tipAmount} sats</p>
             )}
             
-            <p className="text-sm text-gray-400 mt-2">
+            <p className="text-xs text-gray-400 mt-1">
               Total with tip: {baseAmount + tipAmount} sats
             </p>
           </div>
         )}
         
-        <div className="w-full max-w-md flex flex-col gap-2 mt-6">
+        <div className="w-full max-w-md flex flex-col gap-2 mt-3">
           {tipAmount > 0 ? (
             <button
-              className={actionButtonClass}
+              className={`${actionButtonClass} h-10 text-sm`}
               onClick={handleSubmit}
               disabled={isLoading}
             >
@@ -337,7 +337,7 @@ export function TipPage() {
             </button>
           ) : (
             <button
-              className="btn bg-white text-black hover:bg-gray-200 w-full"
+              className="btn bg-white text-black hover:bg-gray-200 w-full h-10 text-sm"
               onClick={handleSkip}
             >
               Skip

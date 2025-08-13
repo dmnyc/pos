@@ -62,86 +62,86 @@ export function Settings() {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto p-4 bg-black text-white" data-theme={merchantConfig.theme}>
+    <div className="w-full max-w-lg mx-auto p-2 bg-black text-white" data-theme={merchantConfig.theme}>
       <Backbar />
-      <h1 className="text-2xl font-bold mb-6">Merchant Settings</h1>
+      <h1 className="text-xl font-bold mb-3">Merchant Settings</h1>
       
-      <div className="tabs tabs-boxed mb-6 bg-gray-900">
+      <div className="tabs tabs-boxed mb-3 bg-gray-900">
         <a 
-          className={`tab ${activeTab === 'branding' ? 'bg-white text-black' : 'text-white'}`}
+          className={`tab text-xs ${activeTab === 'branding' ? 'bg-white text-black' : 'text-white'}`}
           onClick={() => setActiveTab('branding')}
         >
           Branding
         </a>
         <a 
-          className={`tab ${activeTab === 'tips' ? 'bg-white text-black' : 'text-white'}`}
+          className={`tab text-xs ${activeTab === 'tips' ? 'bg-white text-black' : 'text-white'}`}
           onClick={() => setActiveTab('tips')}
         >
           Tips
         </a>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-2">
         {activeTab === 'branding' && (
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div>
-              <label className="block text-white mb-2">Store Name</label>
+              <label className="block text-white mb-1 text-xs">Store Name</label>
               <input
                 type="text"
                 name="name"
                 value={merchantConfig.name}
                 onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white"
+                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
                 placeholder="Store Name"
               />
             </div>
             
             <div>
-              <label className="block text-white mb-2">Display Name</label>
+              <label className="block text-white mb-1 text-xs">Display Name</label>
               <input
                 type="text"
                 name="displayName"
                 value={merchantConfig.displayName}
                 onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white"
+                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
                 placeholder="Display Name"
               />
             </div>
             
             <div>
-              <label className="block text-white mb-2">Logo URL</label>
+              <label className="block text-white mb-1 text-xs">Logo URL</label>
               <input
                 type="text"
                 name="logoUrl"
                 value={merchantConfig.logoUrl}
                 onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white"
+                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
                 placeholder="https://example.com/logo.png"
               />
             </div>
             
             <div>
-              <label className="block text-white mb-2">Theme</label>
+              <label className="block text-white mb-1 text-xs">Theme</label>
               <select
                 name="theme"
                 value={merchantConfig.theme}
                 onChange={handleMerchantConfigChange}
-                className="select select-bordered w-full bg-gray-900 text-white"
+                className="select select-bordered w-full bg-gray-900 text-white h-8 text-sm"
               >
                 <option value="standard">Standard</option>
                 <option value="industrial">Industrial</option>
               </select>
               
               {/* Preview of current theme buttons */}
-              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <p className="text-sm text-gray-400 mb-2">Theme Preview:</p>
+              <div className="mt-2 p-2 bg-gray-800 rounded-lg">
+                <p className="text-xs text-gray-400 mb-1">Theme Preview:</p>
                 <div className="flex gap-2">
                   {merchantConfig.theme === "standard" ? (
-                    <button type="button" className="btn bg-charge-green text-white hover:bg-green-500">
+                    <button type="button" className="btn bg-charge-green text-white hover:bg-green-500 h-8 text-xs">
                       Standard Button
                     </button>
                   ) : (
-                    <button type="button" className="btn btn-industrial-gradient">
+                    <button type="button" className="btn btn-industrial-gradient h-8 text-xs">
                       Industrial Button
                     </button>
                   )}
@@ -150,13 +150,13 @@ export function Settings() {
             </div>
             
             <div>
-              <label className="block text-white mb-2">Description</label>
+              <label className="block text-white mb-1 text-xs">Description</label>
               <input
                 type="text"
                 name="description"
                 value={merchantConfig.description}
                 onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white"
+                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
                 placeholder="Point-of-Sale for bitcoin lightning payments"
               />
             </div>
@@ -164,13 +164,13 @@ export function Settings() {
         )}
         
         {activeTab === 'tips' && (
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div className="form-control">
-              <label className="label cursor-pointer">
-                <span className="label-text text-white">Enable Tips</span>
+              <label className="label py-1 cursor-pointer">
+                <span className="label-text text-white text-xs">Enable Tips</span>
                 <input 
                   type="checkbox" 
-                  className="toggle bg-gray-600 border-gray-600" 
+                  className="toggle toggle-sm bg-gray-600 border-gray-600" 
                   checked={tipSettings.enabled}
                   onChange={handleTipToggle}
                 />
@@ -180,12 +180,12 @@ export function Settings() {
             {tipSettings.enabled && (
               <>
                 <div>
-                  <label className="block text-white mb-2">
+                  <label className="block text-white mb-1 text-xs">
                     Tip Percentages (comma-separated)
                   </label>
                   <input
                     type="text"
-                    className="input input-bordered w-full bg-gray-900 text-white"
+                    className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
                     value={tipSettings.defaultPercentages.join(', ')}
                     onChange={handlePercentagesChange}
                     placeholder="10, 15, 20, 25"
@@ -196,11 +196,11 @@ export function Settings() {
                 </div>
                 
                 <div className="form-control">
-                  <label className="label cursor-pointer">
-                    <span className="label-text text-white">Allow Custom Tip Amount</span>
+                  <label className="label py-1 cursor-pointer">
+                    <span className="label-text text-white text-xs">Allow Custom Tip Amount</span>
                     <input 
                       type="checkbox" 
-                      className="toggle bg-gray-600 border-gray-600" 
+                      className="toggle toggle-sm bg-gray-600 border-gray-600" 
                       checked={tipSettings.allowCustom}
                       onChange={handleCustomTipToggle}
                     />
@@ -211,12 +211,12 @@ export function Settings() {
           </div>
         )}
         
-        <div className="pt-4">
+        <div className="pt-2">
           <button 
             type="submit" 
             className={merchantConfig.theme === "standard" 
-              ? "btn bg-charge-green text-white hover:bg-green-500 w-full" 
-              : "btn btn-industrial-gradient w-full"
+              ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-10 text-sm" 
+              : "btn btn-industrial-gradient w-full h-10 text-sm"
             }
           >
             Save Settings
@@ -224,10 +224,10 @@ export function Settings() {
         </div>
         
         {saved && (
-          <div className="alert bg-charge-green text-white shadow-lg">
+          <div className="alert bg-charge-green text-white shadow-lg py-1">
             <div>
-              <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span>Settings saved successfully!</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current flex-shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span className="text-xs">Settings saved successfully!</span>
             </div>
           </div>
         )}

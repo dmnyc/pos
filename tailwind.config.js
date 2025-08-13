@@ -10,18 +10,25 @@ export default {
         'charge-green': '#00cc66', // Define a custom green color for the charge button
       },
       fontSize: {
-        'xs': '0.7rem',     // Adjusted downward
-        'sm': '0.8rem',     // Adjusted downward
-        'base': '0.925rem', // Adjusted downward from 1rem
-        'lg': '1.025rem',   // Adjusted downward
-        'xl': '1.125rem',   // Adjusted downward
-        '2xl': '1.375rem',  // Adjusted downward
-        '3xl': '1.675rem',  // Adjusted downward
-        '4xl': '2rem',      // Adjusted downward
-        // Keep larger sizes similar to maintain readability for numbers
-        '5xl': '3rem',
-        '6xl': '3.75rem',
-        '7xl': '4.5rem',    // For keypad numbers
+        'xs': '0.65rem',    // Further reduced
+        'sm': '0.75rem',    // Further reduced
+        'base': '0.85rem',  // Further reduced
+        'lg': '0.95rem',    // Further reduced
+        'xl': '1.05rem',    // Further reduced
+        '2xl': '1.25rem',   // Further reduced
+        '3xl': '1.5rem',    // Further reduced
+        '4xl': '1.75rem',   // Further reduced
+        '5xl': '2.5rem',    // Reduced
+        '6xl': '3.25rem',   // Reduced
+        '7xl': '4rem',      // Reduced but still large enough for keypad numbers
+      },
+      spacing: {
+        // Additional custom spacing values for tablet optimization
+        '1/10': '10%',
+        '1/8': '12.5%',
+      },
+      height: {
+        'tablet-content': 'calc(100vh - 120px)', // Useful for main content areas
       },
       backgroundImage: {
         'industrial-gradient': 'linear-gradient(to right, #81726d, #e7b7a0, #ffffff, #e9be93, #cccccc, #858585)',

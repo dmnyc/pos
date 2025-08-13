@@ -28,13 +28,13 @@ export function Backbar({ navigateTo }: BackbarProps) {
   };
   
   return (
-    <div className="navbar bg-black text-white" data-theme={config.theme}>
+    <div className="navbar bg-black text-white h-10" data-theme={config.theme}>
       <div className="flex-none">
         <button
-          className="btn btn-ghost m-1 text-white"
+          className="btn btn-ghost btn-xs m-1 text-white p-0"
           onClick={handleBack}
         >
-          <PopiconsArrowLeftDuotone className="h-6 w-6" />
+          <PopiconsArrowLeftDuotone className="h-5 w-5" />
         </button>
       </div>
     </div>
