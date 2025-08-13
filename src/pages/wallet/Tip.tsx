@@ -277,9 +277,9 @@ export function TipPage() {
   // Button styling based on theme
   const getButtonClass = (isSelected: boolean) => {
     if (isSelected) {
-      return "btn bg-white text-black";
+      return "bg-white text-black hover:bg-gray-200";
     } else {
-      return "btn btn-outline text-white";
+      return "bg-transparent border border-gray-700 text-white hover:bg-gray-800";
     }
   };
 
@@ -332,7 +332,7 @@ export function TipPage() {
             {tipSettings.defaultPercentages.map(tip => (
               <button
                 key={tip}
-                className={`${getButtonClass(selectedTip === tip)} text-xs h-10`}
+                className={`btn ${getButtonClass(selectedTip === tip)} text-sm sm:text-base h-12 font-bold`}
                 onClick={() => handleTipSelection(tip)}
               >
                 {tip}%
@@ -341,7 +341,7 @@ export function TipPage() {
             
             {tipSettings.allowCustom && (
               <button
-                className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-xs h-10 mt-1`}
+                className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-sm sm:text-base h-12 font-bold mt-1`}
                 onClick={() => handleTipSelection(CUSTOM_TIP)}
               >
                 Custom Tip
@@ -452,7 +452,7 @@ export function TipPage() {
           <div className="w-full max-w-md flex flex-col gap-2 mt-auto mb-8">
             {tipAmount > 0 ? (
               <button
-                className={`${actionButtonClass} h-12 text-sm`}
+                className={`${actionButtonClass} h-16 text-xl font-bold`}
                 onClick={handleSubmit}
                 disabled={isLoading}
               >
@@ -461,7 +461,7 @@ export function TipPage() {
               </button>
             ) : (
               <button
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-12 text-sm"
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-16 text-xl font-bold"
                 onClick={handleSkip}
               >
                 No Tip
