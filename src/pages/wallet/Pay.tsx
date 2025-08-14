@@ -68,7 +68,10 @@ export function Pay() {
     if (invoice) {
       const inv = new Invoice({ pr: invoice });
       const { satoshi, description } = inv;
-      setAmount(satoshi);
+      // Ensure amount is parsed as a number
+      const parsedAmount = parseInt(satoshi.toString(), 10);
+      console.log("Invoice amount:", parsedAmount, "Type:", typeof parsedAmount);
+      setAmount(parsedAmount);
       
       // Set description and determine fiat amount
       if (description) {
@@ -163,7 +166,7 @@ export function Pay() {
                   {isTipPayment ? "Tip amount:" : "Amount:"}
                 </span>
                 <span className="text-white text-base md:text-lg lg:text-xl font-medium">
-                  {new Intl.NumberFormat().format(amount)} {amount === 1 ? "sat" : "sats"}
+                  {new Intl.NumberFormat().format(amount)} {parseInt(amount.toString(), 10) === 1 ? "sat" : "sats"}
                 </span>
               </div>
               
