@@ -1,5 +1,3 @@
-import { useNavigate } from "react-router-dom";
-
 type ExactBackButtonProps = {
   onBack: () => void;
   theme?: string;
