@@ -92,46 +92,47 @@ export function Home() {
           <p className="text-center mb-24 md:mb-28 lg:mb-32 text-white text-sm md:text-base lg:text-lg">
             {config.description}
           </p>
-          <Button
-            onConnected={async (provider) => {
-              try {
-                const info = await provider.getInfo();
-                if (info.methods.includes("sendPayment")) {
-                  if (
-                    !confirm(
-                      "The provided connection secret seems to be able to make payments. This could lead to lost funds if you share the PoS URL with others. Are you sure you wish to continue?"
-                    )
-                  ) {
-                    disconnect();
-                    return;
+          <div className="md:transform md:scale-110 lg:scale-125">
+            <Button
+              onConnected={async (provider) => {
+                try {
+                  const info = await provider.getInfo();
+                  if (info.methods.includes("sendPayment")) {
+                    if (
+                      !confirm(
+                        "The provided connection secret seems to be able to make payments. This could lead to lost funds if you share the PoS URL with others. Are you sure you wish to continue?"
+                      )
+                    ) {
+                      disconnect();
+                      return;
+                    }
                   }
-                }
-                if (
-                  !info.methods.includes("makeInvoice") ||
-                  !info.methods.includes("lookupInvoice")
-                ) {
-                  throw new Error(
-                    "Missing permissions. Make sure your select make_invoice and lookup_invoice."
+                  if (
+                    !info.methods.includes("makeInvoice") ||
+                    !info.methods.includes("lookupInvoice")
+                  ) {
+                    throw new Error(
+                      "Missing permissions. Make sure your select make_invoice and lookup_invoice."
+                    );
+                  }
+                  if (!(provider instanceof WebLNProviders.NostrWebLNProvider)) {
+                    throw new Error("WebLN provider is not an instance of NostrWebLNProvider");
+                  }
+                  // TODO: below line should not be needed when modal is updated to close automatically after connecting
+                  closeModal();
+                  window.localStorage.setItem(
+                    localStorageKeys.nwcUrl,
+                    provider.client.nostrWalletConnectUrl
                   );
+                  navigate(`/wallet/new`);
+                } catch (error) {
+                  console.error(error);
+                  alert(error);
+                  disconnect();
                 }
-                if (!(provider instanceof WebLNProviders.NostrWebLNProvider)) {
-                  throw new Error("WebLN provider is not an instance of NostrWebLNProvider");
-                }
-                // TODO: below line should not be needed when modal is updated to close automatically after connecting
-                closeModal();
-                window.localStorage.setItem(
-                  localStorageKeys.nwcUrl,
-                  provider.client.nostrWalletConnectUrl
-                );
-                navigate(`/wallet/new`);
-              } catch (error) {
-                console.error(error);
-                alert(error);
-                disconnect();
-              }
-            }}
-            className="md:transform md:scale-110 lg:scale-125"
-          />
+              }}
+            />
+          </div>
           <button className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn text-black bg-white hover:bg-gray-200" onClick={importWallet}>
             Import wallet URL
           </button>
