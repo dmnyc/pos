@@ -179,18 +179,16 @@ export function Pay() {
             <p className="text-sm md:text-base lg:text-lg text-gray-400 mb-4 md:mb-5 lg:mb-6">{merchantName}</p>
             
             {/* QR Code */}
-            <div 
-              className="relative flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg mb-4 md:mb-5 lg:mb-6 cursor-pointer hover:shadow-lg transition-shadow" 
-              onClick={copyQr}
-            >
-              {/* Tap to copy indicator */}
-              <div className="absolute top-0 right-0 left-0 bg-black bg-opacity-70 text-white text-xs md:text-sm text-center py-1 rounded-t-lg">
-                Tap to copy invoice
+            <div className="flex flex-col items-center">
+              <div 
+                className="flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg cursor-pointer hover:shadow-lg transition-shadow" 
+                onClick={copyQr}
+              >
+                <QRCode value={invoice} size={180} className="md:hidden" />
+                <QRCode value={invoice} size={240} className="hidden md:block lg:hidden" />
+                <QRCode value={invoice} size={300} className="hidden lg:block" />
               </div>
-              
-              <QRCode value={invoice} size={180} className="md:hidden" />
-              <QRCode value={invoice} size={240} className="hidden md:block lg:hidden" />
-              <QRCode value={invoice} size={300} className="hidden lg:block" />
+              <p className="text-xs text-gray-500 mt-1 mb-4 md:mb-5 lg:mb-6">Tap QR code to copy invoice</p>
             </div>
             
             {/* Payment status and countdown timer */}
