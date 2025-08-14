@@ -36,6 +36,20 @@ export function Pay() {
     }
   }
 
+  // Copy the full invoice when clicking on the raw invoice display
+  function copyFullInvoice() {
+    try {
+      if (!invoice) {
+        return;
+      }
+      window.navigator.clipboard.writeText(invoice);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1000);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   function toggleRawInvoice() {
     setShowRawInvoice(!showRawInvoice);
   }
@@ -201,12 +215,20 @@ export function Pay() {
               {showRawInvoice && (
                 <div className="mt-2 w-full max-w-xs md:max-w-md px-2">
                   <div className="bg-gray-900 border border-gray-700 rounded p-2 w-full">
-                    <p className="text-gray-400 text-xs mb-1">Invoice (tap to copy):</p>
-                    <div 
-                      className="text-gray-300 text-xs font-mono break-all cursor-pointer p-1 hover:bg-gray-800 rounded" 
-                      onClick={copyQr}
-                    >
-                      {invoice.substring(0, 30)}...{invoice.substring(invoice.length - 30)}
+                    <div className="flex justify-between items-center mb-1">
+                      <p className="text-gray-400 text-xs">Lightning Invoice:</p>
+                      <button
+                        className="text-xs bg-gray-700 hover:bg-gray-600 text-white rounded px-2 py-1 flex items-center"
+                        onClick={copyFullInvoice}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-3 h-3 mr-1">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        Copy
+                      </button>
+                    </div>
+                    <div className="text-gray-300 text-xs font-mono break-all p-1 bg-gray-800 rounded max-h-20 overflow-y-auto">
+                      {invoice}
                     </div>
                   </div>
                 </div>
