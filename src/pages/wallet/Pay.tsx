@@ -181,14 +181,13 @@ export function Pay() {
             {/* QR Code */}
             <div className="flex flex-col items-center">
               <div 
-                className="flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg cursor-pointer hover:shadow-lg transition-shadow" 
+                className="flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg cursor-pointer hover:shadow-lg transition-shadow mb-4 md:mb-5 lg:mb-6" 
                 onClick={copyQr}
               >
                 <QRCode value={invoice} size={180} className="md:hidden" />
                 <QRCode value={invoice} size={240} className="hidden md:block lg:hidden" />
                 <QRCode value={invoice} size={300} className="hidden lg:block" />
               </div>
-              <p className="text-xs text-gray-500 mt-1 mb-4 md:mb-5 lg:mb-6">Tap QR code to copy invoice</p>
             </div>
             
             {/* Payment status and countdown timer */}
@@ -203,7 +202,7 @@ export function Pay() {
               
               {/* Toggle raw invoice for testing */}
               <button 
-                className="mt-2 text-xs text-gray-500 hover:text-gray-300 underline"
+                className="mt-2 text-xs text-gray-500 hover:text-gray-300"
                 onClick={toggleRawInvoice}
               >
                 {showRawInvoice ? "Hide invoice details" : "Show invoice details"}
