@@ -154,20 +154,20 @@ export function New() {
   // Choose the charge button class based on the theme
   const chargeButtonClass = 
     isLoading || total <= 0 
-      ? "btn bg-gray-600 text-white w-full h-16 text-xl font-bold flex-grow-0" // Inactive state for all themes
+      ? "btn bg-gray-600 text-white w-full h-10 text-base font-bold flex-grow-0" // Inactive state for all themes
       : config.theme === "standard" 
-        ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-16 text-xl font-bold flex-grow-0"
+        ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-10 text-base font-bold flex-grow-0"
         : config.theme === "orangepill"
-          ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full h-16 text-xl font-bold flex-grow-0"
+          ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full h-10 text-base font-bold flex-grow-0"
           : config.theme === "nostrich"
-            ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full h-16 text-xl font-bold flex-grow-0"
+            ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full h-10 text-base font-bold flex-grow-0"
             : config.theme === "beehive"
-              ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-16 text-xl font-bold flex-grow-0"
+              ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-10 text-base font-bold flex-grow-0"
               : config.theme === "safari"
-                ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-16 text-xl font-bold flex-grow-0"
+                ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-10 text-base font-bold flex-grow-0"
                 : config.theme === "blocktron"
-                  ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-16 text-xl font-bold flex-grow-0"
-                  : "btn btn-industrial-gradient w-full h-16 text-xl font-bold flex-grow-0";
+                  ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10 text-base font-bold flex-grow-0"
+                  : "btn btn-industrial-gradient w-full h-10 text-base font-bold flex-grow-0";
 
   return (
     <>
@@ -175,26 +175,30 @@ export function New() {
       <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
         <form
           onSubmit={onSubmit}
-          className="flex flex-col items-center justify-center w-full flex-1 pb-1"
+          className="flex flex-col items-center justify-center w-full flex-1 pb-0"
         >
-          <div className="flex flex-col items-center justify-center w-full flex-1 mb-2">
-            {/* Amount display section */}
-            <div className="flex flex-1 flex-col mb-2 items-center justify-center">
-              <p className="text-6xl whitespace-nowrap text-center mx-auto text-white">
+          {/* Main content layout with proper vertical centering */}
+          <div className="flex flex-col items-center w-full flex-1">
+            {/* Top space to push content down for vertical centering */}
+            <div className="flex-grow"></div>
+            
+            {/* Amount display section - centered between navbar and keypad */}
+            <div className="flex flex-col mb-4 items-center justify-center">
+              <p className="text-5xl whitespace-nowrap text-center mx-auto text-white">
                 {formatNumber(amount, true)}
               </p>
               
               {/* Secondary display showing the sats value when using fiat */}
               {currency !== "SATS" && totalInSats > 0 && (
-                <p className="text-sm whitespace-nowrap text-center mx-auto text-gray-400 mb-2">
+                <p className="text-sm whitespace-nowrap text-center mx-auto text-gray-400 mb-1">
                   {new Intl.NumberFormat().format(totalInSats)} sats
                 </p>
               )}
               
-              <div className="flex items-center justify-center mt-1 mb-2">
-                <div className="relative flex items-center hover:bg-gray-800 bg-gray-900 rounded-md px-3 py-1.5 border border-gray-800">
+              <div className="flex items-center justify-center mt-1">
+                <div className="relative flex items-center hover:bg-gray-800 bg-gray-900 rounded-md px-2 py-1 border border-gray-800">
                   <select
-                    className="pr-6 whitespace-nowrap mx-auto bg-transparent text-gray-300 cursor-pointer appearance-none z-10"
+                    className="pr-6 whitespace-nowrap mx-auto bg-transparent text-gray-300 cursor-pointer appearance-none z-10 text-sm"
                     value={currency}
                     onChange={handleCurrencyChange}
                   >
@@ -206,7 +210,7 @@ export function New() {
                   </select>
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
-                    className="h-4 w-4 pointer-events-none text-gray-500 absolute right-2" 
+                    className="h-3 w-3 pointer-events-none text-gray-500 absolute right-2" 
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor"
@@ -218,73 +222,79 @@ export function New() {
               </div>
             </div>
             
-            {/* Merchant name/label - non-editable, displays store name from settings */}
-            <div className="flex items-center gap-2 mb-4">
-              <p className="text-gray-400 text-xs">{config.name}</p>
-            </div>
+            {/* Bottom space to push content up for vertical centering */}
+            <div className="flex-grow"></div>
             
-            {/* Keypad - with constrained width similar to screenshot */}
-            <div className="grid grid-cols-3 gap-1 sm:gap-2 w-full max-w-xs mx-auto">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+            {/* Keypad section */}
+            <div className="w-full max-w-xs mx-auto">
+              {/* Merchant name/label - moved to just above keypad */}
+              <div className="flex items-center justify-center mb-4">
+                <p className="text-gray-400 text-sm">{config.name}</p>
+              </div>
+              
+              {/* Keypad - reduced height of buttons */}
+              <div className="grid grid-cols-3 gap-1 w-full mb-4">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                  <button
+                    key={num}
+                    type="button" // Prevent form submission
+                    className="btn bg-white text-black hover:bg-gray-200 w-full h-8 sm:h-10 flex-grow text-lg flex items-center justify-center"
+                    onClick={() => handleNumberClick(`${num}`)}
+                  >
+                    {num}
+                  </button>
+                ))}
+
                 <button
-                  key={num}
                   type="button" // Prevent form submission
-                  className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
-                  onClick={() => handleNumberClick(`${num}`)}
+                  className="btn bg-white text-black hover:bg-gray-200 w-full h-8 sm:h-10 flex-grow text-lg flex items-center justify-center"
+                  onClick={() => handleNumberClick(`00`)}
+                  disabled={currency === "SATS"}
                 >
-                  {num}
+                  00
                 </button>
-              ))}
 
-              <button
-                type="button" // Prevent form submission
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
-                onClick={() => handleNumberClick(`00`)}
-                disabled={currency === "SATS"}
-              >
-                00
-              </button>
+                <button
+                  type="button" // Prevent form submission
+                  className="btn bg-white text-black hover:bg-gray-200 w-full h-8 sm:h-10 flex-grow text-lg flex items-center justify-center"
+                  onClick={() => handleNumberClick(`0`)}
+                >
+                  0
+                </button>
 
-              <button
-                type="button" // Prevent form submission
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
-                onClick={() => handleNumberClick(`0`)}
-              >
-                0
-              </button>
-
-              <button
-                type="button" // Prevent form submission
-                className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-10 sm:h-14 flex-grow text-xl flex items-center justify-center"
-                onClick={handleDelete}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
-                  <line x1="18" y1="9" x2="12" y2="15"></line>
-                  <line x1="12" y1="9" x2="18" y2="15"></line>
-                </svg>
-              </button>
+                <button
+                  type="button" // Prevent form submission
+                  className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-8 sm:h-10 flex-grow text-lg flex items-center justify-center"
+                  onClick={handleDelete}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                    <line x1="18" y1="9" x2="12" y2="15"></line>
+                    <line x1="12" y1="9" x2="18" y2="15"></line>
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Charge button - directly below keypad */}
+              <div className="flex flex-col gap-2 mb-4">
+                <button
+                  className={chargeButtonClass}
+                  type="submit"
+                  disabled={isLoading || total <= 0} // Disabled state for accessibility and preventing submissions
+                >
+                  <span className="text-base">Charge {new Intl.NumberFormat().format(totalInSats)} sats</span>
+                  {isLoading && <span className="loading loading-spinner loading-xs"></span>}
+                </button>
+                
+                <button
+                  type="button" // Prevent form submission
+                  className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-8 text-sm"
+                  onClick={handleClear}
+                >
+                  Clear
+                </button>
+              </div>
             </div>
-          </div>
-          
-          {/* Charge button - keeping max width same as keypad */}
-          <div className="w-full max-w-xs mx-auto flex flex-col gap-4 mt-4 mb-2">
-            <button
-              className={`${chargeButtonClass} h-14`}
-              type="submit"
-              disabled={isLoading || total <= 0} // Disabled state for accessibility and preventing submissions
-            >
-              Charge {new Intl.NumberFormat().format(totalInSats)} sats
-              {isLoading && <span className="loading loading-spinner"></span>}
-            </button>
-            
-            <button
-              type="button" // Prevent form submission
-              className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 text-sm"
-              onClick={handleClear}
-            >
-              Clear
-            </button>
           </div>
         </form>
       </div>

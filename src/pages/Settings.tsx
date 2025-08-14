@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Backbar } from '../components/Backbar';
+import { useNavigate } from 'react-router-dom';
+import { ExactBackButton } from '../components/ExactBackButton';
 import { 
   getMerchantConfig, 
   saveMerchantConfig, 
@@ -14,6 +15,16 @@ export function Settings() {
   const [tipSettings, setTipSettings] = useState(getTipSettings());
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('branding');
+  const navigate = useNavigate();
+  
+  const handleBack = () => {
+    const hasWallet = window.localStorage.getItem("pos:nwcUrl");
+    if (hasWallet) {
+      navigate("/wallet/new");
+    } else {
+      navigate("/");
+    }
+  };
 
   useEffect(() => {
     // Reset the saved message after 3 seconds
@@ -116,9 +127,10 @@ export function Settings() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full bg-black text-white" data-theme={merchantConfig.theme}>
-      <Backbar />
-      <div className="w-full max-w-lg mx-auto p-2">
+    <div className="h-full bg-black text-white" data-theme={merchantConfig.theme}>
+      <ExactBackButton onBack={handleBack} theme={merchantConfig.theme} />
+      <div className="flex flex-grow flex-col overflow-auto pt-16">
+        <div className="w-full max-w-lg mx-auto p-2">
         <h1 className="text-xl font-bold mb-3">Merchant Settings</h1>
       
       <div className="tabs tabs-boxed mb-3 bg-gray-900">
@@ -146,7 +158,7 @@ export function Settings() {
                 name="name"
                 value={merchantConfig.name}
                 onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
+                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm settings-input"
                 placeholder="Store Name"
               />
             </div>
@@ -158,7 +170,7 @@ export function Settings() {
                 name="logoUrl"
                 value={merchantConfig.logoUrl}
                 onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
+                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm settings-input"
                 placeholder="https://example.com/logo.png"
               />
               {/* Logo preview */}
@@ -180,7 +192,7 @@ export function Settings() {
                 name="theme"
                 value={merchantConfig.theme}
                 onChange={handleMerchantConfigChange}
-                className="select select-bordered w-full bg-gray-900 text-white h-8 text-sm"
+                className="select select-bordered w-full bg-gray-900 text-white h-8 text-sm settings-select"
               >
                 <option value="standard">Standard</option>
                 <option value="industrial">Industrial</option>
@@ -190,48 +202,12 @@ export function Settings() {
                 <option value="safari">Safari</option>
                 <option value="blocktron">Blocktron</option>
               </select>
-              
-              {/* Preview of current theme buttons */}
-              <div className="mt-2 p-2 bg-gray-800 rounded-lg">
-                <p className="text-xs text-gray-400 mb-1">Theme Preview:</p>
-                <div className="flex gap-2">
-                  {merchantConfig.theme === "standard" ? (
-                    <button type="button" className="btn bg-charge-green text-white hover:bg-green-500 h-8 text-xs">
-                      Standard Button
-                    </button>
-                  ) : merchantConfig.theme === "orangepill" ? (
-                    <button type="button" className="btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover h-8 text-xs">
-                      Orange Pill Button
-                    </button>
-                  ) : merchantConfig.theme === "nostrich" ? (
-                    <button type="button" className="btn bg-nostrich-gradient text-white hover:bg-nostrich-hover h-8 text-xs">
-                      Nostrich Button
-                    </button>
-                  ) : merchantConfig.theme === "beehive" ? (
-                    <button type="button" className="btn bg-beehive-yellow text-black hover:bg-beehive-hover h-8 text-xs">
-                      Beehive Button
-                    </button>
-                  ) : merchantConfig.theme === "safari" ? (
-                    <button type="button" className="btn bg-safari-gradient text-black hover:bg-safari-hover h-8 text-xs">
-                      Safari Button
-                    </button>
-                  ) : merchantConfig.theme === "blocktron" ? (
-                    <button type="button" className="btn bg-blocktron-gradient text-white hover:bg-blocktron-hover h-8 text-xs">
-                      Blocktron Button
-                    </button>
-                  ) : (
-                    <button type="button" className="btn btn-industrial-gradient h-8 text-xs">
-                      Industrial Button
-                    </button>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         )}
         
         {activeTab === 'tips' && (
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <div className="form-control">
               <label className="label py-1 cursor-pointer">
                 <span className="label-text text-white text-xs">Enable Tips</span>
@@ -252,7 +228,7 @@ export function Settings() {
                   </label>
                   <input
                     type="text"
-                    className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm"
+                    className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm settings-input"
                     value={tipPercentagesInput}
                     onChange={handlePercentagesChange}
                     placeholder="10, 15, 20, 25"
@@ -278,23 +254,23 @@ export function Settings() {
           </div>
         )}
         
-        <div className="pt-2 space-y-2">
+        <div className="pt-2 space-y-2 w-full">
           <button 
             type="submit" 
-            className={merchantConfig.theme === "standard" 
-              ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-10 text-sm" 
+            className={`w-full h-10 text-sm btn settings-button ${merchantConfig.theme === "standard" 
+              ? "bg-charge-green text-white hover:bg-green-500" 
               : merchantConfig.theme === "orangepill"
-                ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full h-10 text-sm"
+                ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
                 : merchantConfig.theme === "nostrich"
-                  ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full h-10 text-sm"
+                  ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
                   : merchantConfig.theme === "beehive"
-                    ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-10 text-sm"
+                    ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
                     : merchantConfig.theme === "safari"
-                      ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-10 text-sm"
+                      ? "bg-safari-gradient text-black hover:bg-safari-hover"
                       : merchantConfig.theme === "blocktron"
-                        ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10 text-sm"
-                        : "btn btn-industrial-gradient w-full h-10 text-sm"
-            }
+                        ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
+                        : "btn-industrial-gradient"
+            }`}
           >
             Save Settings
           </button>
@@ -302,7 +278,7 @@ export function Settings() {
           <button 
             type="button"
             onClick={handleResetDefaults}
-            className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 text-sm"
+            className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 text-sm settings-button"
           >
             Restore Default Settings
           </button>
@@ -317,6 +293,7 @@ export function Settings() {
           </div>
         )}
       </form>
+      </div>
       </div>
     </div>
   );

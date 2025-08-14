@@ -56,34 +56,34 @@ export function Paid() {
 
   // Action button class based on theme
   const actionButtonClass = config.theme === "standard" 
-    ? "btn bg-charge-green text-white hover:bg-green-500 w-full"
+    ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-10"
     : config.theme === "orangepill"
-      ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full"
+      ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full h-10"
       : config.theme === "nostrich"
-        ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full"
+        ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full h-10"
         : config.theme === "beehive"
-          ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full"
+          ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-10"
           : config.theme === "safari"
-            ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
+            ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-10"
             : config.theme === "blocktron"
-              ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
-              : "btn btn-industrial-gradient w-full";
+              ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10"
+              : "btn btn-industrial-gradient w-full h-10";
 
   return (
     <>
       {/* Use Navbar component for consistent logo placement */}
       <Navbar />
       <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
-        <div className="flex flex-col gap-3 justify-center items-center grow py-2">
-          <div className="text-center">
-            <PopiconsCircleCheckDuotone className="w-40 h-40 text-charge-green" />
-            <span className="text-lg">Payment received</span>
+        <div className="flex flex-col gap-2 justify-center items-center grow py-1">
+          <div className="flex flex-col items-center justify-center">
+            <PopiconsCircleCheckDuotone className="w-28 h-28 text-charge-green mx-auto mb-2" />
+            <span className="text-base">Payment received</span>
           </div>
           
           {showTipButton && (
             <button 
               onClick={handleTip} 
-              className={`${actionButtonClass} h-12 text-sm`}
+              className={`${actionButtonClass} text-sm`}
             >
               Add a tip
             </button>
@@ -91,9 +91,9 @@ export function Paid() {
         </div>
         
         {/* New payment button moved to the bottom of the screen */}
-        <div className="w-full max-w-xs mx-auto mb-6">
+        <div className="w-full max-w-xs mx-auto mb-3">
           <Link to="../new" className="w-full">
-            <button className="btn bg-white text-black hover:bg-gray-200 w-full h-12 text-sm">
+            <button className="btn bg-white text-black hover:bg-gray-200 w-full h-10 text-sm">
               New payment
             </button>
           </Link>

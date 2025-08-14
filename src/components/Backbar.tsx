@@ -26,13 +26,14 @@ export function Backbar({ navigateTo }: BackbarProps) {
   };
   
   return (
-    <div className="navbar bg-black text-white h-14" data-theme={config.theme}>
-      <div className="w-8 flex justify-start">
+    <div className="navbar bg-black text-white h-10" data-theme={config.theme}>
+      <div className="w-8 flex justify-start items-center">
         <button
-          className="text-gray-400 flex items-center justify-center h-8 w-8"
+          className="text-gray-400 flex items-center justify-center h-6 w-6"
           onClick={handleBack}
+          style={{ marginLeft: '3px' }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="square" strokeLinejoin="miter" d="M15 19l-7-7 7-7" />
           </svg>
         </button>

@@ -1,12 +1,14 @@
 import QRCode from "qrcode.react";
 import { useEffect, useState } from "react";
-import { Backbar } from "../../components/Backbar";
+import { useNavigate } from "react-router-dom";
 import { localStorageKeys } from "../../config";
 import { PopiconsClipboardCheckDuotone, PopiconsClipboardDuotone } from "@popicons/react";
+import { ExactBackButton } from "../../components/ExactBackButton";
 
 export function Share() {
   const [shareURI, setShareURI] = useState("");
   const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const nwcUrl = window.localStorage.getItem(localStorageKeys.nwcUrl);
@@ -33,21 +35,25 @@ export function Share() {
       alert("Failed to copy: " + error);
     }
   }
+  
+  const handleBack = () => {
+    navigate("../new");
+  };
 
   return (
     <div className="h-full bg-black text-white" data-theme="dark">
-      <Backbar />
-      <div className="flex flex-grow gap-5 flex-col justify-center items-center">
-        Scan to connect another device:
+      <ExactBackButton onBack={handleBack} />
+      <div className="flex flex-grow gap-4 flex-col justify-center items-center pt-16">
+        <p className="text-sm">Scan to connect another device:</p>
         <div className="relative flex items-center justify-center p-4 bg-white">
-          <QRCode value={shareURI} size={256} />
+          <QRCode value={shareURI} size={240} />
         </div>
-        or copy the link below:
-        <div className="flex border-2 border-gray-700 rounded-lg bg-gray-900">
+        <p className="text-sm">or copy the link below:</p>
+        <div className="flex border-2 border-gray-700 rounded-lg bg-gray-900 mb-2">
           <input
             type="text"
             value={shareURI}
-            className="input overflow-ellipsis w-full max-w-xs text-sm bg-gray-900 text-white"
+            className="input overflow-ellipsis w-full max-w-xs text-xs bg-gray-900 text-white"
             readOnly
           />
           <div className="w-1 h-full border-l-gray-700 border-l-2"></div>
@@ -59,6 +65,9 @@ export function Share() {
             )}
           </button>
         </div>
+        {copied && (
+          <p className="text-xs text-green-500 animate-pulse">Link copied to clipboard!</p>
+        )}
       </div>
     </div>
   );
