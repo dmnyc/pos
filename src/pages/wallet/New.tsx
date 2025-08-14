@@ -237,7 +237,7 @@ export function New() {
             {/* Keypad section - moved down */}
             <div className="w-full max-w-xs mx-auto">
               {/* Keypad with slightly reduced vertical spacing */}
-              <div className="grid grid-cols-3 gap-1 w-full mb-2">
+              <div className="grid grid-cols-3 gap-1 w-full mb-4">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                   <button
                     key={num}
