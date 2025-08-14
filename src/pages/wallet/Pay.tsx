@@ -129,58 +129,58 @@ export function Pay() {
     <>
       {/* Use the same Navbar component as the New Payment page */}
       <Navbar />
-      <div className="flex w-full h-[calc(100vh-32px)] flex-col items-center justify-between bg-black text-white overflow-hidden" data-theme={config.theme}>
+      <div className="flex w-full h-[calc(100vh-40px)] flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
         <div className="flex flex-col items-center justify-center w-full flex-1">
-          {/* Main content section - more compact */}
-          <div className="flex flex-1 flex-col items-center justify-center py-1">
-            {/* Amount display - more compact */}
+          {/* Main content section */}
+          <div className="flex flex-1 flex-col items-center justify-center py-2">
+            {/* Amount display - consistent with Tip page */}
             <div className="text-center mb-2">
               <div className="flex items-center justify-center">
-                <span className="text-gray-400 text-xs mr-1">
+                <span className="text-gray-400 text-sm mr-1">
                   {isTipPayment ? "Tip amount:" : "Amount:"}
                 </span>
-                <span className="text-white text-sm font-medium">
+                <span className="text-white text-base font-medium">
                   {new Intl.NumberFormat().format(amount)} sats
                 </span>
               </div>
               
               {/* Show fiat amount if available */}
               {fiatAmount && fiatAmount.length > 0 && (
-                <p className="text-xs text-gray-400">
+                <p className="text-sm text-gray-400">
                   {fiatAmount}
                 </p>
               )}
             </div>
             
             {/* Merchant name */}
-            <p className="text-xs text-gray-400 mb-1">{merchantName}</p>
+            <p className="text-sm text-gray-400 mb-2">{merchantName}</p>
             
-            {/* QR Code - reduced size */}
+            {/* QR Code - slightly reduced size for mobile */}
             <div 
-              className="relative flex items-center justify-center p-2 bg-white rounded-lg mb-2" 
+              className="relative flex items-center justify-center p-3 bg-white rounded-lg mb-3" 
               onClick={copyQr}
             >
               <QRCode value={invoice} size={180} />
             </div>
             
-            {/* Payment status and countdown timer - reduced spacing */}
-            <div className="flex flex-col items-center gap-0 mb-2">
+            {/* Payment status and countdown timer */}
+            <div className="flex flex-col items-center gap-0 mb-3">
               <div className="flex items-center justify-center">
                 {!hasCopied && <span className="loading loading-spinner loading-xs text-white mr-1"></span>}
-                <p className="text-xs">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
+                <p className="text-sm">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
               </div>
-              <div className="text-xs text-gray-400">
+              <div className="text-sm text-gray-400">
                 Expires in: <span className="font-mono">{formatTime(countdown)}</span>
               </div>
             </div>
             
-            {/* Bottom section with smaller, red cancel button */}
-            <div className="w-full max-w-xs mx-auto mb-1 flex-shrink-0">
+            {/* Bottom section with cancel button */}
+            <div className="w-full max-w-xs mx-auto mb-2">
               <button
                 onClick={() => {
                   navigate("../new");
                 }}
-                className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-7 text-sm"
+                className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-8 text-sm"
               >
                 Cancel
               </button>
