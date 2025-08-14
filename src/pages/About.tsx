@@ -26,7 +26,7 @@ export function About() {
             Sats Factory POS ⚡️🏭 is powered by Nostr Wallet Connect (NWC). 
           </p>
           <p className="mb-3 md:mb-4 lg:mb-5 text-sm md:text-base lg:text-lg">
-            Based on the open-source Lightning POS by Alby. 🐝💜
+            Based on BuzzPay, the open-source Lightning POS by Alby. 🐝💜
           </p>
           <p className="mb-3 md:mb-4 lg:mb-5 text-xs md:text-sm lg:text-base">
             <a href="https://satsfactory.com" className="text-gray-600 hover:text-gray-500">satsfactory.com</a>
