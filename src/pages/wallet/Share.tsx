@@ -4,16 +4,28 @@ import { useNavigate } from "react-router-dom";
 import { localStorageKeys } from "../../config";
 import { PopiconsClipboardCheckDuotone, PopiconsClipboardDuotone } from "@popicons/react";
 import { ExactBackButton } from "../../components/ExactBackButton";
+import { useRequirePin } from "../../hooks/useRequirePin";
+import { AlertModal } from "../../components/Modals";
 
 export function Share() {
+  useRequirePin(); // Add PIN protection
+  
   const [shareURI, setShareURI] = useState("");
   const [copied, setCopied] = useState(false);
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     const nwcUrl = window.localStorage.getItem(localStorageKeys.nwcUrl);
     if (nwcUrl) {
-      console.log("Restoring wallet URL", nwcUrl);
       const nwcEncoded = btoa(nwcUrl);
       setShareURI(
         window.location.href.replace(
@@ -32,7 +44,11 @@ export function Share() {
         setCopied(false);
       }, 3000);
     } catch (error) {
-      alert("Failed to copy: " + error);
+      setAlertState({
+        isOpen: true,
+        title: 'Copy Failed',
+        message: `Failed to copy: ${error}`
+      });
     }
   }
   
@@ -71,6 +87,13 @@ export function Share() {
           <p className="text-xs md:text-sm lg:text-base text-green-500 animate-pulse">Link copied to clipboard!</p>
         )}
       </div>
+
+      <AlertModal
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        title={alertState.title}
+        message={alertState.message}
+      />
     </div>
   );
 }

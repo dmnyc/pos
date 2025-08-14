@@ -5,9 +5,10 @@ import {
   init,
   WebLNProviders,
 } from "@getalby/bitcoin-connect-react";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { MerchantLogo } from "../components/MerchantLogo";
+import { ConfirmModal, AlertModal } from "../components/Modals";
 import { 
   localStorageKeys, 
   getMerchantConfig,
@@ -19,6 +20,30 @@ export function Home() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const config = getMerchantConfig();
+  const [confirmData, setConfirmData] = useState<{
+    isOpen: boolean;
+    provider: any | null;
+  }>({
+    isOpen: false,
+    provider: null
+  });
+
+  const [importPromptOpen, setImportPromptOpen] = useState(false);
+  const [importUrl, setImportUrl] = useState('');
+  
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
+
+  const showAlert = (title: string, message: string) => {
+    setAlertState({ isOpen: true, title, message });
+  };
 
   React.useEffect(() => {
     // Apply merchant configuration from URL parameters
@@ -26,33 +51,32 @@ export function Home() {
 
     const label = params.get("label") || params.get("name");
     if (label) {
-      localStorage.setItem(localStorageKeys.label, label); // Save the label to local storage
+      localStorage.setItem(localStorageKeys.label, label);
     }
 
     const currency = params.get("currency");
     if (currency) {
-      localStorage.setItem(localStorageKeys.currency, currency); // Save the currency to local storage
+      localStorage.setItem(localStorageKeys.currency, currency);
     } else {
-      // Set USD as default if not specified
       localStorage.setItem(localStorageKeys.currency, "USD");
     }
 
-    // Load label from query parameter and save it to local storage
     const nwcEncoded = params.get("nwc");
     if (nwcEncoded) {
       try {
         const nwcUrl = atob(nwcEncoded);
-        // store the wallet URL so PWA can restore it (PWA always loads on the homepage)
         window.localStorage.setItem(localStorageKeys.nwcUrl, nwcUrl);
-        navigate(`/wallet/new`);
+        // Check for PIN before navigating
+        const hasPin = window.localStorage.getItem('pos_pin');
+        navigate(hasPin ? '/wallet/new' : '/security');
       } catch (error) {
-        console.error(error);
-        alert("Failed to load wallet: " + error);
+        showAlert('Connection Error', 'Failed to load wallet. Please try again.');
       }
     }
     const nwcUrl = window.localStorage.getItem(localStorageKeys.nwcUrl);
     if (nwcUrl) {
-      navigate(`/wallet/new`);
+      const hasPin = window.localStorage.getItem('pos_pin');
+      navigate(hasPin ? '/wallet/new' : '/security');
     }
   }, [navigate, params]);
 
@@ -77,6 +101,64 @@ export function Home() {
     disconnect();
   }, [config]);
 
+  const handleProviderConnection = async (provider: any) => {
+    try {
+      const info = await provider.getInfo();
+      if (info.methods.includes("sendPayment")) {
+        setConfirmData({
+          isOpen: true,
+          provider
+        });
+        return;
+      }
+      await completeConnection(provider);
+    } catch (error) {
+      showAlert('Connection Error', 'Failed to connect to wallet. Please try again.');
+      disconnect();
+    }
+  };
+
+  const completeConnection = async (provider: any) => {
+    try {
+      if (!(provider instanceof WebLNProviders.NostrWebLNProvider)) {
+        throw new Error("WebLN provider is not an instance of NostrWebLNProvider");
+      }
+      
+      const info = await provider.getInfo();
+      if (!info.methods.includes("makeInvoice") || !info.methods.includes("lookupInvoice")) {
+        throw new Error("Missing permissions. Make sure you select make_invoice and lookup_invoice.");
+      }
+
+      closeModal();
+      window.localStorage.setItem(
+        localStorageKeys.nwcUrl,
+        provider.client.nostrWalletConnectUrl
+      );
+      
+      const hasPin = window.localStorage.getItem('pos_pin');
+      navigate(hasPin ? '/wallet/new' : '/security');
+    } catch (error) {
+      showAlert('Connection Error', error instanceof Error ? error.message : 'Failed to complete connection.');
+      disconnect();
+    }
+  };
+
+  const handleConfirm = () => {
+    if (confirmData.provider) {
+      completeConnection(confirmData.provider);
+    }
+  };
+
+  const handleImport = () => {
+    setImportPromptOpen(true);
+  };
+
+  const handleImportConfirm = () => {
+    if (importUrl) {
+      window.location.href = importUrl;
+    }
+  };
+
   return (
     <>
       <div
@@ -84,7 +166,6 @@ export function Home() {
         data-theme={config.theme}
       >
         <div className="flex flex-1 flex-col justify-center items-center max-w-lg w-full px-4">
-          {/* Responsive logo size */}
           <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
             <MerchantLogo className="w-[300px] md:w-[400px] lg:w-[600px] h-auto max-w-[90vw]" />
           </div>
@@ -94,63 +175,57 @@ export function Home() {
           </p>
           <div className="md:transform md:scale-110 lg:scale-125">
             <Button
-              onConnected={async (provider) => {
-                try {
-                  const info = await provider.getInfo();
-                  if (info.methods.includes("sendPayment")) {
-                    if (
-                      !confirm(
-                        "The provided connection secret seems to be able to make payments. This could lead to lost funds if you share the PoS URL with others. Are you sure you wish to continue?"
-                      )
-                    ) {
-                      disconnect();
-                      return;
-                    }
-                  }
-                  if (
-                    !info.methods.includes("makeInvoice") ||
-                    !info.methods.includes("lookupInvoice")
-                  ) {
-                    throw new Error(
-                      "Missing permissions. Make sure your select make_invoice and lookup_invoice."
-                    );
-                  }
-                  if (!(provider instanceof WebLNProviders.NostrWebLNProvider)) {
-                    throw new Error("WebLN provider is not an instance of NostrWebLNProvider");
-                  }
-                  // TODO: below line should not be needed when modal is updated to close automatically after connecting
-                  closeModal();
-                  window.localStorage.setItem(
-                    localStorageKeys.nwcUrl,
-                    provider.client.nostrWalletConnectUrl
-                  );
-                  navigate(`/wallet/new`);
-                } catch (error) {
-                  console.error(error);
-                  alert(error);
-                  disconnect();
-                }
-              }}
+              onConnected={handleProviderConnection}
             />
           </div>
-          <button className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn text-black bg-white hover:bg-gray-200" onClick={importWallet}>
+          <button 
+            className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn text-black bg-white hover:bg-gray-200" 
+            onClick={handleImport}
+          >
             Import wallet URL
           </button>
         </div>
         <Footer />
       </div>
+
+      <ConfirmModal
+        isOpen={confirmData.isOpen}
+        onClose={() => {
+          setConfirmData({ isOpen: false, provider: null });
+          disconnect();
+        }}
+        onConfirm={handleConfirm}
+        title="Warning: Payment Permissions"
+        message="The provided connection secret seems to be able to make payments. This could lead to lost funds if you share the POS URL with others. It is strongly encouraged to use a read-only connection. Do you wish to continue?"
+        confirmText="Continue"
+        isDanger
+      />
+
+      <AlertModal
+        isOpen={importPromptOpen}
+        onClose={() => setImportPromptOpen(false)}
+        title="Import Wallet URL"
+        message={
+          <div>
+            <p className="mb-4">{`On ${config.displayName} in another browser, go to the sidebar menu -> Share, copy the share URL and paste it here.`}</p>
+            <input
+              type="text"
+              value={importUrl}
+              onChange={(e) => setImportUrl(e.target.value)}
+              className="w-full p-2 border rounded bg-gray-700 border-gray-600 text-white"
+              placeholder="Paste URL here"
+            />
+          </div>
+        }
+        buttonText="Import"
+      />
+
+      <AlertModal
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        title={alertState.title}
+        message={alertState.message}
+      />
     </>
   );
-}
-
-// Needed on iOS because PWA localStorage is not shared with Safari.
-// PWA can only be installed with a static URL (e.g. "/pos/").
-function importWallet() {
-  const config = getMerchantConfig();
-  const url = prompt(
-    `On ${config.displayName} in another browser, go to the sidebar menu -> Share, copy the share URL and paste it here.`
-  );
-  if (url) {
-    window.location.href = url;
-  }
 }

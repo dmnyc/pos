@@ -23,7 +23,7 @@ export function About() {
         <p className="text-center text-sm md:text-base lg:text-lg">{config.description}</p>
         <div className="text-center max-w-xs md:max-w-md lg:max-w-lg px-4">
           <p className="mb-3 md:mb-4 lg:mb-5 text-sm md:text-base lg:text-lg">
-            Sats Factory POS ⚡️🏭 is powered by Nostr Wallet Connect (NWC). 
+            Sats Factory POS ⚡️🏭 is powered by Nostr Wallet Connect (NWC).
           </p>
           <p className="mb-3 md:mb-4 lg:mb-5 text-sm md:text-base lg:text-lg">
             Based on BuzzPay, the open-source Lightning POS by Alby. 🐝💜

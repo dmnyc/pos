@@ -1,18 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MerchantLogo } from "./MerchantLogo";
+import { ConfirmModal } from "./Modals";
 import {
   PopiconsBulbDuotone,
   PopiconsLogoutDuotone,
   PopiconsShareDuotone,
   PopiconsSettingsDuotone,
+  PopiconsKeyDuotone,
 } from "@popicons/react";
 import { localStorageKeys, getMerchantConfig } from "../config";
+import { verifyPin } from "../utils/pinUtils";
 import { useState, useRef, useEffect } from "react";
 
 export function Navbar() {
   const config = getMerchantConfig();
   const [isOpen, setIsOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   
   // Handle clicks outside the dropdown to close it
   useEffect(() => {
@@ -37,6 +42,17 @@ export function Navbar() {
   const handleMenuItemClick = () => {
     setIsOpen(false);
   };
+
+  const handleLogout = async () => {
+    const verified = await verifyPin();
+    if (verified) {
+      // Clear both wallet connection and security PIN
+      window.localStorage.removeItem(localStorageKeys.nwcUrl);
+      window.localStorage.removeItem('pos_pin');
+      handleMenuItemClick();
+      navigate('/');
+    }
+  };
   
   return (
     <div className="navbar bg-black text-white h-10 md:h-16 lg:h-20 px-0" data-theme={config.theme}>
@@ -54,9 +70,9 @@ export function Navbar() {
           
           {isOpen && (
             <ul className="absolute top-full left-0 mt-1 menu bg-black rounded-box z-[1] w-48 md:w-56 lg:w-64 p-2 md:p-3 shadow text-white">
-              <li key="share">
-                <Link to="../share" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
-                  <PopiconsShareDuotone className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Share
+              <li key="about">
+                <Link to="/about" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
+                  <PopiconsBulbDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> About
                 </Link>
               </li>
               <li key="settings">
@@ -64,26 +80,23 @@ export function Navbar() {
                   <PopiconsSettingsDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Settings
                 </Link>
               </li>
-              <li key="about">
-                <Link to="/about" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
-                  <PopiconsBulbDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> About
+              <li key="share">
+                <Link to="../share" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
+                  <PopiconsShareDuotone className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Share
                 </Link>
               </li>
-              <li key="logout" className="mt-1">
-                <Link
-                  to="/"
-                  onClick={(e) => {
-                    if (!confirm("Are you sure you wish to log out? Your POS connection will be lost.")) {
-                      e.preventDefault();
-                      return;
-                    }
-                    window.localStorage.removeItem(localStorageKeys.nwcUrl);
-                    handleMenuItemClick();
-                  }}
-                  className="text-red-500 text-base md:text-lg py-3 flex items-center"
+              <li key="security">
+                <Link to="/security/status" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
+                  <PopiconsKeyDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Security
+                </Link>
+              </li>
+              <li key="logout" className="mt-1 border-t border-gray-800 pt-1">
+                <button
+                  onClick={() => setLogoutConfirmOpen(true)}
+                  className="w-full text-left text-red-500 text-base md:text-lg py-3 flex items-center"
                 >
                   <PopiconsLogoutDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Log out
-                </Link>
+                </button>
               </li>
             </ul>
           )}
@@ -97,6 +110,16 @@ export function Navbar() {
       
       {/* Empty space to balance the navbar */}
       <div className="w-8 md:w-12 lg:w-16"></div>
+
+      <ConfirmModal
+        isOpen={logoutConfirmOpen}
+        onClose={() => setLogoutConfirmOpen(false)}
+        onConfirm={handleLogout}
+        title="Confirm Logout"
+        message="Are you sure you wish to log out? Your POS connection will be lost."
+        confirmText="Log Out"
+        isDanger
+      />
     </div>
   );
 }
