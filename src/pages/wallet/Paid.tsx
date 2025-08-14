@@ -73,30 +73,39 @@ export function Paid() {
     <>
       {/* Use Navbar component for consistent logo placement */}
       <Navbar />
-      <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
-        <div className="flex flex-col gap-2 justify-center items-center grow py-1">
+      <div className="flex w-full h-[calc(100vh-40px)] md:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
+        <div className="flex flex-col items-center justify-between w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto h-full py-4">
+          {/* Flexible spacer at top */}
+          <div className="flex-grow"></div>
+          
+          {/* Payment success block - all elements kept together as a single unit */}
           <div className="flex flex-col items-center justify-center">
-            <PopiconsCircleCheckDuotone className="w-28 h-28 text-charge-green mx-auto mb-2" />
-            <span className="text-base">Payment received</span>
+            {/* Success icon and message */}
+            <PopiconsCircleCheckDuotone className="w-28 h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 text-charge-green mx-auto mb-6 md:mb-8" />
+            <span className="text-base md:text-xl lg:text-2xl mb-8 md:mb-10 lg:mb-12">Payment received</span>
+            
+            {/* Add a tip button */}
+            {showTipButton && (
+              <button 
+                onClick={handleTip} 
+                className={`${actionButtonClass.replace('h-10', 'h-10 md:h-12 lg:h-14')} w-full text-sm md:text-base lg:text-lg`}
+              >
+                Add a tip
+              </button>
+            )}
           </div>
           
-          {showTipButton && (
-            <button 
-              onClick={handleTip} 
-              className={`${actionButtonClass} text-sm`}
-            >
-              Add a tip
-            </button>
-          )}
-        </div>
-        
-        {/* New payment button moved to the bottom of the screen */}
-        <div className="w-full max-w-xs mx-auto mb-3">
-          <Link to="../new" className="w-full">
-            <button className="btn bg-white text-black hover:bg-gray-200 w-full h-10 text-sm">
-              New payment
-            </button>
-          </Link>
+          {/* Flexible spacer at bottom */}
+          <div className="flex-grow"></div>
+          
+          {/* New payment button at bottom */}
+          <div className="w-full">
+            <Link to="../new" className="w-full">
+              <button className="btn bg-white text-black hover:bg-gray-200 w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg">
+                New payment
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
     </>

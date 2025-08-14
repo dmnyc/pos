@@ -130,52 +130,60 @@ export function Pay() {
       {/* Use the same Navbar component as the New Payment page */}
       <Navbar />
       <div className="flex w-full h-[calc(100vh-40px)] md:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex-col items-center justify-center bg-black text-white" data-theme={config.theme}>
-        {/* Main content section with proper spacing and centered QR code */}
-        <div className="flex flex-col items-center w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto">
-          {/* Amount display section */}
-          <div className="text-center mb-6 md:mb-8">
-            <div className="flex items-center justify-center">
-              <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">
-                {isTipPayment ? "Tip amount:" : "Amount:"}
-              </span>
-              <span className="text-white text-base md:text-lg lg:text-xl font-medium">
-                {new Intl.NumberFormat().format(amount)} sats
-              </span>
+        <div className="flex flex-col items-center justify-between w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto h-full py-4">
+          {/* Flexible spacer at top */}
+          <div className="flex-grow"></div>
+          
+          {/* Payment information block - all elements kept together as a single unit */}
+          <div className="flex flex-col items-center justify-center">
+            {/* Amount information */}
+            <div className="text-center mb-3 md:mb-4 lg:mb-5">
+              <div className="flex items-center justify-center">
+                <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">
+                  {isTipPayment ? "Tip amount:" : "Amount:"}
+                </span>
+                <span className="text-white text-base md:text-lg lg:text-xl font-medium">
+                  {new Intl.NumberFormat().format(amount)} sats
+                </span>
+              </div>
+              
+              {/* Show fiat amount if available */}
+              {fiatAmount && fiatAmount.length > 0 && (
+                <p className="text-sm md:text-base lg:text-lg text-gray-400">
+                  {fiatAmount}
+                </p>
+              )}
             </div>
             
-            {/* Show fiat amount if available */}
-            {fiatAmount && fiatAmount.length > 0 && (
-              <p className="text-sm md:text-base lg:text-lg text-gray-400">
-                {fiatAmount}
-              </p>
-            )}
-          </div>
-          
-          {/* Merchant name with more spacing but closer to QR code */}
-          <p className="text-sm md:text-base lg:text-lg text-gray-400 mb-6 md:mb-8">{merchantName}</p>
-          
-          {/* QR Code with consistent padding - larger on tablets/desktop */}
-          <div 
-            className="relative flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg mb-6 md:mb-8" 
-            onClick={copyQr}
-          >
-            <QRCode value={invoice} size={180} className="md:hidden" />
-            <QRCode value={invoice} size={240} className="hidden md:block lg:hidden" />
-            <QRCode value={invoice} size={300} className="hidden lg:block" />
-          </div>
-          
-          {/* Payment status and countdown timer */}
-          <div className="flex flex-col items-center gap-0 md:gap-1 mb-8 md:mb-10">
-            <div className="flex items-center justify-center">
-              {!hasCopied && <span className="loading loading-spinner loading-xs md:loading-sm text-white mr-1 md:mr-2"></span>}
-              <p className="text-sm md:text-base lg:text-lg">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
+            {/* Merchant name - with reduced margin as part of the unit */}
+            <p className="text-sm md:text-base lg:text-lg text-gray-400 mb-4 md:mb-5 lg:mb-6">{merchantName}</p>
+            
+            {/* QR Code */}
+            <div 
+              className="relative flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg mb-4 md:mb-5 lg:mb-6" 
+              onClick={copyQr}
+            >
+              <QRCode value={invoice} size={180} className="md:hidden" />
+              <QRCode value={invoice} size={240} className="hidden md:block lg:hidden" />
+              <QRCode value={invoice} size={300} className="hidden lg:block" />
             </div>
-            <div className="text-sm md:text-base lg:text-lg text-gray-400">
-              Expires in: <span className="font-mono">{formatTime(countdown)}</span>
+            
+            {/* Payment status and countdown timer */}
+            <div className="flex flex-col items-center gap-0 md:gap-1 mb-2 md:mb-3 lg:mb-4">
+              <div className="flex items-center justify-center">
+                {!hasCopied && <span className="loading loading-spinner loading-xs md:loading-sm text-white mr-1 md:mr-2"></span>}
+                <p className="text-sm md:text-base lg:text-lg">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
+              </div>
+              <div className="text-sm md:text-base lg:text-lg text-gray-400">
+                Expires in: <span className="font-mono">{formatTime(countdown)}</span>
+              </div>
             </div>
           </div>
           
-          {/* Cancel button - not pushed all the way to bottom */}
+          {/* Flexible spacer at bottom */}
+          <div className="flex-grow"></div>
+          
+          {/* Cancel button at bottom */}
           <div className="w-full">
             <button
               onClick={() => {

@@ -305,170 +305,182 @@ export function TipPage() {
     <>
       {/* Use Navbar component for consistent logo placement */}
       <Navbar />
-      <div className="flex w-full h-[calc(100vh-40px)] flex-col items-center justify-center bg-black text-white" data-theme={config.theme}>
-        <div className="flex flex-col items-center w-full max-w-md mx-auto px-2">
-          <h2 className="text-xl font-bold text-center mb-8">Would you like to add a tip?</h2>
+      <div className="flex w-full h-[calc(100vh-40px)] md:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex-col items-center justify-center bg-black text-white" data-theme={config.theme}>
+        <div className="flex flex-col items-center justify-between w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto h-full py-4">
+          {/* Flexible spacer at top */}
+          <div className="flex-grow"></div>
           
-          <div className="text-center mb-8">
-            {currency !== "SATS" && fiatRate ? (
-              <>
-                <div className="flex items-center justify-center">
-                  <span className="text-gray-400 text-sm mr-1">Base amount:</span>
-                  <span className="text-white text-lg font-medium">{formatCurrency(baseAmountInFiat)}</span>
-                </div>
-                <p className="text-gray-400 text-xs">
-                  {baseAmount} sats
-                </p>
-              </>
-            ) : (
-              <div className="flex items-center justify-center">
-                <span className="text-gray-400 text-sm mr-1">Base amount:</span>
-                <span className="text-white text-lg font-medium">{baseAmount} sats</span>
-              </div>
-            )}
-          </div>
-          
-          {/* Tip options - centered in the middle of page */}
-          <div className="grid grid-cols-2 gap-2 w-full mb-6">
-            {tipSettings.defaultPercentages.map(tip => (
-              <button
-                key={tip}
-                className={`btn ${getButtonClass(selectedTip === tip)} text-sm sm:text-base h-12 font-bold`}
-                onClick={() => handleTipSelection(tip)}
-              >
-                {tip}%
-              </button>
-            ))}
+          {/* Tip content - all elements kept together as a single unit */}
+          <div className="flex flex-col items-center justify-center w-full px-2">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-center mb-6 md:mb-8 lg:mb-10">Would you like to add a tip?</h2>
             
-            {tipSettings.allowCustom && (
-              <button
-                className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-sm sm:text-base h-12 font-bold mt-1`}
-                onClick={() => handleTipSelection(CUSTOM_TIP)}
-              >
-                Custom Tip
-              </button>
-            )}
-          </div>
-          
-          {selectedTip === CUSTOM_TIP && (
-            <div className="w-full mb-6">
-              <div className="flex justify-between items-center mb-1">
-                <label className="label-text text-white text-xs">
-                  Enter custom tip amount
-                </label>
-                {currency !== "SATS" && fiatRate && (
-                  <div className="join border border-gray-600 rounded-md">
-                    <button 
-                      type="button"
-                      className={`join-item px-3 py-1 text-xs font-medium ${customTipCurrency === "FIAT" 
-                        ? 'bg-white text-black' 
-                        : 'bg-transparent text-gray-300'}`}
-                      onClick={() => {
-                        if (customTipCurrency !== "FIAT") handleCurrencyToggle();
-                      }}
-                    >
-                      {currency}
-                    </button>
-                    <button 
-                      type="button"
-                      className={`join-item px-3 py-1 text-xs font-medium ${customTipCurrency === "SATS" 
-                        ? 'bg-white text-black' 
-                        : 'bg-transparent text-gray-300'}`}
-                      onClick={() => {
-                        if (customTipCurrency !== "SATS") handleCurrencyToggle();
-                      }}
-                    >
-                      SATS
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="relative">
-                {customTipCurrency === "FIAT" && currency !== "SATS" && (
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
-                    {currency === "USD" ? "$" : currency + " "}
-                  </span>
-                )}
-                <input
-                  ref={customInputRef}
-                  type="text"
-                  className={`input input-bordered w-full bg-gray-900 text-white h-10 text-sm ${customTipCurrency === "FIAT" && currency !== "SATS" ? "pl-8" : ""}`}
-                  value={customTipValue}
-                  onChange={handleCustomTipChange}
-                  placeholder={customTipCurrency === "FIAT" && currency !== "SATS" ? "0.00" : "Enter amount in sats"}
-                />
-              </div>
-            </div>
-          )}
-          
-          {tipAmount > 0 && (
-            <div className="text-center mb-8">
-              {selectedTip === CUSTOM_TIP ? (
-                customTipCurrency === "FIAT" && currency !== "SATS" && fiatRate ? (
-                  <>
-                    <div className="flex items-center justify-center">
-                      <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
-                      <span className="text-white text-lg font-medium">{formatCurrency(parseFloat(customTipValue) || 0)}</span>
-                    </div>
-                    <p className="text-xs text-gray-400">
-                      {tipAmount} sats
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center justify-center">
-                      <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
-                      <span className="text-white text-lg font-medium">{tipAmount} sats</span>
-                    </div>
-                    {currency !== "SATS" && fiatRate && (
-                      <p className="text-xs text-gray-400">
-                        {formatCurrency(tipAmount / fiatRate)}
-                      </p>
-                    )}
-                  </>
-                )
-              ) : currency !== "SATS" && fiatRate ? (
+            <div className="text-center mb-6 md:mb-8 lg:mb-10">
+              {currency !== "SATS" && fiatRate ? (
                 <>
                   <div className="flex items-center justify-center">
-                    <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
-                    <span className="text-white text-lg font-medium">{formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}</span>
+                    <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Base amount:</span>
+                    <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{formatCurrency(baseAmountInFiat)}</span>
                   </div>
-                  <p className="text-xs text-gray-400">
-                    {tipAmount} sats
+                  <p className="text-gray-400 text-xs md:text-sm lg:text-base">
+                    {baseAmount} sats
                   </p>
                 </>
               ) : (
                 <div className="flex items-center justify-center">
-                  <span className="text-gray-400 text-sm mr-1">Tip amount:</span>
-                  <span className="text-white text-lg font-medium">{tipAmount} sats</span>
+                  <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Base amount:</span>
+                  <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{baseAmount} sats</span>
                 </div>
               )}
-              
-              <p className="text-xs text-gray-400 mt-3">
-                Total with tip: {baseAmount + tipAmount} sats
-              </p>
             </div>
-          )}
-          
-          <div className="w-full">
-            {tipAmount > 0 ? (
-              <button
-                className={`${actionButtonClass} h-14 text-lg font-bold`}
-                onClick={handleSubmit}
-                disabled={isLoading}
-              >
-                Add Tip
-                {isLoading && <span className="loading loading-spinner ml-2"></span>}
-              </button>
-            ) : (
-              <button
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-14 text-lg font-bold"
-                onClick={handleSkip}
-              >
-                No Tip
-              </button>
+            
+            {/* Tip options - grid for percentage buttons */}
+            <div className="grid grid-cols-2 gap-2 md:gap-3 lg:gap-4 w-full mb-6 md:mb-8">
+              {tipSettings.defaultPercentages.map(tip => (
+                <button
+                  key={tip}
+                  className={`btn ${getButtonClass(selectedTip === tip)} text-sm sm:text-base md:text-lg h-12 md:h-14 lg:h-16 font-bold`}
+                  onClick={() => handleTipSelection(tip)}
+                >
+                  {tip}%
+                </button>
+              ))}
+              
+              {tipSettings.allowCustom && (
+                <button
+                  className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-sm sm:text-base md:text-lg h-12 md:h-14 lg:h-16 font-bold mt-1`}
+                  onClick={() => handleTipSelection(CUSTOM_TIP)}
+                >
+                  Custom Tip
+                </button>
+              )}
+            </div>
+            
+            {/* Custom tip input section */}
+            {selectedTip === CUSTOM_TIP && (
+              <div className="w-full mb-6 md:mb-8">
+                <div className="flex justify-between items-center mb-1 md:mb-2">
+                  <label className="label-text text-white text-xs md:text-sm">
+                    Enter custom tip amount
+                  </label>
+                  {currency !== "SATS" && fiatRate && (
+                    <div className="join border border-gray-600 rounded-md">
+                      <button 
+                        type="button"
+                        className={`join-item px-3 py-1 text-xs md:text-sm font-medium ${customTipCurrency === "FIAT" 
+                          ? 'bg-white text-black' 
+                          : 'bg-transparent text-gray-300'}`}
+                        onClick={() => {
+                          if (customTipCurrency !== "FIAT") handleCurrencyToggle();
+                        }}
+                      >
+                        {currency}
+                      </button>
+                      <button 
+                        type="button"
+                        className={`join-item px-3 py-1 text-xs md:text-sm font-medium ${customTipCurrency === "SATS" 
+                          ? 'bg-white text-black' 
+                          : 'bg-transparent text-gray-300'}`}
+                        onClick={() => {
+                          if (customTipCurrency !== "SATS") handleCurrencyToggle();
+                        }}
+                      >
+                        SATS
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="relative">
+                  {customTipCurrency === "FIAT" && currency !== "SATS" && (
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs md:text-sm">
+                      {currency === "USD" ? "$" : currency + " "}
+                    </span>
+                  )}
+                  <input
+                    ref={customInputRef}
+                    type="text"
+                    className={`input input-bordered w-full bg-gray-900 text-white h-10 md:h-12 lg:h-14 text-sm md:text-base ${customTipCurrency === "FIAT" && currency !== "SATS" ? "pl-8 md:pl-10" : ""}`}
+                    value={customTipValue}
+                    onChange={handleCustomTipChange}
+                    placeholder={customTipCurrency === "FIAT" && currency !== "SATS" ? "0.00" : "Enter amount in sats"}
+                  />
+                </div>
+              </div>
             )}
+            
+            {/* Tip amount display */}
+            {tipAmount > 0 && (
+              <div className="text-center mb-6 md:mb-8">
+                {selectedTip === CUSTOM_TIP ? (
+                  customTipCurrency === "FIAT" && currency !== "SATS" && fiatRate ? (
+                    <>
+                      <div className="flex items-center justify-center">
+                        <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
+                        <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{formatCurrency(parseFloat(customTipValue) || 0)}</span>
+                      </div>
+                      <p className="text-xs md:text-sm text-gray-400">
+                        {tipAmount} sats
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-center">
+                        <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
+                        <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{tipAmount} sats</span>
+                      </div>
+                      {currency !== "SATS" && fiatRate && (
+                        <p className="text-xs md:text-sm text-gray-400">
+                          {formatCurrency(tipAmount / fiatRate)}
+                        </p>
+                      )}
+                    </>
+                  )
+                ) : currency !== "SATS" && fiatRate ? (
+                  <>
+                    <div className="flex items-center justify-center">
+                      <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
+                      <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}</span>
+                    </div>
+                    <p className="text-xs md:text-sm text-gray-400">
+                      {tipAmount} sats
+                    </p>
+                  </>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
+                    <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{tipAmount} sats</span>
+                  </div>
+                )}
+                
+                <p className="text-xs md:text-sm text-gray-400 mt-3">
+                  Total with tip: {baseAmount + tipAmount} sats
+                </p>
+              </div>
+            )}
+            
+            {/* Action button */}
+            <div className="w-full">
+              {tipAmount > 0 ? (
+                <button
+                  className={`${actionButtonClass} h-12 md:h-14 lg:h-16 text-base md:text-lg lg:text-xl font-bold`}
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                >
+                  Add Tip
+                  {isLoading && <span className="loading loading-spinner ml-2"></span>}
+                </button>
+              ) : (
+                <button
+                  className="btn bg-white text-black hover:bg-gray-200 w-full h-12 md:h-14 lg:h-16 text-base md:text-lg lg:text-xl font-bold"
+                  onClick={handleSkip}
+                >
+                  No Tip
+                </button>
+              )}
+            </div>
           </div>
+          
+          {/* Flexible spacer at bottom */}
+          <div className="flex-grow"></div>
         </div>
       </div>
     </>
