@@ -77,7 +77,7 @@ export function New() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!total) {
+    if (!total || totalInSats <= 0) {
       return;
     }
     try {
@@ -153,7 +153,7 @@ export function New() {
 
   // Choose the charge button class based on the theme
   const chargeButtonClass = 
-    isLoading || total <= 0 
+    isLoading || total <= 0 || totalInSats <= 0
       ? "btn bg-gray-600 text-white w-full h-10 text-base font-bold flex-grow-0" // Inactive state for all themes
       : config.theme === "standard" 
         ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-10 text-base font-bold flex-grow-0"
@@ -177,23 +177,27 @@ export function New() {
           onSubmit={onSubmit}
           className="flex flex-col items-center justify-center w-full flex-1 pb-0"
         >
-          {/* Main content layout with better vertical spacing */}
+          {/* Main content layout with proper vertical distribution */}
           <div className="flex flex-col items-center w-full flex-1">
-            {/* Top space */}
-            <div className="flex-grow"></div>
+            {/* Logo to price spacing - increased */}
+            <div className="flex-1 max-h-24"></div>
             
-            {/* Amount display section */}
-            <div className="flex flex-col mb-3 items-center justify-center">
+            {/* Amount display section - centered between logo and store name */}
+            <div className="flex flex-col mb-3 items-center justify-center h-[84px]">
               <p className="text-5xl whitespace-nowrap text-center mx-auto text-white">
                 {formatNumber(amount, true)}
               </p>
               
-              {/* Secondary display showing the sats value when using fiat */}
-              {currency !== "SATS" && totalInSats > 0 && (
-                <p className="text-sm whitespace-nowrap text-center mx-auto text-gray-400">
-                  {new Intl.NumberFormat().format(totalInSats)} sats
-                </p>
-              )}
+              {/* Secondary display showing the sats value when using fiat - fixed height container with placeholder */}
+              <div className="h-5">
+                {currency !== "SATS" ? (
+                  <p className="text-sm whitespace-nowrap text-center mx-auto text-gray-400">
+                    {totalInSats > 0 
+                      ? new Intl.NumberFormat().format(totalInSats) + (totalInSats === 1 ? " sat" : " sats") 
+                      : "0 sats"}
+                  </p>
+                ) : null}
+              </div>
               
               <div className="flex items-center justify-center mt-1">
                 <div className="relative flex items-center hover:bg-gray-800 bg-gray-900 rounded-md px-2 py-1 border border-gray-800">
@@ -222,23 +226,23 @@ export function New() {
               </div>
             </div>
             
-            {/* Merchant name/label */}
-            <div className="flex items-center justify-center mb-3">
+            {/* Price to store name spacing - increased */}
+            <div className="flex-1 max-h-24"></div>
+            
+            {/* Merchant name/label - moved down */}
+            <div className="flex items-center justify-center mb-4">
               <p className="text-gray-400 text-sm">{config.name}</p>
             </div>
             
-            {/* Bottom space - reduced to fit everything */}
-            <div className="flex-grow-0"></div>
-            
-            {/* Keypad section */}
+            {/* Keypad section - moved down */}
             <div className="w-full max-w-xs mx-auto">
-              {/* Keypad */}
-              <div className="grid grid-cols-3 gap-1 w-full mb-3">
+              {/* Keypad with slightly reduced vertical spacing */}
+              <div className="grid grid-cols-3 gap-1 w-full mb-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                   <button
                     key={num}
                     type="button" // Prevent form submission
-                    className="btn bg-white text-black hover:bg-gray-200 w-full h-9 flex-grow-0 text-lg flex items-center justify-center"
+                    className="btn bg-white text-black hover:bg-gray-200 w-full h-8 flex-grow-0 text-lg flex items-center justify-center p-0"
                     onClick={() => handleNumberClick(`${num}`)}
                   >
                     {num}
@@ -247,7 +251,7 @@ export function New() {
 
                 <button
                   type="button" // Prevent form submission
-                  className="btn bg-white text-black hover:bg-gray-200 w-full h-9 flex-grow-0 text-lg flex items-center justify-center"
+                  className="btn bg-white text-black hover:bg-gray-200 w-full h-8 flex-grow-0 text-lg flex items-center justify-center p-0"
                   onClick={() => handleNumberClick(`00`)}
                   disabled={currency === "SATS"}
                 >
@@ -256,7 +260,7 @@ export function New() {
 
                 <button
                   type="button" // Prevent form submission
-                  className="btn bg-white text-black hover:bg-gray-200 w-full h-9 flex-grow-0 text-lg flex items-center justify-center"
+                  className="btn bg-white text-black hover:bg-gray-200 w-full h-8 flex-grow-0 text-lg flex items-center justify-center p-0"
                   onClick={() => handleNumberClick(`0`)}
                 >
                   0
@@ -264,10 +268,10 @@ export function New() {
 
                 <button
                   type="button" // Prevent form submission
-                  className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-9 flex-grow-0 text-lg flex items-center justify-center"
+                  className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-8 flex-grow-0 text-lg flex items-center justify-center p-0"
                   onClick={handleDelete}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
                     <line x1="18" y1="9" x2="12" y2="15"></line>
                     <line x1="12" y1="9" x2="18" y2="15"></line>
@@ -275,20 +279,22 @@ export function New() {
                 </button>
               </div>
               
-              {/* Charge button and Clear button */}
-              <div className="flex flex-col gap-2 mb-2">
+              {/* Charge button and Clear button - more compact */}
+              <div className="flex flex-col gap-1 mb-1">
                 <button
-                  className={chargeButtonClass}
+                  className={chargeButtonClass.replace('h-10', 'h-8')}
                   type="submit"
-                  disabled={isLoading || total <= 0}
+                  disabled={isLoading || total <= 0 || totalInSats <= 0}
                 >
-                  <span className="text-base">Charge {new Intl.NumberFormat().format(totalInSats)} sats</span>
+                  <span className="text-base">
+                    Charge {new Intl.NumberFormat().format(totalInSats)} {totalInSats === 1 ? "sat" : "sats"}
+                  </span>
                   {isLoading && <span className="loading loading-spinner loading-xs"></span>}
                 </button>
                 
                 <button
                   type="button" // Prevent form submission
-                  className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-8 text-sm"
+                  className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-7 text-sm"
                   onClick={handleClear}
                 >
                   Clear

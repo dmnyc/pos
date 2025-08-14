@@ -305,11 +305,11 @@ export function TipPage() {
     <>
       {/* Use Navbar component for consistent logo placement */}
       <Navbar />
-      <div className="flex w-full h-full flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
-        <div className="flex flex-col items-center justify-center w-full flex-1 p-2 pt-8">
-          <h2 className="text-xl font-bold text-center mb-6">Would you like to add a tip?</h2>
+      <div className="flex w-full h-[calc(100vh-40px)] flex-col items-center justify-center bg-black text-white" data-theme={config.theme}>
+        <div className="flex flex-col items-center w-full max-w-md mx-auto px-2">
+          <h2 className="text-xl font-bold text-center mb-8">Would you like to add a tip?</h2>
           
-          <div className="text-center mb-6">
+          <div className="text-center mb-8">
             {currency !== "SATS" && fiatRate ? (
               <>
                 <div className="flex items-center justify-center">
@@ -328,7 +328,8 @@ export function TipPage() {
             )}
           </div>
           
-          <div className="grid grid-cols-2 gap-2 w-full max-w-md mb-5">
+          {/* Tip options - centered in the middle of page */}
+          <div className="grid grid-cols-2 gap-2 w-full mb-6">
             {tipSettings.defaultPercentages.map(tip => (
               <button
                 key={tip}
@@ -350,7 +351,7 @@ export function TipPage() {
           </div>
           
           {selectedTip === CUSTOM_TIP && (
-            <div className="w-full max-w-md mb-5">
+            <div className="w-full mb-6">
               <div className="flex justify-between items-center mb-1">
                 <label className="label-text text-white text-xs">
                   Enter custom tip amount
@@ -449,10 +450,10 @@ export function TipPage() {
             </div>
           )}
           
-          <div className="w-full max-w-md flex flex-col gap-2 mt-auto mb-8">
+          <div className="w-full">
             {tipAmount > 0 ? (
               <button
-                className={`${actionButtonClass} h-16 text-xl font-bold`}
+                className={`${actionButtonClass} h-14 text-lg font-bold`}
                 onClick={handleSubmit}
                 disabled={isLoading}
               >
@@ -461,7 +462,7 @@ export function TipPage() {
               </button>
             ) : (
               <button
-                className="btn bg-white text-black hover:bg-gray-200 w-full h-16 text-xl font-bold"
+                className="btn bg-white text-black hover:bg-gray-200 w-full h-14 text-lg font-bold"
                 onClick={handleSkip}
               >
                 No Tip
