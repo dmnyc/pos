@@ -199,7 +199,7 @@ export function New() {
                 ) : null}
               </div>
               
-              <div className="flex items-center justify-center mt-1">
+              <div className="flex items-center justify-center mt-2">
                 <div className="relative flex items-center hover:bg-gray-800 bg-gray-900 rounded-md px-2 py-1 border border-gray-800">
                   <select
                     className="pr-6 whitespace-nowrap mx-auto bg-transparent text-gray-300 cursor-pointer appearance-none z-10 text-sm"
