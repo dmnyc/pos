@@ -21,6 +21,8 @@ export function Pay() {
   const config = getMerchantConfig();
   const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
 
+  const [showRawInvoice, setShowRawInvoice] = useState(false);
+
   function copyQr() {
     try {
       if (!invoice) {
@@ -32,6 +34,10 @@ export function Pay() {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  function toggleRawInvoice() {
+    setShowRawInvoice(!showRawInvoice);
   }
 
   // Format the countdown time as mm:ss
@@ -160,9 +166,14 @@ export function Pay() {
             
             {/* QR Code */}
             <div 
-              className="relative flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg mb-4 md:mb-5 lg:mb-6" 
+              className="relative flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg mb-4 md:mb-5 lg:mb-6 cursor-pointer hover:shadow-lg transition-shadow" 
               onClick={copyQr}
             >
+              {/* Tap to copy indicator */}
+              <div className="absolute top-0 right-0 left-0 bg-black bg-opacity-70 text-white text-xs md:text-sm text-center py-1 rounded-t-lg">
+                Tap to copy invoice
+              </div>
+              
               <QRCode value={invoice} size={180} className="md:hidden" />
               <QRCode value={invoice} size={240} className="hidden md:block lg:hidden" />
               <QRCode value={invoice} size={300} className="hidden lg:block" />
@@ -177,6 +188,29 @@ export function Pay() {
               <div className="text-sm md:text-base lg:text-lg text-gray-400">
                 Expires in: <span className="font-mono">{formatTime(countdown)}</span>
               </div>
+              
+              {/* Toggle raw invoice for testing */}
+              <button 
+                className="mt-2 text-xs text-gray-500 hover:text-gray-300 underline"
+                onClick={toggleRawInvoice}
+              >
+                {showRawInvoice ? "Hide invoice details" : "Show invoice details"}
+              </button>
+              
+              {/* Raw invoice display for testing */}
+              {showRawInvoice && (
+                <div className="mt-2 w-full max-w-xs md:max-w-md px-2">
+                  <div className="bg-gray-900 border border-gray-700 rounded p-2 w-full">
+                    <p className="text-gray-400 text-xs mb-1">Invoice (tap to copy):</p>
+                    <div 
+                      className="text-gray-300 text-xs font-mono break-all cursor-pointer p-1 hover:bg-gray-800 rounded" 
+                      onClick={copyQr}
+                    >
+                      {invoice.substring(0, 30)}...{invoice.substring(invoice.length - 30)}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           
