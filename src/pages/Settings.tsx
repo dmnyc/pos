@@ -130,170 +130,170 @@ export function Settings() {
     <div className="h-full bg-black text-white" data-theme={merchantConfig.theme}>
       <ExactBackButton onBack={handleBack} theme={merchantConfig.theme} />
       <div className="flex flex-grow flex-col overflow-auto pt-16">
-        <div className="w-full max-w-lg mx-auto p-2">
-        <h1 className="text-xl font-bold mb-3">Merchant Settings</h1>
+        <div className="w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto p-2 md:p-4">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Merchant Settings</h1>
       
-      <div className="tabs tabs-boxed mb-3 bg-gray-900">
-        <a 
-          className={`tab text-xs ${activeTab === 'branding' ? 'bg-white text-black' : 'text-white'}`}
-          onClick={() => setActiveTab('branding')}
-        >
-          Branding
-        </a>
-        <a 
-          className={`tab text-xs ${activeTab === 'tips' ? 'bg-white text-black' : 'text-white'}`}
-          onClick={() => setActiveTab('tips')}
-        >
-          Tips
-        </a>
-      </div>
-      
-      <form onSubmit={handleSubmit} className="space-y-2">
-        {activeTab === 'branding' && (
-          <div className="space-y-2">
-            <div>
-              <label className="block text-white mb-1 text-xs">Store Name</label>
-              <input
-                type="text"
-                name="name"
-                value={merchantConfig.name}
-                onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm settings-input"
-                placeholder="Store Name"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-white mb-1 text-xs">Logo URL</label>
-              <input
-                type="text"
-                name="logoUrl"
-                value={merchantConfig.logoUrl}
-                onChange={handleMerchantConfigChange}
-                className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm settings-input"
-                placeholder="https://example.com/logo.png"
-              />
-              {/* Logo preview */}
-              <div className="mt-2 p-2 bg-gray-800 rounded-lg flex justify-center items-center">
-                <div className="p-2 bg-black rounded inline-block">
-                  <img 
-                    src={merchantConfig.logoUrl} 
-                    alt="Logo Preview" 
-                    onError={(e) => { (e.target as HTMLImageElement).src = "/images/satsfactory_logo.svg"; }}
-                    style={{ maxHeight: '60px', maxWidth: '240px', objectFit: 'contain' }} 
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-white mb-1 text-xs">Theme</label>
-              <select
-                name="theme"
-                value={merchantConfig.theme}
-                onChange={handleMerchantConfigChange}
-                className="select select-bordered w-full bg-gray-900 text-white h-8 text-sm settings-select"
-              >
-                <option value="standard">Standard</option>
-                <option value="industrial">Industrial</option>
-                <option value="orangepill">Orange Pill</option>
-                <option value="nostrich">Nostrich</option>
-                <option value="beehive">Beehive</option>
-                <option value="safari">Safari</option>
-                <option value="blocktron">Blocktron</option>
-              </select>
-            </div>
+          <div className="tabs tabs-boxed mb-3 md:mb-4 bg-gray-900">
+            <a 
+              className={`tab text-xs md:text-sm lg:text-base ${activeTab === 'branding' ? 'bg-white text-black' : 'text-white'}`}
+              onClick={() => setActiveTab('branding')}
+            >
+              Branding
+            </a>
+            <a 
+              className={`tab text-xs md:text-sm lg:text-base ${activeTab === 'tips' ? 'bg-white text-black' : 'text-white'}`}
+              onClick={() => setActiveTab('tips')}
+            >
+              Tips
+            </a>
           </div>
-        )}
-        
-        {activeTab === 'tips' && (
-          <div className="space-y-2 w-full">
-            <div className="form-control">
-              <label className="label py-1 cursor-pointer">
-                <span className="label-text text-white text-xs">Enable Tips</span>
-                <input 
-                  type="checkbox" 
-                  className="toggle toggle-sm bg-gray-600 border-gray-600" 
-                  checked={tipSettings.enabled}
-                  onChange={handleTipToggle}
-                />
-              </label>
-            </div>
-            
-            {tipSettings.enabled && (
-              <>
+      
+          <form onSubmit={handleSubmit} className="space-y-2 md:space-y-4">
+            {activeTab === 'branding' && (
+              <div className="space-y-2 md:space-y-4">
                 <div>
-                  <label className="block text-white mb-1 text-xs">
-                    Tip Percentages (comma-separated)
-                  </label>
+                  <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">Store Name</label>
                   <input
                     type="text"
-                    className="input input-bordered w-full bg-gray-900 text-white h-8 text-sm settings-input"
-                    value={tipPercentagesInput}
-                    onChange={handlePercentagesChange}
-                    placeholder="10, 15, 20, 25"
+                    name="name"
+                    value={merchantConfig.name}
+                    onChange={handleMerchantConfigChange}
+                    className="input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input"
+                    placeholder="Store Name"
                   />
-                  <span className="text-xs text-gray-400 mt-1 block">
-                    Enter percentages separated by commas (e.g., 10, 15, 20, 25)
-                  </span>
                 </div>
                 
+                <div>
+                  <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">Logo URL</label>
+                  <input
+                    type="text"
+                    name="logoUrl"
+                    value={merchantConfig.logoUrl}
+                    onChange={handleMerchantConfigChange}
+                    className="input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input"
+                    placeholder="https://example.com/logo.png"
+                  />
+                  {/* Logo preview */}
+                  <div className="mt-2 md:mt-3 p-2 md:p-3 bg-gray-800 rounded-lg flex justify-center items-center">
+                    <div className="p-2 md:p-3 bg-black rounded inline-block">
+                      <img 
+                        src={merchantConfig.logoUrl} 
+                        alt="Logo Preview" 
+                        onError={(e) => { (e.target as HTMLImageElement).src = "/images/satsfactory_logo.svg"; }}
+                        className="h-10 md:h-14 lg:h-16 max-w-[200px] md:max-w-[280px] lg:max-w-[320px] object-contain"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">Theme</label>
+                  <select
+                    name="theme"
+                    value={merchantConfig.theme}
+                    onChange={handleMerchantConfigChange}
+                    className="select select-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-select"
+                  >
+                    <option value="standard">Standard</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="orangepill">Orange Pill</option>
+                    <option value="nostrich">Nostrich</option>
+                    <option value="beehive">Beehive</option>
+                    <option value="safari">Safari</option>
+                    <option value="blocktron">Blocktron</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'tips' && (
+              <div className="space-y-2 md:space-y-4 w-full">
                 <div className="form-control">
-                  <label className="label py-1 cursor-pointer">
-                    <span className="label-text text-white text-xs">Allow Custom Tip Amount</span>
+                  <label className="label py-1 md:py-2 cursor-pointer">
+                    <span className="label-text text-white text-xs md:text-sm lg:text-base">Enable Tips</span>
                     <input 
                       type="checkbox" 
-                      className="toggle toggle-sm bg-gray-600 border-gray-600" 
-                      checked={tipSettings.allowCustom}
-                      onChange={handleCustomTipToggle}
+                      className="toggle toggle-sm md:toggle-md bg-gray-600 border-gray-600" 
+                      checked={tipSettings.enabled}
+                      onChange={handleTipToggle}
                     />
                   </label>
                 </div>
-              </>
+                
+                {tipSettings.enabled && (
+                  <>
+                    <div>
+                      <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">
+                        Tip Percentages (comma-separated)
+                      </label>
+                      <input
+                        type="text"
+                        className="input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input"
+                        value={tipPercentagesInput}
+                        onChange={handlePercentagesChange}
+                        placeholder="10, 15, 20, 25"
+                      />
+                      <span className="text-xs md:text-sm text-gray-400 mt-1 md:mt-2 block">
+                        Enter percentages separated by commas (e.g., 10, 15, 20, 25)
+                      </span>
+                    </div>
+                    
+                    <div className="form-control">
+                      <label className="label py-1 md:py-2 cursor-pointer">
+                        <span className="label-text text-white text-xs md:text-sm lg:text-base">Allow Custom Tip Amount</span>
+                        <input 
+                          type="checkbox" 
+                          className="toggle toggle-sm md:toggle-md bg-gray-600 border-gray-600" 
+                          checked={tipSettings.allowCustom}
+                          onChange={handleCustomTipToggle}
+                        />
+                      </label>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
-          </div>
-        )}
-        
-        <div className="pt-2 space-y-2 w-full">
-          <button 
-            type="submit" 
-            className={`w-full h-10 text-sm btn settings-button ${merchantConfig.theme === "standard" 
-              ? "bg-charge-green text-white hover:bg-green-500" 
-              : merchantConfig.theme === "orangepill"
-                ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
-                : merchantConfig.theme === "nostrich"
-                  ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
-                  : merchantConfig.theme === "beehive"
-                    ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
-                    : merchantConfig.theme === "safari"
-                      ? "bg-safari-gradient text-black hover:bg-safari-hover"
-                      : merchantConfig.theme === "blocktron"
-                        ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
-                        : "btn-industrial-gradient"
-            }`}
-          >
-            Save Settings
-          </button>
-          
-          <button 
-            type="button"
-            onClick={handleResetDefaults}
-            className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 text-sm settings-button"
-          >
-            Restore Default Settings
-          </button>
+            
+            <div className="pt-2 md:pt-4 space-y-2 md:space-y-3 w-full">
+              <button 
+                type="submit" 
+                className={`w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg btn settings-button ${merchantConfig.theme === "standard" 
+                  ? "bg-charge-green text-white hover:bg-green-500" 
+                  : merchantConfig.theme === "orangepill"
+                    ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
+                    : merchantConfig.theme === "nostrich"
+                      ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
+                      : merchantConfig.theme === "beehive"
+                        ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
+                        : merchantConfig.theme === "safari"
+                          ? "bg-safari-gradient text-black hover:bg-safari-hover"
+                          : merchantConfig.theme === "blocktron"
+                            ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
+                            : "btn-industrial-gradient"
+                }`}
+              >
+                Save Settings
+              </button>
+              
+              <button 
+                type="button"
+                onClick={handleResetDefaults}
+                className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg settings-button"
+              >
+                Restore Default Settings
+              </button>
+            </div>
+            
+            {saved && (
+              <div className="text-charge-green text-center mt-2 md:mt-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-4 w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 mr-1 md:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-xs md:text-sm lg:text-base">Settings saved successfully!</span>
+              </div>
+            )}
+          </form>
         </div>
-        
-        {saved && (
-          <div className="text-charge-green text-center mt-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-            <span className="text-xs">Settings saved successfully!</span>
-          </div>
-        )}
-      </form>
-      </div>
       </div>
     </div>
   );

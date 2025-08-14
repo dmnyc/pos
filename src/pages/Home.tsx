@@ -84,12 +84,12 @@ export function Home() {
         data-theme={config.theme}
       >
         <div className="flex flex-1 flex-col justify-center items-center max-w-lg w-full px-4">
-          {/* Doubled the size of the logo (600px instead of 300px) */}
-          <div className="flex justify-center w-full mb-8">
-            <MerchantLogo style={{ width: '600px', height: 'auto', maxWidth: '90vw' }} />
+          {/* Responsive logo size */}
+          <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
+            <MerchantLogo className="w-[300px] md:w-[400px] lg:w-[600px] h-auto max-w-[90vw]" />
           </div>
 
-          <p className="text-center mb-24 text-white">
+          <p className="text-center mb-24 md:mb-28 lg:mb-32 text-white text-sm md:text-base lg:text-lg">
             {config.description}
           </p>
           <Button
@@ -130,8 +130,9 @@ export function Home() {
                 disconnect();
               }
             }}
+            className="md:transform md:scale-110 lg:scale-125"
           />
-          <button className="btn mt-8 btn-sm text-black bg-white hover:bg-gray-200" onClick={importWallet}>
+          <button className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn text-black bg-white hover:bg-gray-200" onClick={importWallet}>
             Import wallet URL
           </button>
         </div>
