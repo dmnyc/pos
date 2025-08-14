@@ -163,7 +163,7 @@ export function Pay() {
                   {isTipPayment ? "Tip amount:" : "Amount:"}
                 </span>
                 <span className="text-white text-base md:text-lg lg:text-xl font-medium">
-                  {new Intl.NumberFormat().format(amount)} sats
+                  {new Intl.NumberFormat().format(amount)} {amount === 1 ? "sat" : "sats"}
                 </span>
               </div>
               
