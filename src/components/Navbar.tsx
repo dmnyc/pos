@@ -39,13 +39,13 @@ export function Navbar() {
   };
   
   return (
-    <div className="navbar bg-black text-white h-10 px-0" data-theme={config.theme}>
+    <div className="navbar bg-black text-white h-8 px-0 min-h-0" data-theme={config.theme}>
       {/* Left section with menu button */}
       <div className="w-8 flex justify-center items-center">
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={toggleDropdown}
-            className="text-gray-400 flex items-center justify-center h-6 w-6 focus:outline-none"
+            className="text-gray-400 flex items-center justify-center h-5 w-5 focus:outline-none"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="square" strokeLinejoin="miter" d="M4 6h16M4 12h16M4 18h16" />
@@ -91,8 +91,8 @@ export function Navbar() {
       </div>
       
       {/* Center section with logo */}
-      <div className="flex-1 flex justify-center items-center min-h-[40px]">
-        <MerchantLogo style={{ height: '20px', width: 'auto', maxWidth: '140px' }} />
+      <div className="flex-1 flex justify-center items-center min-h-[32px]">
+        <MerchantLogo style={{ height: '16px', width: 'auto', maxWidth: '120px' }} />
       </div>
       
       {/* Empty space to balance the navbar */}
