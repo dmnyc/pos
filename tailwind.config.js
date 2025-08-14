@@ -46,7 +46,11 @@ export default {
       },
     },
     screens: {
-      sm: "400px", // decrease small breakpoint from 640px to support small phones (e.g. iPhone SE)
+      sm: "400px", // For small phones
+      md: "768px", // For larger phones and small tablets
+      lg: "1024px", // For tablets like iPad mini
+      xl: "1280px", // For larger tablets and desktops
+      '2xl': "1536px", // For large desktop displays
     },
   },
   // eslint-disable-next-line no-undef

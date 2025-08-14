@@ -129,46 +129,48 @@ export function Pay() {
     <>
       {/* Use the same Navbar component as the New Payment page */}
       <Navbar />
-      <div className="flex w-full h-[calc(100vh-40px)] flex-col items-center justify-center bg-black text-white" data-theme={config.theme}>
+      <div className="flex w-full h-[calc(100vh-40px)] md:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex-col items-center justify-center bg-black text-white" data-theme={config.theme}>
         {/* Main content section with proper spacing and centered QR code */}
-        <div className="flex flex-col items-center w-full max-w-xs mx-auto">
+        <div className="flex flex-col items-center w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto">
           {/* Amount display section */}
-          <div className="text-center mb-6">
+          <div className="text-center mb-6 md:mb-8">
             <div className="flex items-center justify-center">
-              <span className="text-gray-400 text-sm mr-1">
+              <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">
                 {isTipPayment ? "Tip amount:" : "Amount:"}
               </span>
-              <span className="text-white text-base font-medium">
+              <span className="text-white text-base md:text-lg lg:text-xl font-medium">
                 {new Intl.NumberFormat().format(amount)} sats
               </span>
             </div>
             
             {/* Show fiat amount if available */}
             {fiatAmount && fiatAmount.length > 0 && (
-              <p className="text-sm text-gray-400">
+              <p className="text-sm md:text-base lg:text-lg text-gray-400">
                 {fiatAmount}
               </p>
             )}
           </div>
           
           {/* Merchant name with more spacing but closer to QR code */}
-          <p className="text-sm text-gray-400 mb-6">{merchantName}</p>
+          <p className="text-sm md:text-base lg:text-lg text-gray-400 mb-6 md:mb-8">{merchantName}</p>
           
-          {/* QR Code with consistent padding */}
+          {/* QR Code with consistent padding - larger on tablets/desktop */}
           <div 
-            className="relative flex items-center justify-center p-3 bg-white rounded-lg mb-6" 
+            className="relative flex items-center justify-center p-3 md:p-4 lg:p-5 bg-white rounded-lg mb-6 md:mb-8" 
             onClick={copyQr}
           >
-            <QRCode value={invoice} size={180} />
+            <QRCode value={invoice} size={180} className="md:hidden" />
+            <QRCode value={invoice} size={240} className="hidden md:block lg:hidden" />
+            <QRCode value={invoice} size={300} className="hidden lg:block" />
           </div>
           
           {/* Payment status and countdown timer */}
-          <div className="flex flex-col items-center gap-0 mb-8">
+          <div className="flex flex-col items-center gap-0 md:gap-1 mb-8 md:mb-10">
             <div className="flex items-center justify-center">
-              {!hasCopied && <span className="loading loading-spinner loading-xs text-white mr-1"></span>}
-              <p className="text-sm">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
+              {!hasCopied && <span className="loading loading-spinner loading-xs md:loading-sm text-white mr-1 md:mr-2"></span>}
+              <p className="text-sm md:text-base lg:text-lg">{hasCopied ? "Invoice Copied!" : "Waiting for payment..."}</p>
             </div>
-            <div className="text-sm text-gray-400">
+            <div className="text-sm md:text-base lg:text-lg text-gray-400">
               Expires in: <span className="font-mono">{formatTime(countdown)}</span>
             </div>
           </div>
@@ -179,7 +181,7 @@ export function Pay() {
               onClick={() => {
                 navigate("../new");
               }}
-              className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-8 text-sm"
+              className="btn bg-red-500 text-white hover:bg-red-600 active:bg-red-700 w-full h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg"
             >
               Cancel
             </button>
