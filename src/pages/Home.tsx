@@ -146,7 +146,7 @@ export function Home() {
 function importWallet() {
   const config = getMerchantConfig();
   const url = prompt(
-    `On ${config.displayName} in another browser, go to the sidebar menu -> Share with a co-worker, copy the share URL and paste it here.`
+    `On ${config.displayName} in another browser, go to the sidebar menu -> Share, copy the share URL and paste it here.`
   );
   if (url) {
     window.location.href = url;

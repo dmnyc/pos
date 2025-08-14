@@ -23,7 +23,7 @@ export function About() {
         <p className="text-center text-sm">{config.description}</p>
         <div className="text-center">
           <p className="mb-3 text-sm">
-            Sats Factory POS ⚡️🏭 is powered by Nostr Wallet Connect. 
+            Sats Factory POS ⚡️🏭 is powered by Nostr Wallet Connect (NWC). 
           </p>
           <p className="mb-3 text-sm">
             Based on the open-source Lightning POS by Alby. 🐝💜
