@@ -20,7 +20,7 @@ export function MerchantLogo({ className, style }: Props) {
     <img 
       src={logoSrc}
       alt={config.displayName} 
-      className={`${className || ''} h-6 md:h-10 lg:h-14 w-auto max-w-[140px] md:max-w-[220px] lg:max-w-[280px] object-contain`}
+      className={`${className || ''} h-8 md:h-10 lg:h-14 wide:h-14 w-auto max-w-[160px] md:max-w-[220px] lg:max-w-[280px] wide:max-w-[300px] object-contain`}
       style={style}
       onError={(e) => {
         // Fallback to default logo if custom logo fails to load

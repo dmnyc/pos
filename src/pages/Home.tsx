@@ -211,7 +211,7 @@ export function Home() {
       >
         <div className="flex flex-1 flex-col justify-center items-center max-w-lg w-full px-4">
           <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
-            <MerchantLogo className="w-[300px] md:w-[400px] lg:w-[600px] h-auto max-w-[90vw]" />
+            <MerchantLogo className="w-[450px] md:w-[600px] lg:w-[900px] h-auto max-w-[90vw]" />
           </div>
 
           <p className="text-center mb-24 md:mb-28 lg:mb-32 text-white text-sm md:text-base lg:text-lg">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useStore from "../../state/store";
 import { getMerchantConfig } from "../../config";
 import { Navbar } from "../../components/Navbar";
+import { PageContainer } from "../../components/PageContainer";
 import { playPaymentChime } from "../../utils/audioUtils";
 
 export function Paid() {
@@ -65,58 +66,57 @@ export function Paid() {
 
   // Action button class based on theme
   const actionButtonClass = config.theme === "standard" 
-    ? "btn bg-charge-green text-white hover:bg-green-500 w-full h-10"
+    ? "btn bg-charge-green text-white hover:bg-green-500 w-full"
     : config.theme === "orangepill"
-      ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full h-10"
+      ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full"
       : config.theme === "nostrich"
-        ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full h-10"
+        ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full"
         : config.theme === "beehive"
-          ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full h-10"
+          ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full"
           : config.theme === "safari"
-            ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-10"
+            ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
             : config.theme === "blocktron"
-              ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10"
-              : "btn btn-industrial-gradient w-full h-10";
+              ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
+              : "btn btn-industrial-gradient w-full";
 
   return (
     <>
-      {/* Use Navbar component for consistent logo placement */}
       <Navbar />
-      <div className="flex w-full h-[calc(100vh-40px)] md:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] flex-col items-center justify-between bg-black text-white" data-theme={config.theme}>
-        <div className="flex flex-col items-center justify-between w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto h-full py-4">
-          {/* Flexible spacer at top */}
-          <div className="flex-grow"></div>
-          
-          {/* Payment success block - all elements kept together as a single unit */}
+      <PageContainer>
+        <div className="flex flex-col items-center justify-center w-full max-w-xs md:max-w-md lg:max-w-lg wide:max-w-screen-md mx-auto py-2 md:py-4">
+          {/* Payment success block with responsive sizing */}
           <div className="flex flex-col items-center justify-center">
-            {/* Success icon and message */}
-            <PopiconsCircleCheckDuotone className="w-28 h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 text-charge-green mx-auto mb-6 md:mb-8" />
-            <span className="text-base md:text-xl lg:text-2xl mb-8 md:mb-10 lg:mb-12">Payment received</span>
+            {/* Success icon with appropriate sizing for landscape mode */}
+            <PopiconsCircleCheckDuotone 
+              className="w-28 h-28 md:w-36 md:h-36 lg:w-36 lg:h-36 lg:landscape:w-28 lg:landscape:h-28 wide:w-56 wide:h-56 wide:landscape:w-40 wide:landscape:h-40 text-charge-green mx-auto mb-6 md:mb-8 lg:mb-8 lg:landscape:mb-5 wide:mb-10 wide:landscape:mb-8" 
+            />
             
-            {/* Add a tip button */}
+            {/* Success message with responsive text size */}
+            <span className="text-base md:text-xl lg:text-xl lg:landscape:text-lg wide:text-3xl wide:landscape:text-2xl mb-8 md:mb-10 lg:mb-10 lg:landscape:mb-6 wide:mb-12 wide:landscape:mb-8">
+              Payment received
+            </span>
+            
+            {/* Add a tip button with appropriate sizing */}
             {showTipButton && (
               <button 
                 onClick={handleTip} 
-                className={`${actionButtonClass.replace('h-10', 'h-10 md:h-12 lg:h-14')} w-full text-sm md:text-base lg:text-lg`}
+                className={`${actionButtonClass} h-10 md:h-12 lg:h-12 lg:landscape:h-10 wide:h-16 wide:landscape:h-12 max-w-xs md:max-w-md lg:max-w-md lg:landscape:max-w-sm wide:max-w-xl wide:landscape:max-w-md text-sm md:text-base lg:text-base lg:landscape:text-base wide:text-2xl wide:landscape:text-xl`}
               >
                 Add a tip
               </button>
             )}
           </div>
           
-          {/* Flexible spacer at bottom */}
-          <div className="flex-grow"></div>
-          
-          {/* New payment button at bottom */}
-          <div className="w-full">
+          {/* New payment button with appropriate sizing */}
+          <div className="w-full max-w-xs md:max-w-md lg:max-w-md lg:landscape:max-w-sm wide:max-w-xl wide:landscape:max-w-md mt-8 md:mt-10 lg:mt-10 lg:landscape:mt-6 wide:mt-12 wide:landscape:mt-8">
             <Link to="../new" className="w-full">
-              <button className="btn bg-white text-black hover:bg-gray-200 w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg">
+              <button className="btn bg-white text-black hover:bg-gray-200 w-full h-10 md:h-12 lg:h-12 lg:landscape:h-10 wide:h-16 wide:landscape:h-12 text-sm md:text-base lg:text-base lg:landscape:text-base wide:text-2xl wide:landscape:text-xl">
                 New payment
               </button>
             </Link>
           </div>
         </div>
-      </div>
+      </PageContainer>
     </>
   );
 }

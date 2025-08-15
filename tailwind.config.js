@@ -51,6 +51,8 @@ export default {
       lg: "1024px", // For tablets like iPad mini
       xl: "1280px", // For larger tablets and desktops
       '2xl': "1536px", // For large desktop displays
+      'landscape': {'raw': '(orientation: landscape)'},
+      'wide': {'raw': 'screen and (min-width: 1024px) and (orientation: landscape)'}, // For wide landscape viewports
     },
   },
   // eslint-disable-next-line no-undef

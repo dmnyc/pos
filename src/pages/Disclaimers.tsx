@@ -21,7 +21,7 @@ export function Disclaimers() {
           <div className="prose prose-invert">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-8">Disclaimers & Privacy Information</h1>
             
-            <p className="text-gray-400 mb-8">Last Updated: August 14, 2025</p>
+            <p className="text-gray-400 mb-8">Last Updated: August 15, 2025</p>
             
             <div className="mb-12">
               <p>Please read these disclaimers and privacy information carefully before using the Sats Factory POS application.</p>
@@ -89,7 +89,7 @@ export function Disclaimers() {
 
             <h2 className="text-xl md:text-2xl font-bold mt-12 mb-6">II. Privacy Information</h2>
             
-            <p className="mb-6">Effective Date: August 14, 2025</p>
+            <p className="mb-6">Effective Date: August 15, 2025</p>
             
             <h3 className="text-lg font-bold mt-8 mb-4">1. Introduction</h3>
             <p>This privacy information describes how Sats Factory POS handles information. We are committed to collecting only the minimum information necessary to provide the service.</p>
