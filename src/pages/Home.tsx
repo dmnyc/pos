@@ -153,6 +153,56 @@ export function Home() {
     setImportPromptOpen(true);
   };
 
+  const handleImportUrl = (url: string) => {
+    try {
+      // Parse the imported URL to extract parameters
+      const urlObj = new URL(url);
+      let searchParams: URLSearchParams;
+      
+      // Check if it's a hash-based URL (our new format)
+      if (urlObj.hash && urlObj.hash.includes('?')) {
+        // Extract query params from hash (e.g., #/?nwc=...&config=...)
+        const hashQuery = urlObj.hash.split('?')[1];
+        searchParams = new URLSearchParams(hashQuery);
+      } else {
+        // Fall back to regular query params for backward compatibility
+        searchParams = urlObj.searchParams;
+      }
+      
+      // Apply the configuration from imported URL
+      applyMerchantConfigFromUrl(searchParams);
+      
+      // Handle NWC URL
+      const nwcEncoded = searchParams.get("nwc");
+      if (nwcEncoded) {
+        const nwcUrl = atob(nwcEncoded);
+        window.localStorage.setItem(localStorageKeys.nwcUrl, nwcUrl);
+        
+        // Handle other parameters
+        const label = searchParams.get("label") || searchParams.get("name");
+        if (label) {
+          localStorage.setItem(localStorageKeys.label, label);
+        }
+
+        const currency = searchParams.get("currency");
+        if (currency) {
+          localStorage.setItem(localStorageKeys.currency, currency);
+        }
+        
+        setImportPromptOpen(false);
+        setImportUrl('');
+        
+        // Check for PIN before navigating
+        const hasPin = window.localStorage.getItem('pos_pin');
+        navigate(hasPin ? '/wallet/new' : '/security');
+      } else {
+        showAlert('Import Error', 'No wallet connection found in the provided URL.');
+      }
+    } catch (error) {
+      showAlert('Import Error', 'Invalid URL format. Please check the URL and try again.');
+    }
+  };
+
   return (
     <>
       <div
@@ -197,7 +247,10 @@ export function Home() {
 
       <AlertModal
         isOpen={importPromptOpen}
-        onClose={() => setImportPromptOpen(false)}
+        onClose={() => {
+          setImportPromptOpen(false);
+          setImportUrl('');
+        }}
         title="Import Wallet URL"
         message={(
           <div>
@@ -212,6 +265,11 @@ export function Home() {
           </div>
         ) as unknown as string}
         buttonText="Import"
+        onConfirm={() => {
+          if (importUrl.trim()) {
+            handleImportUrl(importUrl.trim());
+          }
+        }}
       />
 
       <AlertModal

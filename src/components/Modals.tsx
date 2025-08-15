@@ -10,6 +10,7 @@ interface BaseModalProps {
 interface AlertModalProps extends BaseModalProps {
   message: string | ReactElement;
   buttonText?: string;
+  onConfirm?: () => void;
 }
 
 interface ConfirmModalProps extends BaseModalProps {
@@ -42,13 +43,20 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   onClose,
   title,
   message,
-  buttonText = "OK"
+  buttonText = "OK",
+  onConfirm
 }) => (
   <BaseModal isOpen={isOpen} title={title}>
     <div className="text-white mb-6">{message}</div>
     <div className="flex justify-center">
       <button
-        onClick={onClose}
+        onClick={() => {
+          if (onConfirm) {
+            onConfirm();
+          } else {
+            onClose?.();
+          }
+        }}
         className="w-full bg-gray-600 hover:bg-gray-500 text-white py-2 rounded-lg transition-colors text-base"
       >
         {buttonText}

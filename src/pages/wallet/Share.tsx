@@ -1,7 +1,7 @@
 import QRCode from "qrcode.react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { localStorageKeys } from "../../config";
+import { localStorageKeys, getMerchantConfig, getTipSettings } from "../../config";
 import { PopiconsClipboardCheckDuotone, PopiconsClipboardDuotone } from "@popicons/react";
 import { ExactBackButton } from "../../components/ExactBackButton";
 import { useRequirePin } from "../../hooks/useRequirePin";
@@ -26,13 +26,30 @@ export function Share() {
   useEffect(() => {
     const nwcUrl = window.localStorage.getItem(localStorageKeys.nwcUrl);
     if (nwcUrl) {
+      const merchantConfig = getMerchantConfig();
+      const tipSettings = getTipSettings();
+      const currency = localStorage.getItem(localStorageKeys.currency) || "USD";
+      
+      // Create compressed configuration object
+      const configObject = {
+        name: merchantConfig.name,
+        logoUrl: merchantConfig.logoUrl,
+        theme: merchantConfig.theme,
+        currency: currency,
+        paymentChime: merchantConfig.paymentChimeEnabled,
+        tips: {
+          enabled: tipSettings.enabled,
+          percentages: tipSettings.defaultPercentages,
+          allowCustom: tipSettings.allowCustom
+        }
+      };
+      
       const nwcEncoded = btoa(nwcUrl);
-      setShareURI(
-        window.location.href.replace(
-          "/wallet/share",
-          `?nwc=${nwcEncoded}&name=${localStorage.getItem(localStorageKeys.label) || ""}&currency=${localStorage.getItem(localStorageKeys.currency) || "USD"}`
-        )
-      );
+      const configEncoded = btoa(JSON.stringify(configObject));
+      
+      // Generate URL compatible with HashRouter
+      const baseUrl = window.location.origin + window.location.pathname;
+      setShareURI(`${baseUrl}#/?nwc=${nwcEncoded}&config=${configEncoded}`);
     }
   }, []);
 

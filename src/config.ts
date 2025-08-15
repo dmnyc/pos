@@ -107,6 +107,20 @@ export function getTipSettings(): TipSettings {
 
 // Parse and apply merchant config from URL parameters
 export function applyMerchantConfigFromUrl(searchParams: URLSearchParams): void {
+  // First check for new compressed format
+  const compressedConfig = searchParams.get("config");
+  if (compressedConfig) {
+    try {
+      const configObject = JSON.parse(atob(compressedConfig));
+      applyCompressedConfig(configObject);
+      return;
+    } catch (error) {
+      console.error("Failed to parse compressed config:", error);
+      // Fall back to individual parameters
+    }
+  }
+
+  // Handle legacy individual parameters (backward compatibility)
   const config = getMerchantConfig();
   let updated = false;
 
@@ -139,9 +153,82 @@ export function applyMerchantConfigFromUrl(searchParams: URLSearchParams): void 
     updated = true;
   }
 
+  // Check for currency (legacy)
+  const currency = searchParams.get("currency");
+  if (currency) {
+    localStorage.setItem(localStorageKeys.currency, currency);
+  }
+
   // Save if any changes were made
   if (updated) {
     saveMerchantConfig(config);
+  }
+}
+
+// Apply compressed configuration object
+function applyCompressedConfig(configObject: any): void {
+  
+  let merchantUpdated = false;
+  let tipUpdated = false;
+  
+  const currentMerchantConfig = getMerchantConfig();
+  const currentTipSettings = getTipSettings();
+  
+  // Apply merchant config settings
+  const newMerchantConfig = { ...currentMerchantConfig };
+  
+  if (configObject.name) {
+    newMerchantConfig.name = configObject.name;
+    merchantUpdated = true;
+  }
+  
+  if (configObject.logoUrl) {
+    newMerchantConfig.logoUrl = configObject.logoUrl;
+    merchantUpdated = true;
+  }
+  
+  if (configObject.theme && ["standard", "industrial", "orangepill", "nostrich", "beehive", "safari", "blocktron"].includes(configObject.theme)) {
+    newMerchantConfig.theme = configObject.theme;
+    merchantUpdated = true;
+  }
+  
+  if (typeof configObject.paymentChime === 'boolean') {
+    newMerchantConfig.paymentChimeEnabled = configObject.paymentChime;
+    merchantUpdated = true;
+  }
+  
+  // Apply currency setting
+  if (configObject.currency) {
+    localStorage.setItem(localStorageKeys.currency, configObject.currency);
+  }
+  
+  // Apply tip settings
+  const newTipSettings = { ...currentTipSettings };
+  
+  if (configObject.tips) {
+    if (typeof configObject.tips.enabled === 'boolean') {
+      newTipSettings.enabled = configObject.tips.enabled;
+      tipUpdated = true;
+    }
+    
+    if (Array.isArray(configObject.tips.percentages)) {
+      newTipSettings.defaultPercentages = configObject.tips.percentages;
+      tipUpdated = true;
+    }
+    
+    if (typeof configObject.tips.allowCustom === 'boolean') {
+      newTipSettings.allowCustom = configObject.tips.allowCustom;
+      tipUpdated = true;
+    }
+  }
+  
+  // Save updated configurations
+  if (merchantUpdated) {
+    saveMerchantConfig(newMerchantConfig);
+  }
+  
+  if (tipUpdated) {
+    saveTipSettings(newTipSettings);
   }
 }
 
