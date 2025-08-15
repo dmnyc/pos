@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { type ReactElement } from 'react';
 
 interface BaseModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   title: string;
   children?: React.ReactNode;
 }
 
 interface AlertModalProps extends BaseModalProps {
-  message: string;
+  message: string | ReactElement;
   buttonText?: string;
 }
 
@@ -22,7 +22,6 @@ interface ConfirmModalProps extends BaseModalProps {
 
 const BaseModal: React.FC<BaseModalProps> = ({
   isOpen,
-  onClose,
   title,
   children
 }) => {
@@ -45,8 +44,8 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   message,
   buttonText = "OK"
 }) => (
-  <BaseModal isOpen={isOpen} onClose={onClose} title={title}>
-    <p className="text-white mb-6">{message}</p>
+  <BaseModal isOpen={isOpen} title={title}>
+    <div className="text-white mb-6">{message}</div>
     <div className="flex justify-center">
       <button
         onClick={onClose}
@@ -68,7 +67,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   cancelText = "Cancel",
   isDanger = false
 }) => (
-  <BaseModal isOpen={isOpen} onClose={onClose} title={title}>
+  <BaseModal isOpen={isOpen} title={title}>
     <p className="text-white mb-6">{message}</p>
     <div className="flex space-x-3">
       <button
@@ -80,7 +79,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       <button
         onClick={() => {
           onConfirm();
-          onClose();
+          onClose?.();
         }}
         className={`flex-1 py-2 px-4 ${
           isDanger 

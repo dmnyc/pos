@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { PinModal } from '../components/PinModal';
 import { AlertModal } from '../components/Modals';

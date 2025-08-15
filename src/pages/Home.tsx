@@ -153,12 +153,6 @@ export function Home() {
     setImportPromptOpen(true);
   };
 
-  const handleImportConfirm = () => {
-    if (importUrl) {
-      window.location.href = importUrl;
-    }
-  };
-
   return (
     <>
       <div
@@ -205,7 +199,7 @@ export function Home() {
         isOpen={importPromptOpen}
         onClose={() => setImportPromptOpen(false)}
         title="Import Wallet URL"
-        message={
+        message={(
           <div>
             <p className="mb-4">{`On ${config.displayName} in another browser, go to the sidebar menu -> Share, copy the share URL and paste it here.`}</p>
             <input
@@ -216,7 +210,7 @@ export function Home() {
               placeholder="Paste URL here"
             />
           </div>
-        }
+        ) as unknown as string}
         buttonText="Import"
       />
 
