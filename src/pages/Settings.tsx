@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRequirePin } from '../hooks/useRequirePin';
+import { AlertModal, ConfirmModal } from '../components/Modals';
 import { ExactBackButton } from '../components/ExactBackButton';
 import { 
   getMerchantConfig, 
@@ -11,11 +13,24 @@ import {
 } from '../config';
 
 export function Settings() {
+  useRequirePin();
   const [merchantConfig, setMerchantConfig] = useState(getMerchantConfig());
   const [tipSettings, setTipSettings] = useState(getTipSettings());
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('branding');
   const navigate = useNavigate();
+  
+  // Modal states
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
   
   const handleBack = () => {
     const hasWallet = window.localStorage.getItem("pos:nwcUrl");
@@ -95,35 +110,41 @@ export function Settings() {
       setSaved(true);
     } catch (error) {
       console.error('Invalid tip percentages format', error);
-      alert('Please check your tip percentages format. Use numbers separated by commas (e.g., 10, 15, 20, 25)');
+      setAlertState({
+        isOpen: true,
+        title: 'Invalid Format',
+        message: 'Please check your tip percentages format. Use numbers separated by commas (e.g., 10, 15, 20, 25)'
+      });
     }
   };
 
   // Reset settings to default values
   const handleResetDefaults = () => {
-    if (confirm("Are you sure you want to restore default settings? This will reset your store name, logo, and tip settings, and switch to the Standard theme.")) {
-      // Set merchant config to default values, including standard theme
-      setMerchantConfig({
-        ...defaultMerchantConfig
-      });
-      
-      // Reset tip settings
-      setTipSettings({...defaultTipSettings});
-      
-      // Reset tip percentages input field
-      setTipPercentagesInput(defaultTipSettings.defaultPercentages.join(', '));
-      
-      // Save changes to localStorage
-      saveMerchantConfig({
-        ...defaultMerchantConfig
-      });
-      saveTipSettings(defaultTipSettings);
-      
-      // Apply the standard theme immediately
-      document.documentElement.setAttribute('data-theme', 'standard');
-      
-      setSaved(true);
-    }
+    setResetConfirmOpen(true);
+  };
+
+  const confirmReset = () => {
+    // Set merchant config to default values, including standard theme
+    setMerchantConfig({
+      ...defaultMerchantConfig
+    });
+    
+    // Reset tip settings
+    setTipSettings({...defaultTipSettings});
+    
+    // Reset tip percentages input field
+    setTipPercentagesInput(defaultTipSettings.defaultPercentages.join(', '));
+    
+    // Save changes to localStorage
+    saveMerchantConfig({
+      ...defaultMerchantConfig
+    });
+    saveTipSettings(defaultTipSettings);
+    
+    // Apply the standard theme immediately
+    document.documentElement.setAttribute('data-theme', 'standard');
+    
+    setSaved(true);
   };
 
   return (
@@ -295,6 +316,23 @@ export function Settings() {
           </form>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={resetConfirmOpen}
+        onClose={() => setResetConfirmOpen(false)}
+        onConfirm={confirmReset}
+        title="Reset Settings"
+        message="Are you sure you want to restore default settings? This will reset your store name, logo, and tip settings, and switch to the Standard theme."
+        confirmText="Reset All"
+        isDanger
+      />
+
+      <AlertModal
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        title={alertState.title}
+        message={alertState.message}
+      />
     </div>
   );
 }

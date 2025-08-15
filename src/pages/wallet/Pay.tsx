@@ -70,7 +70,6 @@ export function Pay() {
       const { satoshi, description } = inv;
       // Ensure amount is parsed as a number
       const parsedAmount = parseInt(satoshi.toString(), 10);
-      console.log("Invoice amount:", parsedAmount, "Type:", typeof parsedAmount);
       setAmount(parsedAmount);
       
       // Set description and determine fiat amount
@@ -103,19 +102,16 @@ export function Pay() {
 
       // Check invoice status every 3 seconds
       const paymentCheckInterval = setInterval(async () => {
-        console.log("Checking invoice", invoice);
         try {
           const response = await provider.lookupInvoice({
             paymentRequest: invoice,
           });
           if (response.paid) {
-            // Clear both intervals when paid
             clearInterval(paymentCheckInterval);
-            // Pass through whether this was a tip payment
             navigate("../paid", { state: { isTipPayment } });
           }
         } catch (error) {
-          console.error("Error checking invoice:", error);
+          // Silent fail - will retry on next interval
         }
       }, 3000);
       
