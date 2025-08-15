@@ -10,6 +10,7 @@ import { About } from "./pages/About";
 import { Settings } from "./pages/Settings";
 import { TipPage } from "./pages/wallet/Tip";
 import Security from "./pages/Security";
+import { Disclaimers } from "./pages/Disclaimers";
 import React, { useEffect } from "react";
 import { localStorageKeys, getMerchantConfig } from "./config";
 
@@ -43,6 +44,7 @@ function App() {
           </Route>
           <Route path="/settings" Component={Settings} />
           <Route path="/security/*" Component={Security} />
+          <Route path="/disclaimers" Component={Disclaimers} />
           <Route path="/about" Component={About} />
           <Route path="/*" Component={NotFound} />
         </Routes>

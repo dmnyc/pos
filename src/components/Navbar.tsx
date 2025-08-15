@@ -7,6 +7,7 @@ import {
   PopiconsShareDuotone,
   PopiconsSettingsDuotone,
   PopiconsKeyDuotone,
+  PopiconsFileDuotone,
 } from "@popicons/react";
 import { localStorageKeys, getMerchantConfig } from "../config";
 import { verifyPin } from "../utils/pinUtils";
@@ -70,11 +71,6 @@ export function Navbar() {
           
           {isOpen && (
             <ul className="absolute top-full left-0 mt-1 menu bg-black rounded-box z-[1] w-48 md:w-56 lg:w-64 p-2 md:p-3 shadow text-white">
-              <li key="about">
-                <Link to="/about" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
-                  <PopiconsBulbDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> About
-                </Link>
-              </li>
               <li key="settings">
                 <Link to="/settings" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
                   <PopiconsSettingsDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Settings
@@ -88,6 +84,16 @@ export function Navbar() {
               <li key="security">
                 <Link to="/security/status" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
                   <PopiconsKeyDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Security
+                </Link>
+              </li>
+              <li key="about">
+                <Link to="/about" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
+                  <PopiconsBulbDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> About
+                </Link>
+              </li>
+              <li key="disclaimers">
+                <Link to="/disclaimers" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
+                  <PopiconsFileDuotone className="h-4 w-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Disclaimers
                 </Link>
               </li>
               <li key="logout" className="mt-1 border-t border-gray-800 pt-1">
