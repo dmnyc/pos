@@ -54,6 +54,16 @@ const Security = () => {
     }
   }, [navigate, isStatusView, isChangingPin])
 
+  const handlePinChange = (value: string, isPrimary: boolean) => {
+    // Only allow numeric characters
+    const numericValue = value.replace(/[^0-9]/g, '');
+    if (isPrimary) {
+      setPin(numericValue);
+    } else {
+      setConfirmPin(numericValue);
+    }
+  };
+
   const handleSetPin = () => {
     if (pin !== confirmPin) {
       showAlert('PIN Mismatch', 'PINs do not match');
@@ -134,7 +144,7 @@ const Security = () => {
                       <input
                         type="password"
                         value={pin}
-                        onChange={(e) => setPin(e.target.value)}
+                        onChange={(e) => handlePinChange(e.target.value, true)}
                         className={pinInputClasses}
                         placeholder="••••"
                         inputMode="numeric"
@@ -147,7 +157,7 @@ const Security = () => {
                       <input
                         type="password"
                         value={confirmPin}
-                        onChange={(e) => setConfirmPin(e.target.value)}
+                        onChange={(e) => handlePinChange(e.target.value, false)}
                         className={pinInputClasses}
                         placeholder="••••"
                         inputMode="numeric"

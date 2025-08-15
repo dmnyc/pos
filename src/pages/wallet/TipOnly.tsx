@@ -285,7 +285,7 @@ export function TipOnly() {
                 </button>
               </div>
               
-              {/* Charge button and Clear button - more compact */}
+              {/* Tip button and action buttons - more compact */}
               <div className="flex flex-col gap-1 md:gap-3 mb-1 md:mb-4">
                 <button
                   className={chargeButtonClass.replace('h-10', 'h-8 md:h-14 lg:h-20')}
@@ -298,13 +298,22 @@ export function TipOnly() {
                   {isLoading && <span className="loading loading-spinner loading-xs md:loading-md"></span>}
                 </button>
                 
-                <button
-                  type="button" // Prevent form submission
-                  className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-7 md:h-10 lg:h-12 text-sm md:text-lg lg:text-xl"
-                  onClick={handleClear}
-                >
-                  Clear
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    type="button" // Prevent form submission
+                    className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white flex-1 h-7 md:h-10 lg:h-12 text-sm md:text-lg lg:text-xl"
+                    onClick={handleClear}
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button" // Prevent form submission
+                    className="btn bg-red-500 text-white hover:bg-red-600 flex-1 h-7 md:h-10 lg:h-12 text-sm md:text-lg lg:text-xl"
+                    onClick={() => navigate("../new")}
+                  >
+                    Cancel Tip
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -27,6 +27,13 @@ export const PinModal: React.FC<PinModalProps> = ({
     setError(false);
   }, [isOpen]);
 
+  const handlePinChange = (value: string) => {
+    // Only allow numeric characters
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setPin(numericValue);
+    setError(false);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (pin.length < 4) {
@@ -48,10 +55,7 @@ export const PinModal: React.FC<PinModalProps> = ({
             <input
               type="password"
               value={pin}
-              onChange={(e) => {
-                setError(false);
-                setPin(e.target.value);
-              }}
+              onChange={(e) => handlePinChange(e.target.value)}
               className={`${pinInputClasses} ${error ? 'border-red-500 focus:border-red-500' : 'focus:border-[#ffcc99]'}`}
               placeholder="••••"
               inputMode="numeric"
