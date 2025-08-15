@@ -12,7 +12,6 @@ const pinInputClasses = "w-full p-3 text-center text-2xl tracking-widest bg-gray
 const Security = () => {
   const [pin, setPin] = useState('')
   const [confirmPin, setConfirmPin] = useState('')
-  const [hasPin, setHasPin] = useState(false)
   const [isChangingPin, setIsChangingPin] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -44,7 +43,6 @@ const Security = () => {
   // Check if PIN already exists in localStorage on component mount
   React.useEffect(() => {
     const existingPin = localStorage.getItem('pos_pin')
-    setHasPin(!!existingPin)
 
     // If viewing status page but no PIN is set, redirect to setup
     if (isStatusView && !existingPin && !isChangingPin) {
@@ -68,7 +66,6 @@ const Security = () => {
     }
 
     localStorage.setItem('pos_pin', pin);
-    setHasPin(true);
     setIsChangingPin(false);
     showAlert('Important: Store Your PIN Safely', 'Please write down or securely store your PIN code. You cannot recover it if forgotten, and you will need to reset the entire POS application if you lose it.');
   }
@@ -84,7 +81,6 @@ const Security = () => {
       setPin('');
       setConfirmPin('');
       setIsChangingPin(true);
-      setHasPin(false);
     }
   };
 
@@ -98,7 +94,7 @@ const Security = () => {
           <div className="bg-gray-800 p-6 pb-4 rounded-lg">
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">{isStatusView ? 'POS Security PIN' : 'Set security PIN to continue'}</h2>
-              {isStatusView && !isChangingPin ? (
+              {(isStatusView && !isChangingPin && localStorage.getItem('pos_pin')) ? (
                 <div>
                   <p className="text-green-400 font-medium mb-4">
                     Security PIN is currently set and active.
