@@ -5,7 +5,7 @@ import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
 import { localStorageKeys, getMerchantConfig } from "../../config";
 
-export function New() {
+export function TipOnly() {
   const [amount, setAmount] = React.useState(0); // Current input
   const [total, setTotal] = React.useState(0); // Total amount
   const [totalInSats, setTotalInSats] = React.useState(0); // Total amount in sats
@@ -86,18 +86,24 @@ export function New() {
       }
       setLoading(true);
       
-      // Create memo with consistent format: "Store Name - Payment (Currency $amount)"
-      let memo = `${config.name} - Payment`;
+      // Create memo with consistent format for tip-only payments
+      let memo = `${config.name} - Tip`;
       if (currency !== "SATS") {
         const formattedAmount = formatNumber(total);
         memo += ` (${currency} ${formattedAmount})`;
       }
       
       const invoice = await provider.makeInvoice({
-        amount: totalInSats.toString(), // Use total for the invoice
+        amount: totalInSats.toString(),
         defaultMemo: memo,
       });
-      navigate(`../pay/${invoice.paymentRequest}`);
+      
+      // Navigate with isTipPayment flag to prevent follow-up tip prompt
+      navigate(`../pay/${invoice.paymentRequest}`, { 
+        state: { 
+          isTipPayment: true 
+        }
+      });
     } catch (error) {
       console.error(error);
       alert("Failed to create invoice: " + error);
@@ -287,7 +293,7 @@ export function New() {
                   disabled={isLoading || total <= 0 || totalInSats <= 0}
                 >
                   <span className="text-base md:text-xl lg:text-2xl">
-                    Charge {new Intl.NumberFormat().format(totalInSats)} {totalInSats === 1 ? "sat" : "sats"}
+                    Tip {new Intl.NumberFormat().format(totalInSats)} {totalInSats === 1 ? "sat" : "sats"}
                   </span>
                   {isLoading && <span className="loading loading-spinner loading-xs md:loading-md"></span>}
                 </button>

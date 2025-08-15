@@ -29,7 +29,7 @@ export function TipPage() {
   // Load currency from localStorage
   useEffect(() => {
     const savedCurrency = localStorage.getItem("pos:currency");
-    if (savedCurrency && savedCurrency !== "SATS") {
+    if (savedCurrency) {
       setCurrency(savedCurrency);
     }
   }, []);
@@ -222,9 +222,9 @@ export function TipPage() {
     try {
       setIsLoading(true);
       
-      let tipMemo = `${config.displayName} - Tip`;
+      let tipMemo = `${config.name} - Tip`;
       
-      // Include fiat amount in the memo for display on the payment screen
+      // Only include fiat amount in memo if not using SATS currency
       let fiatDisplay = "";
       if (currency !== "SATS" && fiatRate) {
         if (customTipCurrency === "FIAT" && customTipValue) {
@@ -315,21 +315,16 @@ export function TipPage() {
             <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-center mb-6 md:mb-8 lg:mb-10">Would you like to add a tip?</h2>
             
             <div className="text-center mb-6 md:mb-8 lg:mb-10">
-              {currency !== "SATS" && fiatRate ? (
-                <>
-                  <div className="flex items-center justify-center">
-                    <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Base amount:</span>
-                    <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{formatCurrency(baseAmountInFiat)}</span>
-                  </div>
-                  <p className="text-gray-400 text-xs md:text-sm lg:text-base">
-                    {baseAmount} {baseAmount === 1 ? "sat" : "sats"}
-                  </p>
-                </>
-              ) : (
-                <div className="flex items-center justify-center">
-                  <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Base amount:</span>
-                  <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{baseAmount} {baseAmount === 1 ? "sat" : "sats"}</span>
-                </div>
+              <div className="flex items-center justify-center">
+                <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Base amount:</span>
+                <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">
+                  {currency === "SATS" ? `${baseAmount} ${baseAmount === 1 ? "sat" : "sats"}` : formatCurrency(baseAmountInFiat)}
+                </span>
+              </div>
+              {currency !== "SATS" && fiatRate && (
+                <p className="text-gray-400 text-xs md:text-sm lg:text-base">
+                  {baseAmount} {baseAmount === 1 ? "sat" : "sats"}
+                </p>
               )}
             </div>
             
@@ -401,7 +396,7 @@ export function TipPage() {
                     className={`input input-bordered w-full bg-gray-900 text-white h-10 md:h-12 lg:h-14 text-sm md:text-base ${customTipCurrency === "FIAT" && currency !== "SATS" ? "pl-8 md:pl-10" : ""}`}
                     value={customTipValue}
                     onChange={handleCustomTipChange}
-                    placeholder={customTipCurrency === "FIAT" && currency !== "SATS" ? "0.00" : "Enter amount in sats"}
+                    placeholder={currency !== "SATS" && customTipCurrency === "FIAT" ? "0.00" : "Enter amount in sats"}
                   />
                 </div>
               </div>
@@ -410,45 +405,21 @@ export function TipPage() {
             {/* Tip amount display */}
             {tipAmount > 0 && (
               <div className="text-center mb-6 md:mb-8">
-                {selectedTip === CUSTOM_TIP ? (
-                  customTipCurrency === "FIAT" && currency !== "SATS" && fiatRate ? (
-                    <>
-                      <div className="flex items-center justify-center">
-                        <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
-                        <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{formatCurrency(parseFloat(customTipValue) || 0)}</span>
-                      </div>
-                      <p className="text-xs md:text-sm text-gray-400">
-                        {tipAmount} {tipAmount === 1 ? "sat" : "sats"}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-center">
-                        <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
-                        <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{tipAmount} {tipAmount === 1 ? "sat" : "sats"}</span>
-                      </div>
-                      {currency !== "SATS" && fiatRate && (
-                        <p className="text-xs md:text-sm text-gray-400">
-                          {formatCurrency(tipAmount / fiatRate)}
-                        </p>
-                      )}
-                    </>
-                  )
-                ) : currency !== "SATS" && fiatRate ? (
-                  <>
-                    <div className="flex items-center justify-center">
-                      <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
-                      <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)}</span>
-                    </div>
-                    <p className="text-xs md:text-sm text-gray-400">
-                      {tipAmount} {tipAmount === 1 ? "sat" : "sats"}
-                    </p>
-                  </>
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
-                    <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">{tipAmount} {tipAmount === 1 ? "sat" : "sats"}</span>
-                  </div>
+                <div className="flex items-center justify-center">
+                  <span className="text-gray-400 text-sm md:text-base lg:text-lg mr-1 md:mr-2">Tip amount:</span>
+                  <span className="text-white text-lg md:text-xl lg:text-2xl font-medium">
+                    {currency === "SATS" ? `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}` 
+                      : selectedTip !== CUSTOM_TIP && fiatRate 
+                        ? formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)
+                        : selectedTip === CUSTOM_TIP && customTipCurrency === "FIAT" && fiatRate
+                          ? formatCurrency(parseFloat(customTipValue) || 0)
+                          : `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}`}
+                  </span>
+                </div>
+                {currency !== "SATS" && fiatRate && (
+                  <p className="text-xs md:text-sm text-gray-400">
+                    {tipAmount} {tipAmount === 1 ? "sat" : "sats"}
+                  </p>
                 )}
                 
                 <p className="text-xs md:text-sm text-gray-400 mt-3">

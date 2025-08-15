@@ -4,6 +4,7 @@ export interface MerchantConfig {
   logoUrl: string;
   description: string;
   theme: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "safari" | "blocktron";
+  paymentChimeEnabled: boolean;
 }
 
 export interface TipSettings {
@@ -18,7 +19,8 @@ export const defaultMerchantConfig: MerchantConfig = {
   displayName: "Sats Factory POS",
   logoUrl: "/images/satsfactory_logo.svg", 
   description: "Point-of-Sale for bitcoin lightning payments",
-  theme: "standard"
+  theme: "standard",
+  paymentChimeEnabled: false
 };
 
 // Default tip settings

@@ -5,6 +5,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar";
 import useStore from "../../state/store";
 import { getMerchantConfig } from "../../config";
+import { fiat } from "@getalby/lightning-tools";
 
 export function Pay() {
   const { invoice } = useParams();
@@ -15,6 +16,8 @@ export function Pay() {
   const [description, setDescription] = useState("");
   const [hasCopied, setCopied] = useState(false);
   const [fiatAmount, setFiatAmount] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("USD");
+  const [calculatedFiatAmount, setCalculatedFiatAmount] = useState<string>("");
   const isTipPayment = location.state?.isTipPayment || false;
   // Safely convert passedFiatAmount to string or empty string
   const passedFiatAmount = location.state?.fiatAmount ? String(location.state.fiatAmount) : "";
@@ -60,6 +63,37 @@ export function Pay() {
     const secs = seconds % 60;
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
+
+  useEffect(() => {
+    // Load currency from localStorage
+    const savedCurrency = localStorage.getItem("pos:currency");
+    if (savedCurrency) {
+      setCurrency(savedCurrency);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Calculate fiat amount if using fiat currency and no fiat amount from description
+    const calculateFiatAmount = async () => {
+      if (currency !== "SATS" && amount > 0 && !fiatAmount) {
+        try {
+          // Get the exchange rate (how many sats per unit of currency)
+          const satsPerUnit = await fiat.getSatoshiValue({ amount: 1, currency });
+          // Convert sats to fiat (amount in sats / sats per unit)
+          const fiatValue = amount / satsPerUnit;
+          const formatted = new Intl.NumberFormat('en-US', { 
+            style: 'currency', 
+            currency: currency 
+          }).format(fiatValue);
+          setCalculatedFiatAmount(formatted);
+        } catch (error) {
+          console.error("Error calculating fiat amount:", error);
+        }
+      }
+    };
+
+    calculateFiatAmount();
+  }, [amount, currency, fiatAmount]);
 
   useEffect(() => {
     if (!provider) {
@@ -166,10 +200,10 @@ export function Pay() {
                 </span>
               </div>
               
-              {/* Show fiat amount if available */}
-              {fiatAmount && fiatAmount.length > 0 && (
+              {/* Show fiat amount if available or calculated */}
+              {((fiatAmount && fiatAmount.length > 0) || (calculatedFiatAmount && currency !== "SATS")) && (
                 <p className="text-sm md:text-base lg:text-lg text-gray-400">
-                  {fiatAmount}
+                  {fiatAmount || calculatedFiatAmount}
                 </p>
               )}
             </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useStore from "../../state/store";
 import { getMerchantConfig } from "../../config";
 import { Navbar } from "../../components/Navbar";
+import { playPaymentChime } from "../../utils/audioUtils";
 
 export function Paid() {
   const navigate = useNavigate();
@@ -17,7 +18,15 @@ export function Paid() {
     // If this payment was a tip, don't show the tip button
     const isTipPayment = location.state?.isTipPayment || false;
     setShowTipButton(!isTipPayment);
-  }, [location]);
+    
+    // Play payment chime if enabled
+    if (config.paymentChimeEnabled) {
+      // Small delay to ensure page has loaded
+      setTimeout(() => {
+        playPaymentChime();
+      }, 300);
+    }
+  }, [location, config.paymentChimeEnabled]);
 
   const handleTip = () => {
     if (lastInvoiceData) {

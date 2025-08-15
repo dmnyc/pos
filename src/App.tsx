@@ -9,6 +9,7 @@ import { Share } from "./pages/wallet/Share";
 import { About } from "./pages/About";
 import { Settings } from "./pages/Settings";
 import { TipPage } from "./pages/wallet/Tip";
+import { TipOnly } from "./pages/wallet/TipOnly";
 import Security from "./pages/Security";
 import { Disclaimers } from "./pages/Disclaimers";
 import React, { useEffect } from "react";
@@ -39,6 +40,7 @@ function App() {
             <Route path="pay/:invoice" Component={Pay} />
             <Route path="paid" Component={Paid} />
             <Route path="tip/:invoice" Component={TipPage} />
+            <Route path="tiponly" Component={TipOnly} />
             <Route path="share" Component={Share} />
             <Route path=":legacyWallet/new" Component={LegacyWalletRedirect} />
           </Route>

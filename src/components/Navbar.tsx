@@ -8,6 +8,7 @@ import {
   PopiconsSettingsDuotone,
   PopiconsKeyDuotone,
   PopiconsFileDuotone,
+  PopiconsHeartDuotone,
 } from "@popicons/react";
 import { localStorageKeys, getMerchantConfig } from "../config";
 import { verifyPin } from "../utils/pinUtils";
@@ -79,6 +80,11 @@ export function Navbar() {
               <li key="share">
                 <Link to="../share" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
                   <PopiconsShareDuotone className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Share
+                </Link>
+              </li>
+              <li key="tiponly">
+                <Link to="../tiponly" className="text-white text-base md:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
+                  <PopiconsHeartDuotone className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3" /> Tip Only
                 </Link>
               </li>
               <li key="security">

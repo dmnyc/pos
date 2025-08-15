@@ -11,6 +11,7 @@ import {
   defaultMerchantConfig,
   defaultTipSettings
 } from '../config';
+import { playPaymentChime } from '../utils/audioUtils';
 
 export function Settings() {
   useRequirePin();
@@ -55,8 +56,14 @@ export function Settings() {
   }, [merchantConfig.theme]);
 
   const handleMerchantConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setMerchantConfig(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    const newValue = type === 'checkbox' ? checked : value;
+    setMerchantConfig(prev => ({ ...prev, [name]: newValue }));
+  };
+
+  const handleChimePreview = () => {
+    playPaymentChime();
   };
 
   // Add state for the raw percentage input as a controlled input
@@ -205,6 +212,32 @@ export function Settings() {
                       />
                     </div>
                   </div>
+                </div>
+                
+                <div className="form-control">
+                  <label className="label py-1 md:py-2 cursor-pointer">
+                    <span className="label-text text-white text-xs md:text-sm lg:text-base">Payment Chime</span>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={handleChimePreview}
+                        className="btn btn-ghost btn-xs text-gray-400 hover:text-white"
+                      >
+                        Preview
+                      </button>
+                      <input 
+                        type="checkbox" 
+                        name="paymentChimeEnabled"
+                        className="toggle toggle-sm md:toggle-md" 
+                        style={{ 
+                          backgroundColor: merchantConfig.paymentChimeEnabled ? '#ffcc99' : '#4b5563',
+                          borderColor: merchantConfig.paymentChimeEnabled ? '#ffcc99' : '#6b7280'
+                        }}
+                        checked={merchantConfig.paymentChimeEnabled}
+                        onChange={handleMerchantConfigChange}
+                      />
+                    </div>
+                  </label>
                 </div>
                 
                 <div>
