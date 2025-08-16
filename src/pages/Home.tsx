@@ -209,9 +209,11 @@ export function Home() {
         className="flex flex-col justify-center items-center w-full h-full bg-black"
         data-theme={config.theme}
       >
-        <div className="flex flex-1 flex-col justify-center items-center max-w-lg w-full px-4">
+        <div className="flex flex-1 flex-col justify-center items-center max-w-xl lg:max-w-2xl w-full px-4">
           <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
-            <MerchantLogo className="w-[450px] md:w-[600px] lg:w-[900px] h-auto max-w-[90vw]" />
+            <MerchantLogo 
+              className="h-auto w-auto max-w-[675px] md:max-w-[900px] lg:max-w-[1350px] max-h-[30vh] md:max-h-[35vh] lg:max-h-[40vh]" 
+            />
           </div>
 
           <p className="text-center mb-24 md:mb-28 lg:mb-32 text-white text-sm md:text-base lg:text-lg">
@@ -223,7 +225,7 @@ export function Home() {
             />
           </div>
           <button 
-            className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn text-black bg-white hover:bg-gray-200" 
+            className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn !bg-gray-800 hover:!bg-gray-300 !text-white hover:!text-black transition-colors duration-300" 
             onClick={handleImport}
           >
             Import wallet URL
@@ -254,7 +256,7 @@ export function Home() {
         title="Import Wallet URL"
         message={(
           <div>
-            <p className="mb-4">{`On ${config.displayName} in another browser, go to the sidebar menu -> Share, copy the share URL and paste it here.`}</p>
+            <p className="mb-4">{`On ${config.displayName} in another browser, go to the sidebar menu → Share, copy the share URL and paste it here.`}</p>
             <input
               type="text"
               value={importUrl}
