@@ -37,7 +37,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
               onResult(decodedText);
               html5QrCode.stop();
             },
-            (errorMessage) => {
+            (_errorMessage) => {
               // Errors during ongoing scan are ignored
             }
           );
