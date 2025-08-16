@@ -6,12 +6,14 @@ import { getMerchantConfig } from "../../config";
 import { Navbar } from "../../components/Navbar";
 import { PageContainer } from "../../components/PageContainer";
 import { playPaymentChime } from "../../utils/audioUtils";
+import CodepenLightning from "../../components/animations/CodepenLightning";
 
 export function Paid() {
   const navigate = useNavigate();
   const location = useLocation();
   const { lastInvoiceData } = useStore();
   const [showTipButton, setShowTipButton] = useState(true);
+  const [showLightning, setShowLightning] = useState(true);
   const config = getMerchantConfig();
   
   // Check if we're coming from a tip payment
@@ -27,6 +29,13 @@ export function Paid() {
         playPaymentChime();
       }, 300);
     }
+    
+    // Hide lightning animation after it completes
+    const lightningTimer = setTimeout(() => {
+      setShowLightning(false);
+    }, 1000);
+    
+    return () => clearTimeout(lightningTimer);
   }, [location, config.paymentChimeEnabled]);
 
   const handleTip = () => {
@@ -67,6 +76,7 @@ export function Paid() {
   return (
     <>
       <Navbar />
+      {showLightning && <CodepenLightning duration={1000} />}
       <PageContainer>
         <div className="flex flex-col items-center justify-center w-full max-w-xs md:max-w-md lg:max-w-lg wide:max-w-screen-md mx-auto py-2 md:py-4">
           {/* Payment success block with responsive sizing */}

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="600px" viewBox="0 0 800 600" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main Lightning Bolt 1 -->
+  <path id="bolt1" d="M400,10 L380,80 L410,100 L380,180 L420,200 L370,320 L400,340 L330,500" 
+        stroke="#FFEB3B" stroke-width="2" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;1;0.2;0.8;0.1;0.5;0" dur="0.6s" begin="0.1s" fill="freeze" />
+  </path>
+  
+  <!-- Main Lightning Bolt 2 -->
+  <path id="bolt2" d="M340,5 L330,70 L350,90 L320,150 L350,170 L300,270 L340,290 L280,440" 
+        stroke="#FFEB3B" stroke-width="2" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;1;0.2;0.8;0.1;0.5;0" dur="0.6s" begin="0.2s" fill="freeze" />
+  </path>
+  
+  <!-- Main Lightning Bolt 3 -->
+  <path id="bolt3" d="M480,8 L460,60 L480,80 L450,140 L480,160 L440,250 L470,270 L430,420" 
+        stroke="#FFEB3B" stroke-width="2" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;1;0.2;0.8;0.1;0.5;0" dur="0.6s" begin="0.3s" fill="freeze" />
+  </path>
+  
+  <!-- Main Lightning Bolt 4 -->
+  <path id="bolt4" d="M550,12 L530,75 L560,95 L520,160 L550,180 L510,280 L550,310 L490,450" 
+        stroke="#FFEB3B" stroke-width="2" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;1;0.2;0.8;0.1;0.5;0" dur="0.6s" begin="0.15s" fill="freeze" />
+  </path>
+  
+  <!-- Main Lightning Bolt 5 -->
+  <path id="bolt5" d="M250,15 L230,65 L260,85 L230,160 L260,180 L210,280 L240,300 L190,430" 
+        stroke="#FFEB3B" stroke-width="2" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;1;0.2;0.8;0.1;0.5;0" dur="0.6s" begin="0.25s" fill="freeze" />
+  </path>
+  
+  <!-- Secondary branches and forks -->
+  <path id="branch1" d="M380,80 L350,120" 
+        stroke="#FFEB3B" stroke-width="1.5" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;0.8;0.1;0.4;0" dur="0.4s" begin="0.15s" fill="freeze" />
+  </path>
+  
+  <path id="branch2" d="M410,100 L440,140" 
+        stroke="#FFEB3B" stroke-width="1.5" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;0.8;0.1;0.4;0" dur="0.4s" begin="0.2s" fill="freeze" />
+  </path>
+  
+  <path id="branch3" d="M350,90 L320,120" 
+        stroke="#FFEB3B" stroke-width="1.5" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;0.8;0.1;0.4;0" dur="0.4s" begin="0.25s" fill="freeze" />
+  </path>
+  
+  <path id="branch4" d="M470,270 L500,310" 
+        stroke="#FFEB3B" stroke-width="1.5" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;0.8;0.1;0.4;0" dur="0.4s" begin="0.35s" fill="freeze" />
+  </path>
+  
+  <path id="branch5" d="M240,300 L210,340" 
+        stroke="#FFEB3B" stroke-width="1.5" fill="none" 
+        stroke-linecap="round" stroke-linejoin="round"
+        style="opacity: 0;">
+    <animate attributeName="opacity" values="0;0.8;0.1;0.4;0" dur="0.4s" begin="0.3s" fill="freeze" />
+  </path>
+  
+  <!-- Glow filters for the lightning -->
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Apply the glow filter to all paths -->
+  <use href="#bolt1" filter="url(#glow)" />
+  <use href="#bolt2" filter="url(#glow)" />
+  <use href="#bolt3" filter="url(#glow)" />
+  <use href="#bolt4" filter="url(#glow)" />
+  <use href="#bolt5" filter="url(#glow)" />
+  <use href="#branch1" filter="url(#glow)" />
+  <use href="#branch2" filter="url(#glow)" />
+  <use href="#branch3" filter="url(#glow)" />
+  <use href="#branch4" filter="url(#glow)" />
+  <use href="#branch5" filter="url(#glow)" />
+</svg>
