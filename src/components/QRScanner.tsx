@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import React, { useEffect, useRef, useState } from 'react';
+import { BrowserQRCodeReader, IScannerControls } from '@zxing/browser';
 
 interface QRScannerProps {
   onResult: (result: string) => void;
@@ -7,61 +7,73 @@ interface QRScannerProps {
 }
 
 const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const controlsRef = useRef<IScannerControls | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [scannerInitialized, setScannerInitialized] = useState(false);
-  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
 
   useEffect(() => {
-    const initializeScanner = async () => {
+    // Check if we're in a secure context
+    if (!window.isSecureContext) {
+      setError("Camera access requires HTTPS. Please use a secure connection.");
+      return;
+    }
+
+    const startScanner = async () => {
       try {
-        // Check if we're in a secure context (https or localhost)
-        if (!window.isSecureContext) {
-          setError("Camera access requires HTTPS. Please use a secure connection.");
+        // Create a new QR code reader
+        const codeReader = new BrowserQRCodeReader();
+        
+        // Reset error state
+        setError(null);
+        
+        // Try to get video element
+        if (!videoRef.current) {
+          setError("Video element not available");
           return;
         }
         
-        // Create instance of scanner
-        scannerRef.current = new Html5Qrcode("qr-reader");
-        
-        try {
-          // Use environment-facing camera (rear camera) directly with facingMode constraint
-          await scannerRef.current.start(
-            { facingMode: "environment" }, // This forces the rear camera on mobile devices
-            {
-              fps: 10,
-              qrbox: { width: 250, height: 250 }
-            },
-            (decodedText) => {
-              // On successful scan
-              onResult(decodedText);
-              if (scannerRef.current) {
-                scannerRef.current.stop().catch(e => console.error("Error stopping after scan:", e));
-              }
-            },
-            (_errorMessage) => {
-              // Errors during ongoing scan are ignored
+        // Start scanning with environment-facing camera (rear camera)
+        const controls = await codeReader.decodeFromConstraints(
+          {
+            video: { 
+              facingMode: 'environment',
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
             }
-          );
-          
-          setScannerInitialized(true);
-        } catch (err) {
-          setError(`Error starting camera: ${err instanceof Error ? err.message : String(err)}`);
-        }
+          },
+          videoRef.current,
+          (result, error, controls) => {
+            if (result) {
+              // On successful scan
+              onResult(result.getText());
+              // Stop scanning
+              controls.stop();
+            }
+            
+            if (error && !(error instanceof TypeError)) {
+              // Ignore TypeError which is thrown when scanning is stopped
+              console.error("Scanning error:", error);
+            }
+          }
+        );
+        
+        // Save controls reference for cleanup
+        controlsRef.current = controls;
+        setIsScanning(true);
+        
       } catch (err) {
-        setError(`Error initializing camera: ${err instanceof Error ? err.message : String(err)}`);
+        setError(`Error accessing camera: ${err instanceof Error ? err.message : String(err)}`);
+        console.error("Scanner error:", err);
       }
     };
 
-    initializeScanner();
+    startScanner();
 
-    // Cleanup function to stop scanner when component unmounts
+    // Cleanup: stop scanner when component unmounts
     return () => {
-      if (scannerRef.current && scannerInitialized) {
-        try {
-          scannerRef.current.stop().catch(error => console.error("Error stopping QR scanner:", error));
-        } catch (error) {
-          console.error("Error stopping QR scanner:", error);
-        }
+      if (controlsRef.current) {
+        controlsRef.current.stop();
       }
     };
   }, [onResult]);
@@ -80,12 +92,22 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           </svg>
         </button>
         
-        {/* QR Scanner container */}
-        <div 
-          id="qr-reader" 
-          className="w-full aspect-square bg-gray-900 rounded-lg overflow-hidden"
-          style={{ maxHeight: '80vh' }}
-        ></div>
+        {/* Video element with scanner overlay */}
+        <div className="relative w-full aspect-square bg-gray-900 rounded-lg overflow-hidden">
+          <video 
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            muted
+            playsInline
+          />
+          
+          {/* Scanning Frame Overlay */}
+          {isScanning && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-64 h-64 border-2 border-white opacity-70 rounded-lg" />
+            </div>
+          )}
+        </div>
       </div>
       
       {error && (
