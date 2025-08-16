@@ -54,6 +54,12 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
 
     const initializeScanner = async () => {
       try {
+        // Check if we're in a secure context (https or localhost)
+        if (!window.isSecureContext) {
+          setError("Camera access requires HTTPS. Please use a secure connection.");
+          return;
+        }
+        
         // Create instance of scanner
         html5QrCode = new Html5Qrcode("qr-reader");
         
