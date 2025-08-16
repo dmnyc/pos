@@ -98,12 +98,14 @@ export function Paid() {
             
             {/* Add a tip button with appropriate sizing */}
             {showTipButton && (
-              <button 
-                onClick={handleTip} 
-                className={`${actionButtonClass} h-10 md:h-12 lg:h-12 lg:landscape:h-10 wide:h-16 wide:landscape:h-12 max-w-xs md:max-w-md lg:max-w-md lg:landscape:max-w-sm wide:max-w-xl wide:landscape:max-w-md text-sm md:text-base lg:text-base lg:landscape:text-base wide:text-2xl wide:landscape:text-xl`}
-              >
-                Add a tip
-              </button>
+              <div className="w-full max-w-xs md:max-w-md lg:max-w-md lg:landscape:max-w-sm wide:max-w-xl wide:landscape:max-w-md">
+                <button 
+                  onClick={handleTip} 
+                  className={`${actionButtonClass} w-full h-10 md:h-12 lg:h-12 lg:landscape:h-10 wide:h-16 wide:landscape:h-12 text-sm md:text-base lg:text-base lg:landscape:text-base wide:text-2xl wide:landscape:text-xl`}
+                >
+                  Add a tip
+                </button>
+              </div>
             )}
           </div>
           
