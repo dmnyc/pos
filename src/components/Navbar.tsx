@@ -10,7 +10,7 @@ import {
   PopiconsFileDuotone,
   PopiconsHeartDuotone,
 } from "@popicons/react";
-import { localStorageKeys, getMerchantConfig } from "../config";
+import { localStorageKeys, getMerchantConfig, defaultMerchantConfig, saveMerchantConfig } from "../config";
 import { verifyPin } from "../utils/pinUtils";
 import { useState, useRef, useEffect } from "react";
 import { getNavbarHeightClasses, getNavbarMinHeightClasses } from "../utils/layoutConstants";
@@ -50,9 +50,18 @@ export function Navbar() {
   const handleLogout = async () => {
     const verified = await verifyPin();
     if (verified) {
-      // Clear both wallet connection and security PIN
+      // Clear wallet connection and security PIN
       window.localStorage.removeItem(localStorageKeys.nwcUrl);
       window.localStorage.removeItem('pos_pin');
+      
+      // Reset merchant config to default - only keep the name, reset everything else
+      const currentConfig = getMerchantConfig();
+      const resetConfig = {
+        ...defaultMerchantConfig,
+        name: currentConfig.name // Keep just the merchant name
+      };
+      saveMerchantConfig(resetConfig);
+      
       handleMenuItemClick();
       navigate('/');
     }
