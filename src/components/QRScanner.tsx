@@ -16,7 +16,31 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
   const [scannerInitialized, setScannerInitialized] = useState(false);
   const [cameras, setCameras] = useState<CameraDevice[]>([]);
   const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
+  const [usingFrontCamera, setUsingFrontCamera] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Function to check if a camera is a front camera
+  const isFrontCamera = (label: string): boolean => {
+    const frontIdentifiers = ['front', 'user', 'selfie', 'face'];
+    return frontIdentifiers.some(id => label.toLowerCase().includes(id));
+  };
+
+  // Group cameras into front and back categories
+  const groupCameras = (devices: CameraDevice[]): { front: CameraDevice[], back: CameraDevice[] } => {
+    const front: CameraDevice[] = [];
+    const back: CameraDevice[] = [];
+    
+    devices.forEach(device => {
+      if (isFrontCamera(device.label)) {
+        front.push(device);
+      } else {
+        back.push(device);
+      }
+    });
+    
+    return { front, back };
+  };
 
   // Start or restart scanner with selected camera
   const startScanner = async (cameraId: string) => {
@@ -28,7 +52,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
         try {
           await scannerRef.current.stop();
           // Small delay to ensure camera is fully stopped before restarting
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise(resolve => setTimeout(resolve, 500));
         } catch (stopErr) {
           console.error("Error stopping camera:", stopErr);
           // Continue anyway, as we're trying to start a new camera
@@ -40,16 +64,37 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
         scannerRef.current = new Html5Qrcode("qr-reader");
       }
       
+      // Calculate the size for the QR box based on container width
+      let qrboxSize = 250;
+      if (containerRef.current) {
+        // Use 70% of the container width for the QR box, but keep it square
+        qrboxSize = Math.min(containerRef.current.offsetWidth * 0.7, 250);
+      }
+      
+      // Check if this is a front camera to update the state
+      if (cameras.length > 0) {
+        const camera = cameras.find(c => c.id === cameraId);
+        if (camera) {
+          setUsingFrontCamera(isFrontCamera(camera.label));
+        }
+      }
+      
       // Start scanning with the selected camera
       await scannerRef.current.start(
         cameraId,
         {
           fps: 10,
           qrbox: {
-            width: 250,
-            height: 250
+            width: qrboxSize,
+            height: qrboxSize
           },
-          aspectRatio: 1.0 // Force a square aspect ratio
+          aspectRatio: 1.0, // Force a square aspect ratio
+          formatsToSupport: [Html5Qrcode.FORMATSTOSUPP_TYPE_QR_CODE],
+          // Use the proper facingMode based on camera type
+          videoConstraints: {
+            deviceId: cameraId,
+            facingMode: usingFrontCamera ? "user" : "environment"
+          }
         },
         (decodedText) => {
           // On successful scan
@@ -86,16 +131,11 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           // Store available cameras
           setCameras(devices);
           
-          // Try to find a back camera (environment-facing camera)
-          let backCamera = devices.find(device => 
-            device.label.toLowerCase().includes('back') || 
-            device.label.toLowerCase().includes('rear') ||
-            device.label.toLowerCase().includes('environment')
-          );
+          // Group cameras into front and back
+          const { front, back } = groupCameras(devices);
           
-          // If we found a back camera, use it; otherwise use the last camera (likely to be back camera)
-          // Note: On many mobile devices, the back camera is often the last in the list
-          const cameraToUse = backCamera || devices[devices.length - 1];
+          // Select the first back camera if available, otherwise use the first camera
+          const cameraToUse = back.length > 0 ? back[0] : devices[0];
           
           // Start scanner with selected camera
           await startScanner(cameraToUse.id);
@@ -121,27 +161,34 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
     };
   }, [onResult]);
 
-  // Handler for camera switching
+  // Handler for camera switching - toggle between front and back only
   const handleCameraSwitch = async () => {
-    // If no cameras or only one camera, do nothing
-    if (cameras.length <= 1 || !selectedCamera) return;
+    if (cameras.length <= 1) return;
     
-    // Find the index of the current camera
-    const currentIndex = cameras.findIndex(camera => camera.id === selectedCamera);
+    // Group cameras
+    const { front, back } = groupCameras(cameras);
     
-    // Calculate the index of the next camera (cycle through available cameras)
-    const nextIndex = (currentIndex + 1) % cameras.length;
+    if (front.length === 0 || back.length === 0) {
+      // If there are no front or back cameras, just use regular cycling
+      const currentIndex = cameras.findIndex(camera => camera.id === selectedCamera);
+      const nextIndex = (currentIndex + 1) % cameras.length;
+      await startScanner(cameras[nextIndex].id);
+      return;
+    }
     
-    // Clear any previous errors
-    setError(null);
-    
-    // Start scanning with the next camera
-    await startScanner(cameras[nextIndex].id);
+    // Toggle between front and back camera groups
+    if (usingFrontCamera) {
+      // Switch to the first back camera
+      await startScanner(back[0].id);
+    } else {
+      // Switch to the first front camera
+      await startScanner(front[0].id);
+    }
   };
 
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="relative w-full">
+      <div ref={containerRef} className="relative w-full">
         {/* Close button in top-right corner */}
         <button
           onClick={onClose}
@@ -171,6 +218,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
         <div 
           id="qr-reader" 
           className="w-full aspect-square bg-gray-900 rounded-lg overflow-hidden"
+          style={{ maxHeight: '80vh' }}
         ></div>
       </div>
       
@@ -184,7 +232,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
         Point your camera at a QR code containing a wallet URL
         {cameras.length > 1 && (
           <div className="mt-1 text-xs text-gray-400">
-            Use the camera button in the top-left to switch cameras
+            {usingFrontCamera ? 'Using front camera' : 'Using back camera'} • 
+            Tap camera button to switch
           </div>
         )}
       </div>
