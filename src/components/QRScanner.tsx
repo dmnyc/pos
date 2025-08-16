@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 
 interface QRScannerProps {
@@ -16,26 +16,47 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
   const [scannerInitialized, setScannerInitialized] = useState(false);
   const [cameras, setCameras] = useState<CameraDevice[]>([]);
   const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
 
   // Start or restart scanner with selected camera
-  const startScanner = async (cameraId: string, html5QrCode: Html5Qrcode) => {
+  const startScanner = async (cameraId: string) => {
     try {
+      setError(null);
+      
       // Stop scanner if it's already running
-      if (scannerInitialized) {
-        await html5QrCode.stop();
+      if (scannerRef.current && scannerInitialized) {
+        try {
+          await scannerRef.current.stop();
+          // Small delay to ensure camera is fully stopped before restarting
+          await new Promise(resolve => setTimeout(resolve, 300));
+        } catch (stopErr) {
+          console.error("Error stopping camera:", stopErr);
+          // Continue anyway, as we're trying to start a new camera
+        }
+      }
+      
+      // Create a new instance if needed
+      if (!scannerRef.current) {
+        scannerRef.current = new Html5Qrcode("qr-reader");
       }
       
       // Start scanning with the selected camera
-      await html5QrCode.start(
+      await scannerRef.current.start(
         cameraId,
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 }
+          qrbox: {
+            width: 250,
+            height: 250
+          },
+          aspectRatio: 1.0 // Force a square aspect ratio
         },
         (decodedText) => {
           // On successful scan
           onResult(decodedText);
-          html5QrCode.stop();
+          if (scannerRef.current) {
+            scannerRef.current.stop().catch(e => console.error("Error stopping after scan:", e));
+          }
         },
         (_errorMessage) => {
           // Errors during ongoing scan are ignored
@@ -50,8 +71,6 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
   };
 
   useEffect(() => {
-    let html5QrCode: Html5Qrcode;
-
     const initializeScanner = async () => {
       try {
         // Check if we're in a secure context (https or localhost)
@@ -59,9 +78,6 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           setError("Camera access requires HTTPS. Please use a secure connection.");
           return;
         }
-        
-        // Create instance of scanner
-        html5QrCode = new Html5Qrcode("qr-reader");
         
         // Check if camera permissions are available
         const devices = await Html5Qrcode.getCameras();
@@ -71,7 +87,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           setCameras(devices);
           
           // Try to find a back camera (environment-facing camera)
-          const backCamera = devices.find(device => 
+          let backCamera = devices.find(device => 
             device.label.toLowerCase().includes('back') || 
             device.label.toLowerCase().includes('rear') ||
             device.label.toLowerCase().includes('environment')
@@ -82,7 +98,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           const cameraToUse = backCamera || devices[devices.length - 1];
           
           // Start scanner with selected camera
-          await startScanner(cameraToUse.id, html5QrCode);
+          await startScanner(cameraToUse.id);
         } else {
           setError("No camera found or permission denied");
         }
@@ -95,9 +111,9 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
 
     // Cleanup function to stop scanner when component unmounts
     return () => {
-      if (html5QrCode && scannerInitialized) {
+      if (scannerRef.current && scannerInitialized) {
         try {
-          html5QrCode.stop().catch(error => console.error("Error stopping QR scanner:", error));
+          scannerRef.current.stop().catch(error => console.error("Error stopping QR scanner:", error));
         } catch (error) {
           console.error("Error stopping QR scanner:", error);
         }
@@ -116,11 +132,11 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
     // Calculate the index of the next camera (cycle through available cameras)
     const nextIndex = (currentIndex + 1) % cameras.length;
     
-    // Create a new scanner instance
-    const html5QrCode = new Html5Qrcode("qr-reader");
+    // Clear any previous errors
+    setError(null);
     
     // Start scanning with the next camera
-    await startScanner(cameras[nextIndex].id, html5QrCode);
+    await startScanner(cameras[nextIndex].id);
   };
 
   return (
