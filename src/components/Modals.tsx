@@ -5,6 +5,7 @@ interface BaseModalProps {
   onClose?: () => void;
   title: string;
   children?: React.ReactNode;
+  size?: 'default' | 'large';
 }
 
 interface AlertModalProps extends BaseModalProps {
@@ -25,13 +26,14 @@ const BaseModal: React.FC<BaseModalProps> = ({
   isOpen,
   onClose,
   title,
-  children
+  children,
+  size = 'default'
 }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-900 rounded-lg p-6 w-full max-w-sm mx-4 relative">
+      <div className={`bg-gray-900 rounded-lg p-6 mx-4 relative ${size === 'large' ? 'w-full max-w-md' : 'w-full max-w-sm'}`}>
         {onClose && (
           <button 
             onClick={onClose}
@@ -56,9 +58,10 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   title,
   message,
   buttonText = "OK",
-  onConfirm
+  onConfirm,
+  size
 }) => (
-  <BaseModal isOpen={isOpen} title={title} onClose={onClose}>
+  <BaseModal isOpen={isOpen} title={title} onClose={onClose} size={size}>
     <div className="text-white mb-6">{message}</div>
     <div className="flex justify-center">
       <button
@@ -85,9 +88,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   confirmText = "Confirm",
   cancelText = "Cancel",
-  isDanger = false
+  isDanger = false,
+  size
 }) => (
-  <BaseModal isOpen={isOpen} title={title} onClose={onClose}>
+  <BaseModal isOpen={isOpen} title={title} onClose={onClose} size={size}>
     <p className="text-white mb-6">{message}</p>
     <div className="flex space-x-3">
       <button
