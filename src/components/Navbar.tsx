@@ -135,8 +135,8 @@ export function Navbar() {
       </div>
       
       {/* Right section with heart icon for Tip Only */}
-      <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-center items-center">
-        {location.pathname !== "/wallet/tiponly" && (
+      <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-end items-center">
+        {location.pathname !== "/wallet/tiponly" ? (
           <Link 
             to="../tiponly" 
             className="text-gray-300 hover:text-white flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none transition-colors"
@@ -144,6 +144,19 @@ export function Navbar() {
           >
             <PopiconsHeartDuotone className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6" />
           </Link>
+        ) : (
+          <div className="flex items-center justify-end">
+            <Link 
+              to="../new" 
+              className="flex items-center group"
+              aria-label="Exit Tip Only"
+            >
+              <span className="text-gray-300 group-hover:text-gray-100 text-xs md:text-sm lg:text-sm wide:text-base mr-1 md:mr-1.5 lg:mr-2">Tip Only</span>
+              <div className="text-red-500 group-hover:text-red-400 flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 transition-colors">
+                <PopiconsHeartDuotone className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6" />
+              </div>
+            </Link>
+          </div>
         )}
       </div>
 
