@@ -135,7 +135,7 @@ export function Navbar() {
       </div>
       
       {/* Right section with heart icon for Tip Only */}
-      <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-end items-center">
+      <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-center items-center">
         {location.pathname !== "/wallet/tiponly" ? (
           <Link 
             to="../tiponly" 
@@ -145,16 +145,16 @@ export function Navbar() {
             <PopiconsHeartDuotone className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6" />
           </Link>
         ) : (
-          <div className="flex items-center justify-end">
+          <div className="relative flex items-center justify-center">
+            <span className="absolute right-full whitespace-nowrap mr-1.5 text-[10px] md:text-xs lg:text-xs wide:text-sm text-red-600 self-center">Tip Only</span>
             <Link 
               to="../new" 
-              className="flex items-center group"
+              className="flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none"
               aria-label="Exit Tip Only"
             >
-              <span className="text-gray-300 group-hover:text-gray-100 text-xs md:text-sm lg:text-sm wide:text-base mr-1 md:mr-1.5 lg:mr-2">Tip Only</span>
-              <div className="text-red-500 group-hover:text-red-400 flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 transition-colors">
-                <PopiconsHeartDuotone className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6" />
-              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#E11D48" className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6">
+                <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+              </svg>
             </Link>
           </div>
         )}
