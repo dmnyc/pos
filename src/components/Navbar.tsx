@@ -8,7 +8,7 @@ import {
   PopiconsSettingsDuotone,
   PopiconsKeyDuotone,
   PopiconsFileDuotone,
-  PopiconsHeartDuotone,
+  PopiconsHeartDuotone, // Still needed for the menu item
 } from "@popicons/react";
 import { localStorageKeys, getMerchantConfig } from "../config";
 import { verifyPin } from "../utils/pinUtils";
