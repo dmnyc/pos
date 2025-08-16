@@ -89,7 +89,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
             height: qrboxSize
           },
           aspectRatio: 1.0, // Force a square aspect ratio
-          formatsToSupport: [Html5Qrcode.FORMATSTOSUPP_TYPE_QR_CODE],
+          // Explicitly define the formats to support
+          formatsToSupport: [0x1], // QR Code format
           // Use the proper facingMode based on camera type
           videoConstraints: {
             deviceId: cameraId,
