@@ -10,7 +10,7 @@ import {
   PopiconsFileDuotone,
   PopiconsHeartDuotone,
 } from "@popicons/react";
-import { localStorageKeys, getMerchantConfig, defaultMerchantConfig, saveMerchantConfig } from "../config";
+import { localStorageKeys, getMerchantConfig } from "../config";
 import { verifyPin } from "../utils/pinUtils";
 import { useState, useRef, useEffect } from "react";
 import { getNavbarHeightClasses, getNavbarMinHeightClasses } from "../utils/layoutConstants";
@@ -54,13 +54,16 @@ export function Navbar() {
       window.localStorage.removeItem(localStorageKeys.nwcUrl);
       window.localStorage.removeItem('pos_pin');
       
-      // Reset merchant config to default - only keep the name, reset everything else
-      const currentConfig = getMerchantConfig();
-      const resetConfig = {
-        ...defaultMerchantConfig,
-        name: currentConfig.name // Keep just the merchant name
-      };
-      saveMerchantConfig(resetConfig);
+      // APPROACH 1: Completely remove merchant config (will use default on next load)
+      window.localStorage.removeItem(localStorageKeys.merchantConfig);
+      
+      // APPROACH 2: Or reset it to default (keeping the name)
+      // const currentConfig = getMerchantConfig();
+      // const resetConfig = {
+      //   ...defaultMerchantConfig,
+      //   name: currentConfig.name // Keep just the merchant name
+      // };
+      // saveMerchantConfig(resetConfig);
       
       handleMenuItemClick();
       navigate('/');

@@ -214,7 +214,8 @@ export function Home() {
         <div className="flex flex-1 flex-col justify-center items-center max-w-xl lg:max-w-2xl w-full px-4">
           <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
             <MerchantLogo 
-              className="h-auto w-auto max-w-[675px] md:max-w-[900px] lg:max-w-[1350px] max-h-[30vh] md:max-h-[35vh] lg:max-h-[40vh]" 
+              className="h-auto w-auto max-w-[675px] md:max-w-[900px] lg:max-w-[1350px] max-h-[30vh] md:max-h-[35vh] lg:max-h-[40vh]"
+              isHomePage={true}
             />
           </div>
 
