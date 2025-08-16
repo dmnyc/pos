@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { MerchantLogo } from "./MerchantLogo";
 import { ConfirmModal } from "./Modals";
 import {
@@ -21,6 +21,7 @@ export function Navbar() {
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Handle clicks outside the dropdown to close it
   useEffect(() => {
@@ -121,8 +122,18 @@ export function Navbar() {
         <MerchantLogo />
       </div>
       
-      {/* Empty space to balance the navbar */}
-      <div className="w-10 md:w-12 lg:w-16 wide:w-16"></div>
+      {/* Right section with heart icon for Tip Only */}
+      <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-center items-center">
+        {location.pathname !== "/wallet/tiponly" && (
+          <Link 
+            to="../tiponly" 
+            className="text-gray-300 hover:text-white flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none transition-colors"
+            aria-label="Tip Only"
+          >
+            <PopiconsHeartDuotone className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6" />
+          </Link>
+        )}
+      </div>
 
       <ConfirmModal
         isOpen={logoutConfirmOpen}
