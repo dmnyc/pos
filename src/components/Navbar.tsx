@@ -139,7 +139,7 @@ export function Navbar() {
         {location.pathname !== "/wallet/tiponly" ? (
           <Link 
             to="../tiponly" 
-            className="flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none hover:opacity-80 transition-opacity"
+            className="flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none hover:brightness-150 transition-all"
             aria-label="Tip Only"
           >
             <svg viewBox="0 0 512 512" className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6">
@@ -151,7 +151,7 @@ export function Navbar() {
             <span className="absolute right-full whitespace-nowrap mr-1.5 text-[10px] md:text-xs lg:text-xs wide:text-sm text-[#ef4445] self-center font-bold">Tip Only</span>
             <Link 
               to="../new" 
-              className="flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none hover:opacity-80 transition-opacity"
+              className="flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none hover:brightness-150 transition-all"
               aria-label="Exit Tip Only"
             >
               <svg viewBox="0 0 512 512" className="h-5 w-5 md:h-5 md:w-5 lg:h-6 lg:w-6 wide:h-6 wide:w-6">
