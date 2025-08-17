@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRequirePin } from '../hooks/useRequirePin';
 import { AlertModal, ConfirmModal } from '../components/Modals';
 import { ExactBackButton } from '../components/ExactBackButton';
+import { CheckForUpdates } from '../components/settings';
 import {
   getMerchantConfig,
   saveMerchantConfig,
@@ -183,6 +184,12 @@ export function Settings() {
             >
               Tips
             </a>
+            <a
+              className={`tab text-xs md:text-sm lg:text-base ${activeTab === 'advanced' ? 'bg-white text-black' : 'text-white'}`}
+              onClick={() => setActiveTab('advanced')}
+            >
+              Advanced
+            </a>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-2 md:space-y-4">
@@ -351,38 +358,61 @@ export function Settings() {
                 )}
               </div>
             )}
+            
+            {activeTab === 'advanced' && (
+              <div className="space-y-4 md:space-y-6 w-full">
+                <CheckForUpdates className="mb-4" />
+                
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold mb-2">Application Recovery</h3>
+                  <p className="text-sm text-gray-400 mb-4">
+                    If you're experiencing issues with the application, you can try refreshing it.
+                    This won't clear your PIN or wallet connection.
+                  </p>
+                  <button 
+                    type="button"
+                    onClick={() => window.location.reload()}
+                    className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded text-sm transition-colors"
+                  >
+                    Refresh Application
+                  </button>
+                </div>
+              </div>
+            )}
 
-            <div className="pt-2 md:pt-4 space-y-2 md:space-y-3 w-full">
-              <button
-                type="submit"
-                className={`w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg btn settings-button ${merchantConfig.theme === "standard"
-                  ? "bg-charge-green text-white hover:bg-green-500"
-                  : merchantConfig.theme === "orangepill"
-                    ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
-                    : merchantConfig.theme === "nostrich"
-                      ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
-                      : merchantConfig.theme === "beehive"
-                        ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
-                        : merchantConfig.theme === "liquidity"
-                          ? "bg-liquidity-gradient text-black hover:bg-liquidity-hover"
-                          : merchantConfig.theme === "safari"
-                          ? "bg-safari-gradient text-black hover:bg-safari-hover"
-                          : merchantConfig.theme === "blocktron"
-                            ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
-                            : "btn-industrial-gradient"
-                }`}
-              >
-                Save Settings
-              </button>
+            {(activeTab === 'branding' || activeTab === 'tips') && (
+              <div className="pt-2 md:pt-4 space-y-2 md:space-y-3 w-full">
+                <button
+                  type="submit"
+                  className={`w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg btn settings-button ${merchantConfig.theme === "standard"
+                    ? "bg-charge-green text-white hover:bg-green-500"
+                    : merchantConfig.theme === "orangepill"
+                      ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
+                      : merchantConfig.theme === "nostrich"
+                        ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
+                        : merchantConfig.theme === "beehive"
+                          ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
+                          : merchantConfig.theme === "liquidity"
+                            ? "bg-liquidity-gradient text-black hover:bg-liquidity-hover"
+                            : merchantConfig.theme === "safari"
+                            ? "bg-safari-gradient text-black hover:bg-safari-hover"
+                            : merchantConfig.theme === "blocktron"
+                              ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
+                              : "btn-industrial-gradient"
+                  }`}
+                >
+                  Save Settings
+                </button>
 
-              <button
-                type="button"
-                onClick={handleResetDefaults}
-                className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg settings-button"
-              >
-                Restore Default Settings
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={handleResetDefaults}
+                  className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg settings-button"
+                >
+                  Restore Default Settings
+                </button>
+              </div>
+            )}
 
             {saved && (
               <div className="text-charge-green text-center mt-2 md:mt-3">
