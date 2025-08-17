@@ -223,10 +223,7 @@ export function Home() {
         className="flex flex-col justify-center items-center w-full h-full bg-black"
         data-theme={config.theme}
       >
-        {/* Version label in top-left corner */}
-        <div className="absolute top-2 left-2 text-gray-500">
-          <VersionLabel showPrefix={true} />
-        </div>
+        {/* Version label now only in footer */}
 
         <div className="flex flex-1 flex-col justify-center items-center max-w-xl lg:max-w-2xl w-full px-4">
           <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
