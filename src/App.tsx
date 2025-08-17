@@ -103,12 +103,16 @@ function AppContent() {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [isSecurityPage, isAnyModalOpen]);
+  }, []); // Empty dependency array to only run once on mount
 
   // Re-check conditions when location changes or modal state changes
+  // But don't show the button until the initial timer has fired
   useEffect(() => {
-    setShowRecoveryButton(!isAuthenticated() && !isSecurityPage && !isAnyModalOpen);
-  }, [location, isAnyModalOpen, isSecurityPage]);
+    // Only update if the button is already showing (after initial delay)
+    if (showRecoveryButton) {
+      setShowRecoveryButton(!isAuthenticated() && !isSecurityPage && !isAnyModalOpen);
+    }
+  }, [location, isAnyModalOpen, isSecurityPage, showRecoveryButton]);
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-0 md:py-1">
