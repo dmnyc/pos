@@ -26,9 +26,11 @@ export const VersionLabel: React.FC<VersionLabelProps> = ({
   showBuild = false
 }) => {
   const [buildNumber, setBuildNumber] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(showBuild);
 
   useEffect(() => {
     if (showBuild) {
+      setIsLoading(true);
       // Fetch version info to get the build number
       fetch('/version.json')
         .then(response => {
@@ -41,9 +43,11 @@ export const VersionLabel: React.FC<VersionLabelProps> = ({
           if (data.buildNumber) {
             setBuildNumber(data.buildNumber);
           }
+          setIsLoading(false);
         })
         .catch(error => {
           console.warn('Error fetching build number:', error);
+          setIsLoading(false);
         });
     }
   }, [showBuild]);
@@ -51,7 +55,10 @@ export const VersionLabel: React.FC<VersionLabelProps> = ({
   return (
     <span className={`text-xs opacity-50 ${className}`}>
       {showPrefix ? 'v' : ''}{APP_VERSION}
-      {showBuild && buildNumber && <span className="ml-1">(build {buildNumber})</span>}
+      {showBuild && (isLoading ? 
+        <span className="ml-1">(loading...)</span> : 
+        buildNumber && <span className="ml-1">(build {buildNumber})</span>
+      )}
     </span>
   );
 };
