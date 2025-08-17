@@ -11,20 +11,20 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
   const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
-  
+
   // Initialize QR scanner when component mounts
   useEffect(() => {
     const initializeScanner = async () => {
       try {
         // Reset error state
         setError(null);
-        
+
         // Check for cameras
         if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
           setError("Camera access not supported in this browser");
           return;
         }
-        
+
         // Get permission for camera
         try {
           await navigator.mediaDevices.getUserMedia({ video: true });
@@ -33,20 +33,20 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           setError("Camera permission denied. Please allow camera access and try again.");
           return;
         }
-        
+
         // Create a QR code reader
         const reader = new BrowserQRCodeReader();
         codeReaderRef.current = reader;
-        
+
         if (!videoRef.current) {
           setError("Video element not available");
           return;
         }
-        
+
         // Start scanning with environment-facing camera (rear camera)
         await reader.decodeFromConstraints(
           {
-            video: { 
+            video: {
               facingMode: 'environment', // Use rear camera
               width: { ideal: 720 },
               height: { ideal: 480 }
@@ -56,8 +56,8 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
           (result, error) => {
             if (result) {
               const text = result.getText();
-              console.log("QR code detected:", text);
-              
+              // console.log("QR code detected:", text);
+
               try {
                 // Validate URL
                 new URL(text);
@@ -67,31 +67,33 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
                 console.warn("Scanned non-URL QR code:", text);
               }
             }
-            
+
             if (error && !(error instanceof TypeError)) {
               console.error("Scanning error:", error);
             }
           }
         );
-        
+
         setIsScanning(true);
       } catch (err) {
         console.error("Error initializing scanner:", err);
         setError(`Error initializing scanner: ${err instanceof Error ? err.message : String(err)}`);
       }
     };
-    
+
     initializeScanner();
-    
+
     // Cleanup function
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
       if (codeReaderRef.current) {
         try {
-          // Just stop the media tracks
-          if (videoRef.current && videoRef.current.srcObject) {
-            const stream = videoRef.current.srcObject as MediaStream;
+          // Store the current video ref in a variable to ensure it doesn't change by cleanup time
+          const currentVideoRef = videoRef.current;
+          if (currentVideoRef && currentVideoRef.srcObject) {
+            const stream = currentVideoRef.srcObject as MediaStream;
             stream.getTracks().forEach(track => track.stop());
-            videoRef.current.srcObject = null;
+            currentVideoRef.srcObject = null;
           }
         } catch (err) {
           console.error("Error cleaning up scanner:", err);
@@ -99,7 +101,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
       }
     };
   }, [onResult]);
-  
+
   return (
     <div className="flex flex-col items-center w-full">
       <div className="relative w-full">
@@ -113,45 +115,45 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         {/* Video element with scanner overlay */}
-        <div className="relative w-full bg-gray-900 rounded-lg overflow-hidden" 
+        <div className="relative w-full bg-gray-900 rounded-lg overflow-hidden"
              style={{ aspectRatio: '1/1' }}>
-          <video 
+          <video
             ref={videoRef}
             className="w-full h-full object-cover"
             muted
             playsInline
             autoPlay
           />
-          
+
           {/* Scanning Frame Overlay */}
           {isScanning && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-64 h-64 border-2 border-white opacity-70 rounded-md" />
             </div>
           )}
-          
+
           {/* Scanning animation */}
           {isScanning && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-64 border-t-2 border-white opacity-80 animate-[scanline_2s_ease-in-out_infinite]" 
+              <div className="w-64 border-t-2 border-white opacity-80 animate-[scanline_2s_ease-in-out_infinite]"
                    style={{ animationName: 'scanline' }}/>
             </div>
           )}
         </div>
       </div>
-      
+
       {error && (
         <div className="mt-4 text-red-500 text-center">
           {error}
         </div>
       )}
-      
+
       <div className="mt-4 text-center text-gray-300 text-sm">
         Point your camera at a QR code containing a wallet URL
       </div>
-      
+
       {/* Add scanline animation to CSS */}
       <style>{`
         @keyframes scanline {

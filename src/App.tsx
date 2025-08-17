@@ -18,14 +18,14 @@ import { localStorageKeys, getMerchantConfig } from "./config";
 function App() {
   // Apply the theme from merchant config
   const config = getMerchantConfig();
-  
+
   // Set the theme when the app loads
   useEffect(() => {
     // Valid themes are "standard" and "industrial"
-    const validTheme = config.theme === "standard" || config.theme === "industrial" 
-      ? config.theme 
+    const validTheme = config.theme === "standard" || config.theme === "industrial"
+      ? config.theme
       : "standard";
-      
+
     // Apply the theme to the root element for DaisyUI
     document.documentElement.setAttribute("data-theme", validTheme);
   }, [config.theme]);

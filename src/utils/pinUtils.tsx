@@ -28,7 +28,7 @@ const showAlert = (title: string, message: string): Promise<void> => {
 export const verifyPin = (): Promise<boolean> => {
   return new Promise((resolve) => {
     const storedPin = localStorage.getItem('pos_pin');
-    
+
     if (!storedPin) {
       showAlert('Error', 'Security PIN is not set').then(() => resolve(false));
       return;

@@ -39,7 +39,7 @@ export function TipPage() {
     const fetchRate = async () => {
       try {
         if (currency === "SATS") return;
-        
+
         // Get how many sats per unit of currency
         const satsPerUnit = await fiat.getSatoshiValue({ amount: 1, currency });
         setFiatRate(satsPerUnit);
@@ -47,7 +47,7 @@ export function TipPage() {
         console.error("Error fetching exchange rate:", error);
       }
     };
-    
+
     fetchRate();
   }, [currency]);
 
@@ -62,17 +62,17 @@ export function TipPage() {
       return;
     }
 
-    // Decode invoice to get original amount
+    // Decode invoice to get original amoun
     if (invoice) {
       try {
         const decodedInvoice = JSON.parse(atob(invoice));
         setBaseAmount(decodedInvoice.amount);
-        
+
         // Check if there's a currency in the invoice data
         if (decodedInvoice.currency && decodedInvoice.currency !== "SATS") {
           setCurrency(decodedInvoice.currency);
         }
-        
+
         // Set initialization flag
         setIsInitialized(true);
       } catch (error) {
@@ -98,7 +98,7 @@ export function TipPage() {
       const calculatedTip = Math.round(baseAmount * (selectedTip / 100));
       setTipAmount(calculatedTip);
     } else if (selectedTip === CUSTOM_TIP) {
-      // Custom tip - handle based on selected currency format
+      // Custom tip - handle based on selected currency forma
       if (customTipValue) {
         if (customTipCurrency === "FIAT" && fiatRate && currency !== "SATS") {
           // Convert fiat value to sats (fiatValue * satsPerUnit)
@@ -123,9 +123,9 @@ export function TipPage() {
 
   // Handle tip selection - memoized to prevent unnecessary re-renders
   const handleTipSelection = useCallback((tip: number | string) => {
-    console.log(`Selected tip: ${tip}`);
+    // console.log(`Selected tip: ${tip}`);
     setSelectedTip(tip);
-    
+
     // If selecting custom, prepare a default value
     if (tip === CUSTOM_TIP) {
       // Set default currency for custom tip - use fiat when available
@@ -134,7 +134,7 @@ export function TipPage() {
       } else {
         setCustomTipCurrency("SATS");
       }
-      
+
       // Only set a default value if the current value is empty
       if (!customTipValue) {
         // Default to 15% tip
@@ -143,12 +143,12 @@ export function TipPage() {
           const defaultTip = (baseAmount * defaultTipPercentage) / fiatRate;
           setCustomTipValue(defaultTip.toFixed(2));
         } else {
-          // For SATS, default to 15% of the base amount
+          // For SATS, default to 15% of the base amoun
           const defaultTip = Math.round(baseAmount * 0.15);
           setCustomTipValue(defaultTip.toString());
         }
       }
-      
+
       // Focus the input field after a short delay to ensure it's rendered
       setTimeout(() => {
         if (customInputRef.current) {
@@ -160,18 +160,18 @@ export function TipPage() {
 
   const handleCustomTipChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
-    
+
     // For fiat currencies, allow decimal points
     if (customTipCurrency === "FIAT" && currency !== "SATS") {
       // Remove anything that's not a digit or decimal point
       value = value.replace(/[^0-9.]/g, '');
-      
+
       // Ensure only one decimal point
       const parts = value.split('.');
       if (parts.length > 2) {
         value = parts[0] + '.' + parts.slice(1).join('');
       }
-      
+
       // Limit to 2 decimal places
       if (parts.length === 2 && parts[1].length > 2) {
         value = parts[0] + '.' + parts[1].substring(0, 2);
@@ -180,16 +180,16 @@ export function TipPage() {
       // For SATS, only allow integers
       value = value.replace(/[^0-9]/g, '');
     }
-    
+
     setCustomTipValue(value);
   };
-  
+
   // Handle toggle between fiat and sats for custom tip
   const handleCurrencyToggle = () => {
     if (customTipCurrency === "FIAT" && fiatRate) {
       // Switch from FIAT to SATS
       setCustomTipCurrency("SATS");
-      
+
       // Convert the current value to sats if it exists and is valid
       if (customTipValue) {
         const fiatValue = parseFloat(customTipValue);
@@ -201,7 +201,7 @@ export function TipPage() {
     } else {
       // Switch from SATS to FIAT
       setCustomTipCurrency("FIAT");
-      
+
       // Convert the current value to fiat if it exists and is valid
       if (customTipValue && fiatRate) {
         const satValue = parseInt(customTipValue);
@@ -221,9 +221,9 @@ export function TipPage() {
 
     try {
       setIsLoading(true);
-      
+
       let tipMemo = `${config.name} - Tip`;
-      
+
       // Only include fiat amount in memo if not using SATS currency
       let fiatDisplay = "";
       if (currency !== "SATS" && fiatRate) {
@@ -238,15 +238,15 @@ export function TipPage() {
           tipMemo += ` (${fiatDisplay})`;
         }
       }
-      
+
       const invoice = await provider.makeInvoice({
         amount: tipAmount.toString(),
         defaultMemo: tipMemo,
       });
-      
-      // Pass state indicating this is a tip payment along with the fiat amount
-      navigate(`../pay/${invoice.paymentRequest}`, { 
-        state: { 
+
+      // Pass state indicating this is a tip payment along with the fiat amoun
+      navigate(`../pay/${invoice.paymentRequest}`, {
+        state: {
           isTipPayment: true,
           fiatAmount: fiatDisplay
         }
@@ -267,10 +267,10 @@ export function TipPage() {
     if (currency === "SATS") {
       return `${amount} ${amount === 1 ? "sat" : "sats"}`;
     }
-    
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: currency 
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency
     }).format(amount);
   };
 
@@ -284,10 +284,10 @@ export function TipPage() {
   };
 
   // Action button class based on theme
-  const actionButtonClass = 
+  const actionButtonClass =
     tipAmount <= 0 || isLoading
       ? "btn bg-gray-600 text-white w-full" // Inactive state for all themes
-      : config.theme === "standard" 
+      : config.theme === "standard"
         ? "btn bg-charge-green text-white hover:bg-green-500 w-full"
         : config.theme === "orangepill"
           ? "btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover w-full"
@@ -295,11 +295,13 @@ export function TipPage() {
             ? "btn bg-nostrich-gradient text-white hover:bg-nostrich-hover w-full"
             : config.theme === "beehive"
               ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full"
-              : config.theme === "safari"
-                ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
-                : config.theme === "blocktron"
-                  ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
-                  : "btn btn-industrial-gradient w-full";
+              : config.theme === "liquidity"
+                ? "btn bg-liquidity-gradient text-black hover:bg-liquidity-hover w-full"
+                : config.theme === "safari"
+                  ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
+                  : config.theme === "blocktron"
+                    ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
+                    : "btn btn-industrial-gradient w-full";
 
   return (
     <>
@@ -309,11 +311,11 @@ export function TipPage() {
         <div className="flex flex-col items-center justify-between w-full max-w-xs md:max-w-md xl:max-w-md mx-auto h-full py-4">
           {/* Flexible spacer at top */}
           <div className="flex-grow"></div>
-          
+
           {/* Tip content - all elements kept together as a single unit */}
           <div className="flex flex-col items-center justify-center w-full px-2">
             <h2 className="text-xl md:text-2xl xl:text-2xl font-bold text-center mb-6 md:mb-8 xl:mb-8">Would you like to add a tip?</h2>
-            
+
             <div className="text-center mb-6 md:mb-8 xl:mb-8">
               <div className="flex items-center justify-center">
                 <span className="text-gray-400 text-sm md:text-base xl:text-base mr-1 md:mr-2">Base amount:</span>
@@ -327,7 +329,7 @@ export function TipPage() {
                 </p>
               )}
             </div>
-            
+
             {/* Tip options - grid for percentage buttons */}
             <div className="grid grid-cols-2 gap-1.5 md:gap-2 lg:gap-2 lg:landscape:gap-1.5 wide:gap-3 w-full mb-6 md:mb-8">
               {tipSettings.defaultPercentages.map(tip => (
@@ -339,7 +341,7 @@ export function TipPage() {
                   {tip}%
                 </button>
               ))}
-              
+
               {tipSettings.allowCustom && (
                 <button
                   className={`btn col-span-2 ${getButtonClass(selectedTip === CUSTOM_TIP)} text-sm sm:text-base md:text-lg lg:text-lg lg:landscape:text-base wide:text-xl h-12 md:h-14 lg:h-14 lg:landscape:h-10 wide:h-16 font-bold mt-1`}
@@ -349,7 +351,7 @@ export function TipPage() {
                 </button>
               )}
             </div>
-            
+
             {/* Custom tip input section */}
             {selectedTip === CUSTOM_TIP && (
               <div className="w-full mb-6 md:mb-8">
@@ -359,10 +361,10 @@ export function TipPage() {
                   </label>
                   {currency !== "SATS" && fiatRate && (
                     <div className="join border border-gray-600 rounded-md">
-                      <button 
+                      <button
                         type="button"
-                        className={`join-item px-3 py-1 text-xs md:text-sm xl:text-sm font-medium ${customTipCurrency === "FIAT" 
-                          ? 'bg-white text-black' 
+                        className={`join-item px-3 py-1 text-xs md:text-sm xl:text-sm font-medium ${customTipCurrency === "FIAT"
+                          ? 'bg-white text-black'
                           : 'bg-transparent text-gray-300'}`}
                         onClick={() => {
                           if (customTipCurrency !== "FIAT") handleCurrencyToggle();
@@ -370,10 +372,10 @@ export function TipPage() {
                       >
                         {currency}
                       </button>
-                      <button 
+                      <button
                         type="button"
-                        className={`join-item px-3 py-1 text-xs md:text-sm xl:text-sm font-medium ${customTipCurrency === "SATS" 
-                          ? 'bg-white text-black' 
+                        className={`join-item px-3 py-1 text-xs md:text-sm xl:text-sm font-medium ${customTipCurrency === "SATS"
+                          ? 'bg-white text-black'
                           : 'bg-transparent text-gray-300'}`}
                         onClick={() => {
                           if (customTipCurrency !== "SATS") handleCurrencyToggle();
@@ -401,15 +403,15 @@ export function TipPage() {
                 </div>
               </div>
             )}
-            
+
             {/* Tip amount display */}
             {tipAmount > 0 && (
               <div className="text-center mb-6 md:mb-8">
                 <div className="flex items-center justify-center">
                   <span className="text-gray-400 text-sm md:text-base xl:text-base mr-1 md:mr-2">Tip amount:</span>
                   <span className="text-white text-lg md:text-xl xl:text-xl font-medium">
-                    {currency === "SATS" ? `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}` 
-                      : selectedTip !== CUSTOM_TIP && fiatRate 
+                    {currency === "SATS" ? `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}`
+                      : selectedTip !== CUSTOM_TIP && fiatRate
                         ? formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)
                         : selectedTip === CUSTOM_TIP && customTipCurrency === "FIAT" && fiatRate
                           ? formatCurrency(parseFloat(customTipValue) || 0)
@@ -421,13 +423,13 @@ export function TipPage() {
                     {tipAmount} {tipAmount === 1 ? "sat" : "sats"}
                   </p>
                 )}
-                
+
                 <p className="text-xs md:text-sm xl:text-sm text-gray-400 mt-3">
                   Total with tip: {baseAmount + tipAmount} {(baseAmount + tipAmount) === 1 ? "sat" : "sats"}
                 </p>
               </div>
             )}
-            
+
             {/* Action button */}
             <div className="w-full">
               {tipAmount > 0 ? (
@@ -449,7 +451,7 @@ export function TipPage() {
               )}
             </div>
           </div>
-          
+
           {/* Flexible spacer at bottom */}
           <div className="flex-grow"></div>
         </div>

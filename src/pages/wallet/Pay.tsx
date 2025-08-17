@@ -82,9 +82,9 @@ export function Pay() {
           const satsPerUnit = await fiat.getSatoshiValue({ amount: 1, currency });
           // Convert sats to fiat (amount in sats / sats per unit)
           const fiatValue = amount / satsPerUnit;
-          const formatted = new Intl.NumberFormat('en-US', { 
-            style: 'currency', 
-            currency: currency 
+          const formatted = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency
           }).format(fiatValue);
           setCalculatedFiatAmount(formatted);
         } catch (error) {
@@ -106,11 +106,11 @@ export function Pay() {
       // Ensure amount is parsed as a number
       const parsedAmount = parseInt(satoshi.toString(), 10);
       setAmount(parsedAmount);
-      
-      // Set description and determine fiat amount
+
+      // Set description and determine fiat amoun
       if (description) {
         setDescription(description);
-        
+
         // For tip payments, use the fiat amount passed through navigation state if available
         if (isTipPayment && passedFiatAmount.length > 0) {
           setFiatAmount(passedFiatAmount);
@@ -123,15 +123,15 @@ export function Pay() {
           }
         }
       }
-      
+
       // Save invoice data for potential tip
       if (!isTipPayment) {
         // Get the current currency
         const currency = localStorage.getItem("pos:currency") || "SATS";
-        setLastInvoiceData({ 
-          amount: satoshi, 
+        setLastInvoiceData({
+          amount: satoshi,
           description,
-          currency 
+          currency
         });
       }
 
@@ -149,7 +149,7 @@ export function Pay() {
           // Silent fail - will retry on next interval
         }
       }, 3000);
-      
+
       // Countdown timer
       const countdownInterval = setInterval(() => {
         setCountdown(prevCountdown => {
@@ -170,7 +170,7 @@ export function Pay() {
         clearInterval(countdownInterval);
       };
     }
-  }, [invoice, navigate, provider, setLastInvoiceData, isTipPayment]);
+  }, [invoice, navigate, provider, setLastInvoiceData, isTipPayment, passedFiatAmount]);
 
   if (!invoice) {
     return null;
@@ -197,7 +197,7 @@ export function Pay() {
                   {new Intl.NumberFormat().format(amount)} {parseInt(amount.toString(), 10) === 1 ? "sat" : "sats"}
                 </span>
               </div>
-              
+
               {/* Show fiat amount if available or calculated */}
               {((fiatAmount && fiatAmount.length > 0) || (calculatedFiatAmount && currency !== "SATS")) && (
                 <p className="text-sm md:text-base lg:text-base wide:text-xl text-gray-400 mt-1">
@@ -205,7 +205,7 @@ export function Pay() {
                 </p>
               )}
             </div>
-            
+
             {/* Merchant name */}
             <p className="text-sm md:text-base lg:text-base wide:text-xl text-gray-400">
               {merchantName}
@@ -216,7 +216,7 @@ export function Pay() {
           <div className="flex flex-col lg:landscape:flex-row lg:landscape:items-center lg:landscape:justify-center lg:landscape:gap-8 w-full">
             {/* QR code - in landscape mode on left side */}
             <div className="flex flex-col items-center justify-center lg:landscape:flex-1">
-              <div 
+              <div
                 className="flex items-center justify-center p-3 md:p-4 lg:p-4 wide:p-6 bg-white rounded-lg cursor-pointer hover:shadow-lg transition-shadow mb-4 md:mb-5 lg:mb-5"
                 onClick={copyQr}
               >
@@ -230,7 +230,7 @@ export function Pay() {
                 <QRCode value={invoice} size={240} className="hidden wide:landscape:block" />
               </div>
             </div>
-            
+
             {/* Right side content */}
             <div className="flex flex-col items-center lg:landscape:items-start lg:landscape:flex-1">
               {/* Payment info in landscape mode only (hidden in portrait) */}
@@ -245,7 +245,7 @@ export function Pay() {
                       {new Intl.NumberFormat().format(amount)} {parseInt(amount.toString(), 10) === 1 ? "sat" : "sats"}
                     </span>
                   </div>
-                  
+
                   {/* Show fiat amount if available or calculated */}
                   {((fiatAmount && fiatAmount.length > 0) || (calculatedFiatAmount && currency !== "SATS")) && (
                     <p className="text-base text-gray-400 mt-1">
@@ -253,13 +253,13 @@ export function Pay() {
                     </p>
                   )}
                 </div>
-                
+
                 {/* Merchant name */}
                 <p className="text-base text-gray-400 mt-2 mb-6 lg:landscape:text-left">
                   {merchantName}
                 </p>
               </div>
-              
+
               {/* Payment status and countdown timer */}
               <div className="flex flex-col items-center lg:landscape:items-start gap-1 mb-2 md:mb-3 lg:landscape:mb-4 lg:landscape:w-full">
                 <div className="flex items-center">
@@ -272,7 +272,7 @@ export function Pay() {
                   Expires in: <span className="font-mono">{formatTime(countdown)}</span>
                 </div>
               </div>
-              
+
               {/* Cancel button positioned consistently with adequate spacing */}
               <div className="w-full mt-6 lg:landscape:mt-8 mb-4">
                 <button
@@ -282,9 +282,9 @@ export function Pay() {
                   Cancel
                 </button>
               </div>
-              
+
               {/* Toggle raw invoice button moved below cancel button to be closer to the invoice display */}
-              <button 
+              <button
                 className="text-xs md:text-sm wide:text-base lg:landscape:text-xs text-gray-500 hover:text-gray-300 lg:landscape:self-start"
                 onClick={toggleRawInvoice}
               >
@@ -292,7 +292,7 @@ export function Pay() {
               </button>
             </div>
           </div>
-          
+
           {/* Raw invoice display that spans full width in all layouts */}
           {showRawInvoice && (
             <div className="mt-3 w-full px-2 lg:landscape:mt-5">

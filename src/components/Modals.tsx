@@ -35,7 +35,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className={`bg-gray-900 rounded-lg p-6 mx-4 relative ${size === 'large' ? 'w-full max-w-md' : 'w-full max-w-sm'}`}>
         {onClose && (
-          <button 
+          <button
             onClick={onClose}
             className="absolute top-2 right-2 text-gray-400 hover:text-white"
             aria-label="Close"
@@ -106,8 +106,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           onClose?.();
         }}
         className={`flex-1 py-2 px-4 ${
-          isDanger 
-            ? 'bg-red-600 hover:bg-red-500' 
+          isDanger
+            ? 'bg-red-600 hover:bg-red-500'
             : 'bg-gray-600 hover:bg-gray-500'
         } text-white rounded-lg transition-colors`}
       >

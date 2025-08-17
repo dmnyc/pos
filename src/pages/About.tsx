@@ -44,7 +44,7 @@ export function About() {
             
             <p>
               Sats Factory POS was born from a clear need in the bitcoin payments space: the lack of accessible, 
-              non-custodial Lightning Network point-of-sale systems for small businesses.
+              non-custodial Lightning Network point-of-sale options for small businesses.
             </p>
 
             <h3 className="text-lg font-semibold text-white mt-6">Breaking Down Barriers</h3>
@@ -66,7 +66,7 @@ export function About() {
 
             <h3 className="text-lg font-semibold text-white mt-6">Rethinking Tipping</h3>
             <p>
-              We've taken a more respectful approach to digital tipping, addressing common issues with modern POS systems that rely on tip shaming and pressure tactics:
+              We've taken a more respectful approach to digital tipping, addressing common frustrations with modern POS systems that rely on tip shaming and pressure tactics:
             </p>
             <ul className="list-disc ml-6 mt-2 space-y-1">
               <li>Tips are truly optional, not demanded</li>
@@ -86,7 +86,7 @@ export function About() {
             </ul>
 
             <p className="mt-6 italic">
-              This is our vision for commerce on a bitcoin standard - transparent, respectful, and truly optional tipping.
+              This is our vision for commerce on a bitcoin standard.
             </p>
           </div>
         </div>

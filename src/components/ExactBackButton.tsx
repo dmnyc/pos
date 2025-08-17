@@ -5,8 +5,8 @@ type ExactBackButtonProps = {
 
 export function ExactBackButton({ onBack, theme = "dark" }: ExactBackButtonProps) {
   return (
-    <div 
-      className="fixed top-0 left-0 bg-black w-full h-14 md:h-16 lg:h-20 z-10 border-b border-gray-900" 
+    <div
+      className="fixed top-0 left-0 bg-black w-full h-14 md:h-16 lg:h-20 z-10 border-b border-gray-900"
       data-theme={theme}
     >
       <button

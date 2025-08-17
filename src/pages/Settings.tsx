@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useRequirePin } from '../hooks/useRequirePin';
 import { AlertModal, ConfirmModal } from '../components/Modals';
 import { ExactBackButton } from '../components/ExactBackButton';
-import { 
-  getMerchantConfig, 
-  saveMerchantConfig, 
-  getTipSettings, 
+import {
+  getMerchantConfig,
+  saveMerchantConfig,
+  getTipSettings,
   saveTipSettings,
   defaultMerchantConfig,
   defaultTipSettings
 } from '../config';
 import { playPaymentChime } from '../utils/audioUtils';
+import CodepenLightning from '../components/animations/CodepenLightning';
 
 export function Settings() {
   useRequirePin();
@@ -19,8 +20,9 @@ export function Settings() {
   const [tipSettings, setTipSettings] = useState(getTipSettings());
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('branding');
+  const [showLightningPreview, setShowLightningPreview] = useState(false);
   const navigate = useNavigate();
-  
+
   // Modal states
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [alertState, setAlertState] = useState<{
@@ -32,7 +34,7 @@ export function Settings() {
     title: '',
     message: ''
   });
-  
+
   const handleBack = () => {
     const hasWallet = window.localStorage.getItem("pos:nwcUrl");
     if (hasWallet) {
@@ -66,6 +68,13 @@ export function Settings() {
     playPaymentChime();
   };
 
+  const handleLightningPreview = () => {
+    setShowLightningPreview(true);
+    setTimeout(() => {
+      setShowLightningPreview(false);
+    }, 1000);
+  };
+
   // Add state for the raw percentage input as a controlled input
   const [tipPercentagesInput, setTipPercentagesInput] = useState(() => {
     return tipSettings.defaultPercentages.join(', ');
@@ -74,7 +83,7 @@ export function Settings() {
   useEffect(() => {
     // Initialize the input state when tipSettings are first loaded
     setTipPercentagesInput(tipSettings.defaultPercentages.join(', '));
-  }, []); // Empty dependency array means this runs once on mount
+  }, [tipSettings.defaultPercentages]); // Added the missing dependency
 
   const handleTipToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTipSettings(prev => ({ ...prev, enabled: e.target.checked }));
@@ -91,27 +100,27 @@ export function Settings() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Parse the tip percentages from the raw input
     try {
       const percentages = tipPercentagesInput
         .split(',')
-        .map(p => parseInt(p.trim()))
-        .filter(p => !isNaN(p) && p > 0);
-      
+        .map((p: string) => parseInt(p.trim()))
+        .filter((p: number) => !isNaN(p) && p > 0);
+
       // Update the tip settings with the parsed percentages
       const updatedTipSettings = {
         ...tipSettings,
         defaultPercentages: percentages.length > 0 ? percentages : [10, 15, 20, 25] // fallback to defaults if empty
       };
-      
+
       // Ensure the fixed fields are preserved with their default values
       const updatedConfig = {
         ...merchantConfig,
         displayName: "Sats Factory POS",
         description: "Point-of-Sale for bitcoin lightning payments"
       };
-      
+
       saveMerchantConfig(updatedConfig);
       saveTipSettings(updatedTipSettings);
       setSaved(true);
@@ -135,22 +144,22 @@ export function Settings() {
     setMerchantConfig({
       ...defaultMerchantConfig
     });
-    
+
     // Reset tip settings
     setTipSettings({...defaultTipSettings});
-    
+
     // Reset tip percentages input field
     setTipPercentagesInput(defaultTipSettings.defaultPercentages.join(', '));
-    
+
     // Save changes to localStorage
     saveMerchantConfig({
       ...defaultMerchantConfig
     });
     saveTipSettings(defaultTipSettings);
-    
+
     // Apply the standard theme immediately
     document.documentElement.setAttribute('data-theme', 'standard');
-    
+
     setSaved(true);
   };
 
@@ -160,22 +169,22 @@ export function Settings() {
       <div className="flex flex-grow flex-col overflow-auto pt-16">
         <div className="w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto p-2 md:p-4">
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Merchant Settings</h1>
-      
+
           <div className="tabs tabs-boxed mb-3 md:mb-4 bg-gray-900">
-            <a 
+            <a
               className={`tab text-xs md:text-sm lg:text-base ${activeTab === 'branding' ? 'bg-white text-black' : 'text-white'}`}
               onClick={() => setActiveTab('branding')}
             >
               Branding
             </a>
-            <a 
+            <a
               className={`tab text-xs md:text-sm lg:text-base ${activeTab === 'tips' ? 'bg-white text-black' : 'text-white'}`}
               onClick={() => setActiveTab('tips')}
             >
               Tips
             </a>
           </div>
-      
+
           <form onSubmit={handleSubmit} className="space-y-2 md:space-y-4">
             {activeTab === 'branding' && (
               <div className="space-y-2 md:space-y-4">
@@ -190,7 +199,7 @@ export function Settings() {
                     placeholder="Store Name"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">Logo URL</label>
                   <input
@@ -204,16 +213,42 @@ export function Settings() {
                   {/* Logo preview */}
                   <div className="mt-2 md:mt-3 p-2 md:p-3 bg-gray-800 rounded-lg flex justify-center items-center">
                     <div className="p-2 md:p-3 bg-black rounded inline-block">
-                      <img 
-                        src={merchantConfig.logoUrl} 
-                        alt="Logo Preview" 
+                      <img
+                        src={merchantConfig.logoUrl}
+                        alt="Logo Preview"
                         onError={(e) => { (e.target as HTMLImageElement).src = "/images/satsfactory_logo.svg"; }}
                         className="h-10 md:h-14 lg:h-16 max-w-[200px] md:max-w-[280px] lg:max-w-[320px] object-contain"
                       />
                     </div>
                   </div>
                 </div>
-                
+
+                <div className="form-control">
+                  <label className="label py-1 md:py-2 cursor-pointer">
+                    <span className="label-text text-white text-xs md:text-sm lg:text-base">Payment Effect</span>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        type="button"
+                        onClick={handleLightningPreview}
+                        className="btn btn-ghost btn-xs text-gray-400 hover:text-white"
+                      >
+                        Preview
+                      </button>
+                      <input
+                        type="checkbox"
+                        name="paymentEffectEnabled"
+                        className="toggle toggle-sm md:toggle-md"
+                        style={{
+                          backgroundColor: merchantConfig.paymentEffectEnabled ? '#ffcc99' : '#4b5563',
+                          borderColor: merchantConfig.paymentEffectEnabled ? '#ffcc99' : '#6b7280'
+                        }}
+                        checked={merchantConfig.paymentEffectEnabled}
+                        onChange={handleMerchantConfigChange}
+                      />
+                    </div>
+                  </label>
+                </div>
+
                 <div className="form-control">
                   <label className="label py-1 md:py-2 cursor-pointer">
                     <span className="label-text text-white text-xs md:text-sm lg:text-base">Payment Chime</span>
@@ -225,11 +260,11 @@ export function Settings() {
                       >
                         Preview
                       </button>
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         name="paymentChimeEnabled"
-                        className="toggle toggle-sm md:toggle-md" 
-                        style={{ 
+                        className="toggle toggle-sm md:toggle-md"
+                        style={{
                           backgroundColor: merchantConfig.paymentChimeEnabled ? '#ffcc99' : '#4b5563',
                           borderColor: merchantConfig.paymentChimeEnabled ? '#ffcc99' : '#6b7280'
                         }}
@@ -239,7 +274,7 @@ export function Settings() {
                     </div>
                   </label>
                 </div>
-                
+
                 <div>
                   <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">Theme</label>
                   <select
@@ -253,27 +288,32 @@ export function Settings() {
                     <option value="orangepill">Orange Pill</option>
                     <option value="nostrich">Nostrich</option>
                     <option value="beehive">Beehive</option>
+                    <option value="liquidity">Liquidity</option>
                     <option value="safari">Safari</option>
                     <option value="blocktron">Blocktron</option>
                   </select>
                 </div>
               </div>
             )}
-            
+
             {activeTab === 'tips' && (
               <div className="space-y-2 md:space-y-4 w-full">
                 <div className="form-control">
                   <label className="label py-1 md:py-2 cursor-pointer">
                     <span className="label-text text-white text-xs md:text-sm lg:text-base">Enable Tips</span>
-                    <input 
-                      type="checkbox" 
-                      className="toggle toggle-sm md:toggle-md bg-gray-600 border-gray-600" 
+                    <input
+                      type="checkbox"
+                      className="toggle toggle-sm md:toggle-md"
+                      style={{
+                        backgroundColor: tipSettings.enabled ? '#ffcc99' : '#4b5563',
+                        borderColor: tipSettings.enabled ? '#ffcc99' : '#6b7280'
+                      }}
                       checked={tipSettings.enabled}
                       onChange={handleTipToggle}
                     />
                   </label>
                 </div>
-                
+
                 {tipSettings.enabled && (
                   <>
                     <div>
@@ -291,13 +331,17 @@ export function Settings() {
                         Enter percentages separated by commas (e.g., 10, 15, 20, 25)
                       </span>
                     </div>
-                    
+
                     <div className="form-control">
                       <label className="label py-1 md:py-2 cursor-pointer">
                         <span className="label-text text-white text-xs md:text-sm lg:text-base">Allow Custom Tip Amount</span>
-                        <input 
-                          type="checkbox" 
-                          className="toggle toggle-sm md:toggle-md bg-gray-600 border-gray-600" 
+                        <input
+                          type="checkbox"
+                          className="toggle toggle-sm md:toggle-md"
+                          style={{
+                            backgroundColor: tipSettings.allowCustom ? '#ffcc99' : '#4b5563',
+                            borderColor: tipSettings.allowCustom ? '#ffcc99' : '#6b7280'
+                          }}
                           checked={tipSettings.allowCustom}
                           onChange={handleCustomTipToggle}
                         />
@@ -307,19 +351,21 @@ export function Settings() {
                 )}
               </div>
             )}
-            
+
             <div className="pt-2 md:pt-4 space-y-2 md:space-y-3 w-full">
-              <button 
-                type="submit" 
-                className={`w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg btn settings-button ${merchantConfig.theme === "standard" 
-                  ? "bg-charge-green text-white hover:bg-green-500" 
+              <button
+                type="submit"
+                className={`w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg btn settings-button ${merchantConfig.theme === "standard"
+                  ? "bg-charge-green text-white hover:bg-green-500"
                   : merchantConfig.theme === "orangepill"
                     ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
                     : merchantConfig.theme === "nostrich"
                       ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
                       : merchantConfig.theme === "beehive"
                         ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
-                        : merchantConfig.theme === "safari"
+                        : merchantConfig.theme === "liquidity"
+                          ? "bg-liquidity-gradient text-black hover:bg-liquidity-hover"
+                          : merchantConfig.theme === "safari"
                           ? "bg-safari-gradient text-black hover:bg-safari-hover"
                           : merchantConfig.theme === "blocktron"
                             ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
@@ -328,8 +374,8 @@ export function Settings() {
               >
                 Save Settings
               </button>
-              
-              <button 
+
+              <button
                 type="button"
                 onClick={handleResetDefaults}
                 className="btn btn-ghost text-gray-400 hover:bg-gray-800 hover:text-white w-full h-10 md:h-12 lg:h-14 text-sm md:text-base lg:text-lg settings-button"
@@ -337,7 +383,7 @@ export function Settings() {
                 Restore Default Settings
               </button>
             </div>
-            
+
             {saved && (
               <div className="text-charge-green text-center mt-2 md:mt-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-4 w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 mr-1 md:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -366,6 +412,8 @@ export function Settings() {
         title={alertState.title}
         message={alertState.message}
       />
+
+      {showLightningPreview && <CodepenLightning duration={1000} />}
     </div>
   );
 }

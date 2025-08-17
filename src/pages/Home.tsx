@@ -10,12 +10,15 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { MerchantLogo } from "../components/MerchantLogo";
 import { ConfirmModal, AlertModal } from "../components/Modals";
 import QRScanner from "../components/QRScanner";
-import { 
-  localStorageKeys, 
+import {
+  localStorageKeys,
   getMerchantConfig,
-  applyMerchantConfigFromUrl 
+  applyMerchantConfigFromUrl
 } from "../config";
 import { Footer } from "../components/Footer";
+
+// Use the WebLN provider from library
+import type { WebLNProvider } from "@webbtc/webln-types";
 
 export function Home() {
   const navigate = useNavigate();
@@ -23,7 +26,7 @@ export function Home() {
   const config = getMerchantConfig();
   const [confirmData, setConfirmData] = useState<{
     isOpen: boolean;
-    provider: any | null;
+    provider: WebLNProvider | null;
   }>({
     isOpen: false,
     provider: null
@@ -32,7 +35,7 @@ export function Home() {
   const [importPromptOpen, setImportPromptOpen] = useState(false);
   const [importUrl, setImportUrl] = useState('');
   const [showScanner, setShowScanner] = useState(false);
-  
+
   const [alertState, setAlertState] = useState<{
     isOpen: boolean;
     title: string;
@@ -103,40 +106,46 @@ export function Home() {
     disconnect();
   }, [config]);
 
-  const handleProviderConnection = async (provider: any) => {
-    try {
-      const info = await provider.getInfo();
-      if (info.methods.includes("sendPayment")) {
-        setConfirmData({
-          isOpen: true,
-          provider
-        });
-        return;
+  // Use a synchronous version to match the Button's expected callback type
+  const handleProviderConnection = (provider: WebLNProvider) => {
+    // Immediately start the async work but return void to satisfy the type
+    (async () => {
+      try {
+        const info = await provider.getInfo();
+        if (info.methods.includes("sendPayment")) {
+          setConfirmData({
+            isOpen: true,
+            provider
+          });
+          return;
+        }
+        await completeConnection(provider);
+      } catch (error) {
+        showAlert('Connection Error', 'Failed to connect to wallet. Please try again.');
+        disconnect();
       }
-      await completeConnection(provider);
-    } catch (error) {
-      showAlert('Connection Error', 'Failed to connect to wallet. Please try again.');
-      disconnect();
-    }
+    })();
   };
 
-  const completeConnection = async (provider: any) => {
+  const completeConnection = async (provider: WebLNProvider) => {
     try {
       if (!(provider instanceof WebLNProviders.NostrWebLNProvider)) {
         throw new Error("WebLN provider is not an instance of NostrWebLNProvider");
       }
-      
+
       const info = await provider.getInfo();
       if (!info.methods.includes("makeInvoice") || !info.methods.includes("lookupInvoice")) {
         throw new Error("Missing permissions. Make sure you select make_invoice and lookup_invoice.");
       }
 
       closeModal();
+      // Type assertion to access the nostrWalletConnectUrl property
+      const nostrProvider = provider as unknown as { client: { nostrWalletConnectUrl: string } };
       window.localStorage.setItem(
         localStorageKeys.nwcUrl,
-        provider.client.nostrWalletConnectUrl
+        nostrProvider.client.nostrWalletConnectUrl
       );
-      
+
       const hasPin = window.localStorage.getItem('pos_pin');
       navigate(hasPin ? '/wallet/new' : '/security');
     } catch (error) {
@@ -160,7 +169,7 @@ export function Home() {
       // Parse the imported URL to extract parameters
       const urlObj = new URL(url);
       let searchParams: URLSearchParams;
-      
+
       // Check if it's a hash-based URL (our new format)
       if (urlObj.hash && urlObj.hash.includes('?')) {
         // Extract query params from hash (e.g., #/?nwc=...&config=...)
@@ -170,16 +179,16 @@ export function Home() {
         // Fall back to regular query params for backward compatibility
         searchParams = urlObj.searchParams;
       }
-      
+
       // Apply the configuration from imported URL
       applyMerchantConfigFromUrl(searchParams);
-      
+
       // Handle NWC URL
       const nwcEncoded = searchParams.get("nwc");
       if (nwcEncoded) {
         const nwcUrl = atob(nwcEncoded);
         window.localStorage.setItem(localStorageKeys.nwcUrl, nwcUrl);
-        
+
         // Handle other parameters
         const label = searchParams.get("label") || searchParams.get("name");
         if (label) {
@@ -190,10 +199,10 @@ export function Home() {
         if (currency) {
           localStorage.setItem(localStorageKeys.currency, currency);
         }
-        
+
         setImportPromptOpen(false);
         setImportUrl('');
-        
+
         // Check for PIN before navigating
         const hasPin = window.localStorage.getItem('pos_pin');
         navigate(hasPin ? '/wallet/new' : '/security');
@@ -213,7 +222,7 @@ export function Home() {
       >
         <div className="flex flex-1 flex-col justify-center items-center max-w-xl lg:max-w-2xl w-full px-4">
           <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
-            <MerchantLogo 
+            <MerchantLogo
               className="h-auto w-auto max-w-[675px] md:max-w-[900px] lg:max-w-[1350px] max-h-[30vh] md:max-h-[35vh] lg:max-h-[40vh]"
               isHomePage={true}
             />
@@ -227,8 +236,8 @@ export function Home() {
               onConnected={handleProviderConnection}
             />
           </div>
-          <button 
-            className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn !bg-gray-800 hover:!bg-gray-300 !text-white hover:!text-black transition-colors duration-300" 
+          <button
+            className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn !bg-gray-800 hover:!bg-gray-300 !text-white hover:!text-black transition-colors duration-300"
             onClick={handleImport}
           >
             Import wallet URL
@@ -262,7 +271,7 @@ export function Home() {
         message={(
           <div>
             {showScanner ? (
-              <QRScanner 
+              <QRScanner
                 onResult={(result) => {
                   setImportUrl(result);
                   setShowScanner(false);
@@ -276,7 +285,7 @@ export function Home() {
                   <input
                     type="text"
                     value={importUrl}
-                    onChange={(e) => setImportUrl(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImportUrl(e.target.value)}
                     className="flex-grow p-2 border rounded-l bg-gray-700 border-gray-600 text-white"
                     placeholder="Paste URL here"
                   />
@@ -292,7 +301,7 @@ export function Home() {
                     </svg>
                   </button>
                 </div>
-                <p className="text-sm text-gray-400">Or click the camera icon to scan a QR code with your device camera</p>
+                <p className="text-sm text-gray-400">Or click the camera icon to scan a QR code with your device camera.</p>
               </>
             )}
           </div>
