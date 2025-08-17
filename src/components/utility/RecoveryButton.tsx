@@ -32,6 +32,11 @@ export const RecoveryButton: React.FC<{
         button.setAttribute('disabled', 'true');
       }
 
+      // Set a timeout to force reload even if something goes wrong
+      const forceReloadTimeout = setTimeout(() => {
+        window.location.reload();
+      }, 5000); // Force reload after 5 seconds if stuck
+
       // Unregister service workers
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
@@ -54,6 +59,9 @@ export const RecoveryButton: React.FC<{
       // Optional: You could preserve certain settings if needed
       window.localStorage.clear();
       console.log('localStorage cleared');
+
+      // Cancel the force reload timeout since we're doing it manually
+      clearTimeout(forceReloadTimeout);
 
       // Reload with cache busting parameter
       window.location.href = window.location.href.split('?')[0] + 

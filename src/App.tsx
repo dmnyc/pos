@@ -1,4 +1,4 @@
-import { HashRouter as Router, Route, Routes, useParams, useNavigate } from "react-router-dom";
+import { HashRouter as Router, Route, Routes, useParams, useNavigate, useLocation } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Wallet } from "./pages/Wallet";
 import { NotFound } from "./pages/NotFound";
@@ -16,9 +16,22 @@ import React, { useEffect, useState } from "react";
 import { localStorageKeys, getMerchantConfig } from "./config";
 import { ErrorBoundary, VersionChecker, RecoveryButton } from "./components/utility";
 
+// Main App wrapper that adds router
 function App() {
+  return (
+    <ErrorBoundary>
+      <Router>
+        <AppContent />
+      </Router>
+    </ErrorBoundary>
+  );
+}
+
+// Main content component that needs router context
+function AppContent() {
   // State for the recovery button
   const [showRecoveryButton, setShowRecoveryButton] = useState(false);
+  const location = useLocation();
   
   // Apply the theme from merchant config
   const config = getMerchantConfig();
@@ -41,54 +54,96 @@ function App() {
            !!localStorage.getItem('pos_pin');
   };
 
-  // Show recovery button only after 5 seconds and only if user is not authenticated
+  // Check if the current path is the security page
+  const isSecurityPage = location.pathname.startsWith('/security');
+
+  // Detect any open modals
+  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
+
+  // Set up modal detection
   useEffect(() => {
-    // After 5 seconds, enable the recovery button only if not authenticated
+    const checkForModals = () => {
+      // Check for modal backdrops and common modal containers
+      const modalElements = document.querySelectorAll(
+        '.fixed.inset-0.bg-black.bg-opacity-50, .modal-backdrop, [role="dialog"]'
+      );
+      
+      setIsAnyModalOpen(modalElements.length > 0 || isSecurityPage);
+    };
+
+    // Check immediately
+    checkForModals();
+    
+    // Set up an observer to detect DOM changes that might indicate modals
+    const observer = new MutationObserver(checkForModals);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style', 'hidden'],
+    });
+    
+    // Also check periodically for modals that might be added by React
+    const intervalId = setInterval(checkForModals, 500);
+    
+    return () => {
+      observer.disconnect();
+      clearInterval(intervalId);
+    };
+  }, [isSecurityPage]);
+
+  // Show recovery button only after 5 seconds and only if:
+  // 1. User is not authenticated
+  // 2. We're not on the security page
+  // 3. No modals are open
+  useEffect(() => {
+    // After 5 seconds, check if we should show the recovery button
     const timer = setTimeout(() => {
-      setShowRecoveryButton(!isAuthenticated());
+      setShowRecoveryButton(!isAuthenticated() && !isSecurityPage && !isAnyModalOpen);
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isSecurityPage, isAnyModalOpen]);
+
+  // Re-check conditions when location changes or modal state changes
+  useEffect(() => {
+    setShowRecoveryButton(!isAuthenticated() && !isSecurityPage && !isAnyModalOpen);
+  }, [location, isAnyModalOpen, isSecurityPage]);
 
   return (
-    <ErrorBoundary>
-      <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-0 md:py-1">
-        {/* Version checker - periodically checks for updates */}
-        <VersionChecker checkInterval={30 * 60 * 1000} /> {/* Check every 30 minutes */}
-        
-        <Router>
-          <Routes>
-            <Route path="/" Component={Home} />
-            <Route path="/wallet" Component={Wallet}>
-              <Route path="new" Component={New} />
-              <Route path="pay/:invoice" Component={Pay} />
-              <Route path="paid" Component={Paid} />
-              <Route path="tip/:invoice" Component={TipPage} />
-              <Route path="tiponly" Component={TipOnly} />
-              <Route path="share" Component={Share} />
-              <Route path=":legacyWallet/new" Component={LegacyWalletRedirect} />
-            </Route>
-            <Route path="/settings" Component={Settings} />
-            <Route path="/security/*" Component={Security} />
-            <Route path="/disclaimers" Component={Disclaimers} />
-            <Route path="/about" Component={About} />
-            <Route path="/*" Component={NotFound} />
-          </Routes>
-        </Router>
-        
-        {/* Recovery button (conditionally shown) */}
-        {showRecoveryButton && (
-          <div className="fixed top-2 right-2 z-50 opacity-50 hover:opacity-100 transition-opacity">
-            <RecoveryButton 
-              className="scale-75 origin-top-right"
-              buttonText="⚡ Refresh App"
-              explanation=""
-            />
-          </div>
-        )}
-      </div>
-    </ErrorBoundary>
+    <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-0 md:py-1">
+      {/* Version checker - periodically checks for updates */}
+      <VersionChecker checkInterval={30 * 60 * 1000} /> {/* Check every 30 minutes */}
+      
+      <Routes>
+        <Route path="/" Component={Home} />
+        <Route path="/wallet" Component={Wallet}>
+          <Route path="new" Component={New} />
+          <Route path="pay/:invoice" Component={Pay} />
+          <Route path="paid" Component={Paid} />
+          <Route path="tip/:invoice" Component={TipPage} />
+          <Route path="tiponly" Component={TipOnly} />
+          <Route path="share" Component={Share} />
+          <Route path=":legacyWallet/new" Component={LegacyWalletRedirect} />
+        </Route>
+        <Route path="/settings" Component={Settings} />
+        <Route path="/security/*" Component={Security} />
+        <Route path="/disclaimers" Component={Disclaimers} />
+        <Route path="/about" Component={About} />
+        <Route path="/*" Component={NotFound} />
+      </Routes>
+      
+      {/* Recovery button (conditionally shown) */}
+      {showRecoveryButton && (
+        <div className="fixed top-2 right-2 z-40 opacity-50 hover:opacity-100 transition-opacity">
+          <RecoveryButton 
+            className="scale-75 origin-top-right"
+            buttonText="⚡ Refresh App"
+            explanation=""
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
