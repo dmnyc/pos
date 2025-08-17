@@ -133,6 +133,11 @@ The resilience features work automatically, but developers can:
 - Update version information in `package.json` to trigger update notifications
 - The service worker is configured to check for updates every 5 minutes
 
+Users can also manually check for updates by:
+1. Going to Settings → Advanced tab
+2. Using the "Check for Updates" feature
+3. Clicking "Update Now" if a new version is available (this refreshes the app without clearing data)
+
 These mechanisms help ensure that users always have a working application, even when issues with caching or PWA functionality occur.
 
 ## Mobile Optimization
