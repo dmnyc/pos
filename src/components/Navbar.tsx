@@ -149,7 +149,7 @@ export function Navbar() {
           </Link>
         ) : (
           <div className="relative flex items-center justify-center">
-            <span className="absolute right-full whitespace-nowrap mr-1.5 text-[10px] md:text-xs lg:text-xs wide:text-sm text-[#ef4445] self-center font-bold">Tip Only</span>
+            <span className="absolute right-full whitespace-nowrap mr-1.5 text-[10px] md:text-xs lg:text-xs wide:text-sm text-[#e5e7eb] self-center font-bold">Tip Only</span>
             <Link
               to="../new"
               className="group flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none transition-all"
