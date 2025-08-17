@@ -371,7 +371,12 @@ export function Settings() {
                   </p>
                   <button 
                     type="button"
-                    onClick={() => window.location.reload()}
+                    onClick={() => {
+                      // Add cache-busting parameter but keep all other query params
+                      const url = new URL(window.location.href);
+                      url.searchParams.set('refresh', Date.now().toString());
+                      window.location.href = url.toString();
+                    }}
                     className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded text-sm transition-colors"
                   >
                     Refresh Application
