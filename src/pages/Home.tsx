@@ -10,6 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { MerchantLogo } from "../components/MerchantLogo";
 import { ConfirmModal, AlertModal } from "../components/Modals";
 import QRScanner from "../components/QRScanner";
+import { VersionLabel } from "../components/utility";
 import {
   localStorageKeys,
   getMerchantConfig,
@@ -222,6 +223,11 @@ export function Home() {
         className="flex flex-col justify-center items-center w-full h-full bg-black"
         data-theme={config.theme}
       >
+        {/* Version label in top-left corner */}
+        <div className="absolute top-2 left-2 text-gray-500">
+          <VersionLabel showPrefix={true} />
+        </div>
+
         <div className="flex flex-1 flex-col justify-center items-center max-w-xl lg:max-w-2xl w-full px-4">
           <div className="flex justify-center w-full mb-8 md:mb-10 lg:mb-12">
             <MerchantLogo
