@@ -12,17 +12,22 @@ import { TipPage } from "./pages/wallet/Tip";
 import { TipOnly } from "./pages/wallet/TipOnly";
 import Security from "./pages/Security";
 import { Disclaimers } from "./pages/Disclaimers";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { localStorageKeys, getMerchantConfig } from "./config";
+import { ErrorBoundary, VersionChecker, RecoveryButton } from "./components/utility";
 
 function App() {
+  // State for the recovery button
+  const [showRecoveryButton, setShowRecoveryButton] = useState(false);
+  
   // Apply the theme from merchant config
   const config = getMerchantConfig();
 
   // Set the theme when the app loads
   useEffect(() => {
-    // Valid themes are "standard" and "industrial"
-    const validTheme = config.theme === "standard" || config.theme === "industrial"
+    // Valid themes are "standard" and "industrial" and all other supported themes
+    const validTheme = ["standard", "industrial", "orangepill", "nostrich", 
+                        "beehive", "liquidity", "safari", "blocktron"].includes(config.theme)
       ? config.theme
       : "standard";
 
@@ -30,28 +35,55 @@ function App() {
     document.documentElement.setAttribute("data-theme", validTheme);
   }, [config.theme]);
 
+  // Check for any errors during initial load
+  useEffect(() => {
+    // After 5 seconds, enable the recovery button
+    // This helps in case of subtle rendering issues that don't trigger error boundaries
+    const timer = setTimeout(() => {
+      setShowRecoveryButton(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-0 md:py-1">
-      <Router>
-        <Routes>
-          <Route path="/" Component={Home} />
-          <Route path="/wallet" Component={Wallet}>
-            <Route path="new" Component={New} />
-            <Route path="pay/:invoice" Component={Pay} />
-            <Route path="paid" Component={Paid} />
-            <Route path="tip/:invoice" Component={TipPage} />
-            <Route path="tiponly" Component={TipOnly} />
-            <Route path="share" Component={Share} />
-            <Route path=":legacyWallet/new" Component={LegacyWalletRedirect} />
-          </Route>
-          <Route path="/settings" Component={Settings} />
-          <Route path="/security/*" Component={Security} />
-          <Route path="/disclaimers" Component={Disclaimers} />
-          <Route path="/about" Component={About} />
-          <Route path="/*" Component={NotFound} />
-        </Routes>
-      </Router>
-    </div>
+    <ErrorBoundary>
+      <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-0 md:py-1">
+        {/* Version checker - periodically checks for updates */}
+        <VersionChecker checkInterval={30 * 60 * 1000} /> {/* Check every 30 minutes */}
+        
+        <Router>
+          <Routes>
+            <Route path="/" Component={Home} />
+            <Route path="/wallet" Component={Wallet}>
+              <Route path="new" Component={New} />
+              <Route path="pay/:invoice" Component={Pay} />
+              <Route path="paid" Component={Paid} />
+              <Route path="tip/:invoice" Component={TipPage} />
+              <Route path="tiponly" Component={TipOnly} />
+              <Route path="share" Component={Share} />
+              <Route path=":legacyWallet/new" Component={LegacyWalletRedirect} />
+            </Route>
+            <Route path="/settings" Component={Settings} />
+            <Route path="/security/*" Component={Security} />
+            <Route path="/disclaimers" Component={Disclaimers} />
+            <Route path="/about" Component={About} />
+            <Route path="/*" Component={NotFound} />
+          </Routes>
+        </Router>
+        
+        {/* Recovery button (conditionally shown) */}
+        {showRecoveryButton && (
+          <div className="fixed bottom-2 right-2 z-50 opacity-50 hover:opacity-100 transition-opacity">
+            <RecoveryButton 
+              className="scale-75 origin-bottom-right"
+              buttonText="⚡ Refresh App"
+              explanation=""
+            />
+          </div>
+        )}
+      </div>
+    </ErrorBoundary>
   );
 }
 
