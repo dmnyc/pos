@@ -85,6 +85,8 @@ export function Home() {
     }
   }, [navigate, params]);
 
+  // For now, we'll just use the standard bitcoin-connect styles
+  // In the future, we can add more customization options
   React.useEffect(() => {
     init({
       appName: config.displayName,
