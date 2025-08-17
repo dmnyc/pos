@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { APP_VERSION } from '../../components/utility/VersionLabel';
+
+interface VersionInfo {
+  version: string;
+  buildNumber?: string;
+  buildDate?: string;
+}
 
 interface CheckForUpdatesProps {
   className?: string;
@@ -7,7 +13,24 @@ interface CheckForUpdatesProps {
 
 export const CheckForUpdates: React.FC<CheckForUpdatesProps> = ({ className = '' }) => {
   const [status, setStatus] = useState<'idle' | 'checking' | 'current' | 'outdated' | 'error'>('idle');
-  const [latestVersion, setLatestVersion] = useState<string | null>(null);
+  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
+
+  // Fetch version info when component mounts
+  useEffect(() => {
+    const fetchVersionInfo = async () => {
+      try {
+        const response = await fetch(`/version.json`);
+        if (response.ok) {
+          const data: VersionInfo = await response.json();
+          setVersionInfo(data);
+        }
+      } catch (error) {
+        console.warn('Error fetching initial version info:', error);
+      }
+    };
+
+    fetchVersionInfo();
+  }, []);
 
   const checkForUpdates = async () => {
     try {
@@ -22,8 +45,8 @@ export const CheckForUpdates: React.FC<CheckForUpdatesProps> = ({ className = ''
         return;
       }
 
-      const data = await response.json();
-      setLatestVersion(data.version);
+      const data: VersionInfo = await response.json();
+      setVersionInfo(data);
       
       // Check if versions match
       if (data.version && data.version !== APP_VERSION) {
@@ -54,11 +77,18 @@ export const CheckForUpdates: React.FC<CheckForUpdatesProps> = ({ className = ''
         <div className="flex flex-col space-y-2">
           <div className="text-sm text-gray-400">
             Current version: <span className="text-white">{APP_VERSION}</span>
+            <span className="text-gray-500 ml-1">(build {versionInfo?.buildNumber || '...'})</span>
           </div>
           
-          {status === 'outdated' && latestVersion && (
+          {versionInfo?.buildDate && (
+            <div className="text-sm text-gray-400">
+              Build date: <span className="text-gray-300">{versionInfo.buildDate}</span>
+            </div>
+          )}
+          
+          {status === 'outdated' && versionInfo && (
             <div className="text-sm text-green-400">
-              New version available: <span className="font-medium">{latestVersion}</span>
+              New version available: <span className="font-medium">{versionInfo.version}</span>
             </div>
           )}
           
@@ -78,7 +108,7 @@ export const CheckForUpdates: React.FC<CheckForUpdatesProps> = ({ className = ''
             <button
               onClick={checkForUpdates}
               disabled={status === 'checking'}
-              className="bg-gray-700 hover:bg-gray-600 text-white py-1 px-3 rounded text-sm transition-colors"
+              className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded text-sm transition-colors"
             >
               {status === 'checking' ? 'Checking...' : 'Check for Updates'}
             </button>
@@ -86,7 +116,7 @@ export const CheckForUpdates: React.FC<CheckForUpdatesProps> = ({ className = ''
             {status === 'outdated' && (
               <button
                 onClick={refreshApp}
-                className="bg-green-600 hover:bg-green-500 text-white py-1 px-3 rounded text-sm transition-colors"
+                className="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded text-sm transition-colors"
               >
                 Update Now
               </button>
