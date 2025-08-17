@@ -111,6 +111,11 @@ This POS application includes several features to prevent and recover from commo
    - Reset localStorage (if needed)
    - Reload with a fresh instance
 
+These resilience features are designed to be authentication-aware, meaning:
+- They are fully available on the login/connection screen
+- After connecting to a wallet and setting a PIN, recovery mechanisms become more limited to protect against bypassing security
+- Error boundaries will never clear user credentials when authenticated
+
 ### When to Use Recovery Features
 
 These features are particularly helpful in scenarios like:

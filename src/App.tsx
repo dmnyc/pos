@@ -35,12 +35,17 @@ function App() {
     document.documentElement.setAttribute("data-theme", validTheme);
   }, [config.theme]);
 
-  // Check for any errors during initial load
+  // Check if user is authenticated (has NWC URL and PIN)
+  const isAuthenticated = () => {
+    return !!localStorage.getItem(localStorageKeys.nwcUrl) && 
+           !!localStorage.getItem('pos_pin');
+  };
+
+  // Show recovery button only after 5 seconds and only if user is not authenticated
   useEffect(() => {
-    // After 5 seconds, enable the recovery button
-    // This helps in case of subtle rendering issues that don't trigger error boundaries
+    // After 5 seconds, enable the recovery button only if not authenticated
     const timer = setTimeout(() => {
-      setShowRecoveryButton(true);
+      setShowRecoveryButton(!isAuthenticated());
     }, 5000);
 
     return () => clearTimeout(timer);

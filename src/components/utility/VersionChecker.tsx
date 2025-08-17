@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RecoveryButton } from './RecoveryButton';
+import { localStorageKeys } from '../../config';
 
 // This should match your package.json version
 // We'll dynamically inject this during the build process
@@ -21,6 +22,12 @@ export const VersionChecker: React.FC<VersionCheckerProps> = ({
   const [outdated, setOutdated] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Check if user is authenticated (has NWC URL and PIN)
+  const isAuthenticated = () => {
+    return !!localStorage.getItem(localStorageKeys.nwcUrl) && 
+           !!localStorage.getItem('pos_pin');
+  };
+
   // Function to check for version mismatch
   const checkVersion = async () => {
     try {
@@ -38,7 +45,14 @@ export const VersionChecker: React.FC<VersionCheckerProps> = ({
       if (data.version && data.version !== APP_VERSION) {
         console.log(`App version mismatch: running ${APP_VERSION}, latest is ${data.version}`);
         setOutdated(true);
-        setModalOpen(true);
+        
+        // Only show modal for non-authenticated users
+        // For authenticated users, we just log the version mismatch
+        if (!isAuthenticated()) {
+          setModalOpen(true);
+        } else {
+          console.log('Version update available but user is authenticated - update notification suppressed');
+        }
       }
     } catch (error) {
       console.warn('Version check failed:', error);
@@ -67,7 +81,7 @@ export const VersionChecker: React.FC<VersionCheckerProps> = ({
     };
   }, [checkInterval]);
 
-  // No UI needed if everything is up to date
+  // No UI needed if everything is up to date or user is authenticated
   if (!outdated || !modalOpen) {
     return null;
   }
