@@ -74,9 +74,9 @@ function App() {
         
         {/* Recovery button (conditionally shown) */}
         {showRecoveryButton && (
-          <div className="fixed bottom-2 right-2 z-50 opacity-50 hover:opacity-100 transition-opacity">
+          <div className="fixed top-2 right-2 z-50 opacity-50 hover:opacity-100 transition-opacity">
             <RecoveryButton 
-              className="scale-75 origin-bottom-right"
+              className="scale-75 origin-top-right"
               buttonText="⚡ Refresh App"
               explanation=""
             />
