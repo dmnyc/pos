@@ -96,6 +96,40 @@ You can create custom instances for different merchants by:
 
 Each merchant's settings will be stored in their browser's localStorage.
 
+## Application Resilience
+
+This POS application includes several features to prevent and recover from common PWA issues like blank screens, stale caches, or service worker problems:
+
+### Automatic Recovery Mechanisms
+
+1. **Error Boundaries**: Catches JavaScript errors in components to prevent the entire UI from crashing
+2. **Version Checking**: Periodically checks for application updates and prompts users to refresh
+3. **Service Worker Management**: Improved service worker configuration to handle updates properly
+4. **Recovery Button**: A small, unobtrusive button appears after the app loads that allows users to:
+   - Clear application caches
+   - Unregister service workers
+   - Reset localStorage (if needed)
+   - Reload with a fresh instance
+
+### When to Use Recovery Features
+
+These features are particularly helpful in scenarios like:
+
+- After an application update
+- When the screen appears blank or partially loaded
+- If components aren't rendering properly
+- When the application seems "stuck" or unresponsive
+
+### For Developers
+
+The resilience features work automatically, but developers can:
+
+- Check `public/version.json` to see the currently deployed version
+- Update version information in `package.json` to trigger update notifications
+- The service worker is configured to check for updates every 5 minutes
+
+These mechanisms help ensure that users always have a working application, even when issues with caching or PWA functionality occur.
+
 ## Mobile Optimization
 
 The interface is fully optimized for mobile devices with:
