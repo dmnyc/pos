@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { MerchantLogo } from "./MerchantLogo";
 import { ConfirmModal } from "./Modals";
 import {
@@ -14,13 +14,14 @@ import { localStorageKeys, getMerchantConfig } from "../config";
 import { verifyPin } from "../utils/pinUtils";
 import { useState, useRef, useEffect } from "react";
 import { getNavbarHeightClasses, getNavbarMinHeightClasses } from "../utils/layoutConstants";
+import useStore from "../state/store";
+import { disconnect } from "@getalby/bitcoin-connect-react";
 
 export function Navbar() {
   const config = getMerchantConfig();
   const [isOpen, setIsOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Handle clicks outside the dropdown to close it
@@ -50,23 +51,35 @@ export function Navbar() {
   const handleLogout = async () => {
     const verified = await verifyPin();
     if (verified) {
+      // Clear the provider from the store to properly disconnect
+      useStore.getState().setProvider(undefined);
+      // Clear last invoice data
+      useStore.getState().setLastInvoiceData(null);
+      
       // Clear wallet connection and security PIN
       window.localStorage.removeItem(localStorageKeys.nwcUrl);
       window.localStorage.removeItem('pos_pin');
 
       // APPROACH 1: Completely remove merchant config (will use default on next load)
       window.localStorage.removeItem(localStorageKeys.merchantConfig);
+      
+      // Clear any additional state from localStorage
+      window.localStorage.removeItem(localStorageKeys.currency);
+      window.localStorage.removeItem(localStorageKeys.label);
+      window.localStorage.removeItem(localStorageKeys.tipSettings);
 
-      // APPROACH 2: Or reset it to default (keeping the name)
-      // const currentConfig = getMerchantConfig();
-      // const resetConfig = {
-      //   ...defaultMerchantConfig,
-      //   name: currentConfig.name // Keep just the merchant name
-      // };
-      // saveMerchantConfig(resetConfig);
+      // Ensure we disconnect from any active wallet connections
+      try {
+        disconnect();
+      } catch (e) {
+        // Ignore any errors during disconnect
+        console.log("Error during disconnect:", e);
+      }
 
       handleMenuItemClick();
-      navigate('/');
+      
+      // Force a reload of the application to ensure clean state
+      window.location.href = '/';
     }
   };
 
