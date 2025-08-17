@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { APP_VERSION } from '../utility/VersionLabel';
+import { APP_VERSION } from '../../components/utility/VersionLabel';
 
 interface VersionInfo {
   version: string;

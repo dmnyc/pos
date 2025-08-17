@@ -10,6 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { MerchantLogo } from "../components/MerchantLogo";
 import { ConfirmModal, AlertModal } from "../components/Modals";
 import QRScanner from "../components/QRScanner";
+import { VersionLabel } from "../components/utility";
 import {
   localStorageKeys,
   getMerchantConfig,
