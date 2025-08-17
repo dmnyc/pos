@@ -41,6 +41,8 @@ export default {
         'nostrich-hover': 'linear-gradient(to bottom, #c253b4, #a9186a)',
         'safari-gradient': 'linear-gradient(to bottom, #4d8c2f, #94b639, #f5b735, #ea8829, #d6492b)',
         'safari-hover': 'linear-gradient(to bottom, #3d7c1f, #84a629, #e5a725, #da7819, #c6391b)',
+        'liquidity-gradient': 'linear-gradient(to bottom, #4dd0f9, #0682b0)',
+        'liquidity-hover': 'linear-gradient(to bottom, #3cc0e9, #0572a0)',
         'blocktron-gradient': 'linear-gradient(to right, #ff9900, #ff7a30, #ff00aa, #7b00ff, #00FFFF)',
         'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #6b00ef, #00FFFF)',
       },
@@ -129,6 +131,21 @@ export default {
           "secondary-content": "#000000", // Black text on secondary elements
           accent: "#fce169", // Yellow for accent elements (charge button)
           "accent-content": "#000000", // Black text on yellow buttons for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        liquidity: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#4dd0f9", // Blue for accent elements (charge button)
+          "accent-content": "#000000", // Black text on blue buttons for better contrast
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background
           "base-content": "#FFFFFF", // White text on base elements

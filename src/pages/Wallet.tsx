@@ -11,14 +11,14 @@ export function Wallet() {
     (async () => {
       const nwcUrl = window.localStorage.getItem(localStorageKeys.nwcUrl);
       if (nwcUrl) {
-        console.log("Enabling provider");
+        // console.log("Enabling provider");
         try {
           const _provider = new webln.NostrWebLNProvider({
             nostrWalletConnectUrl: nwcUrl,
           });
           await _provider.enable();
           useStore.getState().setProvider(_provider);
-          console.log("Provider enabled");
+          // console.log("Provider enabled");
         } catch (error) {
           console.error(error);
           alert("Failed to load wallet: " + error);

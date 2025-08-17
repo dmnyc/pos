@@ -2,8 +2,8 @@ import { Navbar } from '../../components/Navbar';
 import { PageContainer } from '../../components/PageContainer';
 
 /**
- * Example page demonstrating the use of the PageContainer component
- * This shows how to implement the container in new pages for consistent layout
+ * Example page demonstrating the use of the PageContainer componen
+ * This shows how to implement the container in new pages for consistent layou
  */
 export function ExamplePage() {
   return (

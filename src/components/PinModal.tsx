@@ -12,9 +12,9 @@ interface PinModalProps {
   message?: string;
 }
 
-export const PinModal: React.FC<PinModalProps> = ({ 
-  isOpen, 
-  onClose, 
+export const PinModal: React.FC<PinModalProps> = ({
+  isOpen,
+  onClose,
   onSubmit,
   message = "Enter your PIN to continue"
 }) => {
@@ -50,12 +50,12 @@ export const PinModal: React.FC<PinModalProps> = ({
       <div className="bg-gray-900 rounded-lg p-6 w-full max-w-sm mx-4">
         <form onSubmit={handleSubmit}>
           <h2 className="text-xl font-semibold mb-4 text-white">{message}</h2>
-          
+
           <div className="mb-4">
             <input
               type="password"
               value={pin}
-              onChange={(e) => handlePinChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePinChange(e.target.value)}
               className={`${pinInputClasses} ${error ? 'border-red-500 focus:border-red-500' : 'focus:border-[#ffcc99]'}`}
               placeholder="••••"
               inputMode="numeric"

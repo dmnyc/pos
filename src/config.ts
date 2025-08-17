@@ -3,8 +3,9 @@ export interface MerchantConfig {
   displayName: string;
   logoUrl: string;
   description: string;
-  theme: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "safari" | "blocktron";
+  theme: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "liquidity" | "safari" | "blocktron";
   paymentChimeEnabled: boolean;
+  paymentEffectEnabled: boolean;
 }
 
 export interface TipSettings {
@@ -17,10 +18,11 @@ export interface TipSettings {
 export const defaultMerchantConfig: MerchantConfig = {
   name: "Sats Factory",
   displayName: "Sats Factory POS",
-  logoUrl: "/images/satsfactory_logo.svg", 
+  logoUrl: "/images/satsfactory_logo.svg",
   description: "Point-of-Sale for bitcoin lightning payments",
   theme: "standard",
-  paymentChimeEnabled: false
+  paymentChimeEnabled: false,
+  paymentEffectEnabled: true
 };
 
 // Default tip settings
@@ -33,29 +35,30 @@ export const defaultTipSettings: TipSettings = {
 // Function to load merchant configuration from localStorage
 export function loadMerchantConfig(): MerchantConfig {
   const storedConfig = localStorage.getItem(localStorageKeys.merchantConfig);
-  
+
   if (storedConfig) {
     try {
       // Handle migration from old config format with primaryColor/secondaryColor
       const parsedConfig = JSON.parse(storedConfig);
-      
+
       // If the old format is found (has primaryColor but no theme)
       if (parsedConfig.primaryColor && !parsedConfig.theme) {
-        // Copy everything except primaryColor and secondaryColor
+        // Copy everything except primaryColor and secondaryColor, use _var convention to indicate intentionally unused
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { primaryColor, secondaryColor, ...rest } = parsedConfig;
         // Add theme property
-        return { 
-          ...rest, 
+        return {
+          ...rest,
           theme: "standard" // Default to standard theme for migrated configs
         };
       }
-      
+
       return parsedConfig;
     } catch (e) {
       console.error("Failed to parse stored merchant config", e);
     }
   }
-  
+
   // Return default if no stored config
   return defaultMerchantConfig;
 }
@@ -63,7 +66,7 @@ export function loadMerchantConfig(): MerchantConfig {
 // Function to load tip settings from localStorage
 export function loadTipSettings(): TipSettings {
   const storedSettings = localStorage.getItem(localStorageKeys.tipSettings);
-  
+
   if (storedSettings) {
     try {
       return JSON.parse(storedSettings);
@@ -71,7 +74,7 @@ export function loadTipSettings(): TipSettings {
       console.error("Failed to parse stored tip settings", e);
     }
   }
-  
+
   // Return default if no stored settings
   return defaultTipSettings;
 }
@@ -90,12 +93,12 @@ export function saveTipSettings(settings: TipSettings): void {
 export function getMerchantConfig(): MerchantConfig {
   const savedConfig = loadMerchantConfig();
   // Always enforce certain fixed values
-  return { 
-    ...defaultMerchantConfig, 
+  return {
+    ...defaultMerchantConfig,
     ...savedConfig,
     // Always override these specific fields
     displayName: "Sats Factory POS",
-    description: "Point-of-Sale for bitcoin lightning payments" 
+    description: "Point-of-Sale for bitcoin lightning payments"
   };
 }
 
@@ -165,68 +168,82 @@ export function applyMerchantConfigFromUrl(searchParams: URLSearchParams): void 
   }
 }
 
+// Define interface for compressed config
+interface CompressedConfig {
+  name?: string;
+  logoUrl?: string;
+  theme?: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "liquidity" | "safari" | "blocktron";
+  paymentChime?: boolean;
+  currency?: string;
+  tips?: {
+    enabled?: boolean;
+    percentages?: number[];
+    allowCustom?: boolean;
+  };
+}
+
 // Apply compressed configuration object
-function applyCompressedConfig(configObject: any): void {
-  
+function applyCompressedConfig(configObject: CompressedConfig): void {
+
   let merchantUpdated = false;
   let tipUpdated = false;
-  
+
   const currentMerchantConfig = getMerchantConfig();
   const currentTipSettings = getTipSettings();
-  
+
   // Apply merchant config settings
   const newMerchantConfig = { ...currentMerchantConfig };
-  
+
   if (configObject.name) {
     newMerchantConfig.name = configObject.name;
     merchantUpdated = true;
   }
-  
+
   if (configObject.logoUrl) {
     newMerchantConfig.logoUrl = configObject.logoUrl;
     merchantUpdated = true;
   }
-  
-  if (configObject.theme && ["standard", "industrial", "orangepill", "nostrich", "beehive", "safari", "blocktron"].includes(configObject.theme)) {
+
+  if (configObject.theme && ["standard", "industrial", "orangepill", "nostrich", "beehive", "liquidity", "safari", "blocktron"].includes(configObject.theme)) {
     newMerchantConfig.theme = configObject.theme;
     merchantUpdated = true;
   }
-  
+
   if (typeof configObject.paymentChime === 'boolean') {
     newMerchantConfig.paymentChimeEnabled = configObject.paymentChime;
     merchantUpdated = true;
   }
-  
+
   // Apply currency setting
   if (configObject.currency) {
     localStorage.setItem(localStorageKeys.currency, configObject.currency);
   }
-  
+
   // Apply tip settings
   const newTipSettings = { ...currentTipSettings };
-  
+
   if (configObject.tips) {
     if (typeof configObject.tips.enabled === 'boolean') {
       newTipSettings.enabled = configObject.tips.enabled;
       tipUpdated = true;
     }
-    
+
     if (Array.isArray(configObject.tips.percentages)) {
       newTipSettings.defaultPercentages = configObject.tips.percentages;
       tipUpdated = true;
     }
-    
+
     if (typeof configObject.tips.allowCustom === 'boolean') {
       newTipSettings.allowCustom = configObject.tips.allowCustom;
       tipUpdated = true;
     }
   }
-  
+
   // Save updated configurations
   if (merchantUpdated) {
     saveMerchantConfig(newMerchantConfig);
   }
-  
+
   if (tipUpdated) {
     saveTipSettings(newTipSettings);
   }

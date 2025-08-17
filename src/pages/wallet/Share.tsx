@@ -9,7 +9,7 @@ import { AlertModal } from "../../components/Modals";
 
 export function Share() {
   useRequirePin(); // Add PIN protection
-  
+
   const [shareURI, setShareURI] = useState("");
   const [copied, setCopied] = useState(false);
   const [alertState, setAlertState] = useState<{
@@ -29,8 +29,8 @@ export function Share() {
       const merchantConfig = getMerchantConfig();
       const tipSettings = getTipSettings();
       const currency = localStorage.getItem(localStorageKeys.currency) || "USD";
-      
-      // Create compressed configuration object
+
+      // Create compressed configuration objec
       const configObject = {
         name: merchantConfig.name,
         logoUrl: merchantConfig.logoUrl,
@@ -43,10 +43,10 @@ export function Share() {
           allowCustom: tipSettings.allowCustom
         }
       };
-      
+
       const nwcEncoded = btoa(nwcUrl);
       const configEncoded = btoa(JSON.stringify(configObject));
-      
+
       // Generate URL compatible with HashRouter
       const baseUrl = window.location.origin + window.location.pathname;
       setShareURI(`${baseUrl}#/?nwc=${nwcEncoded}&config=${configEncoded}`);
@@ -68,7 +68,7 @@ export function Share() {
       });
     }
   }
-  
+
   const handleBack = () => {
     navigate("../new");
   };

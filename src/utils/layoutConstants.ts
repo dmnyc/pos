@@ -17,7 +17,7 @@ export const NAVBAR_HEIGHTS = {
 
 /**
  * Returns Tailwind classes for calculating full-height containers that account for the navbar
- * Use this for main content containers to ensure they fill the available viewport height
+ * Use this for main content containers to ensure they fill the available viewport heigh
  * Example: getFullHeightClasses() => "h-[calc(100vh-48px)] md:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)] wide:h-[calc(100vh-80px)]"
  */
 export function getFullHeightClasses(): string {

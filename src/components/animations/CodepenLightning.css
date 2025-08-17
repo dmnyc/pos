@@ -2,20 +2,32 @@
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   z-index: 1000;
   transition: background 0.2s;
+  /* Ensure content is centered */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Allow content to overflow without being cut off */
+  overflow: visible;
 }
 
 .lightning-svg {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100vw;
+  /* Increased size to allow for overflow without cutting off bolts */
+  width: 100vw; /* Use full viewport width */
   height: 100vh;
   filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.7));
+  /* Center the SVG */
+  left: 50%;
+  transform: translateX(-50%);
+  /* Explicitly allow overflow */
+  overflow: visible;
 }
 
 .rayo {

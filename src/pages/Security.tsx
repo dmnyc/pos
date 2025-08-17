@@ -15,9 +15,9 @@ const Security = () => {
   const [isChangingPin, setIsChangingPin] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  
+
   const isStatusView = location.pathname === '/security/status'
-  
+
   // Alert modal state
   const [alertState, setAlertState] = useState<{
     isOpen: boolean;
@@ -39,8 +39,8 @@ const Security = () => {
     }
     setAlertState(prev => ({ ...prev, isOpen: false }));
   };
-  
-  // Check if PIN already exists in localStorage on component mount
+
+  // Check if PIN already exists in localStorage on component moun
   React.useEffect(() => {
     const existingPin = localStorage.getItem('pos_pin')
 
@@ -69,7 +69,7 @@ const Security = () => {
       showAlert('PIN Mismatch', 'PINs do not match');
       return;
     }
-    
+
     if (pin.length < 4) {
       showAlert('Invalid PIN', 'PIN must be at least 4 digits');
       return;
@@ -100,7 +100,7 @@ const Security = () => {
       <div className="flex flex-grow flex-col overflow-auto pt-16">
         <div className="w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto p-2 md:p-4">
           <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Security Settings</h1>
-          
+
           <div className="bg-gray-800 p-6 pb-4 rounded-lg">
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">{isStatusView ? 'POS Security PIN' : 'Set security PIN to continue'}</h2>
@@ -144,7 +144,7 @@ const Security = () => {
                       <input
                         type="password"
                         value={pin}
-                        onChange={(e) => handlePinChange(e.target.value, true)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePinChange(e.target.value, true)}
                         className={pinInputClasses}
                         placeholder="••••"
                         inputMode="numeric"
@@ -157,7 +157,7 @@ const Security = () => {
                       <input
                         type="password"
                         value={confirmPin}
-                        onChange={(e) => handlePinChange(e.target.value, false)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handlePinChange(e.target.value, false)}
                         className={pinInputClasses}
                         placeholder="••••"
                         inputMode="numeric"

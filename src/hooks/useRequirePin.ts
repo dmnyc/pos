@@ -12,7 +12,7 @@ export const useRequirePin = () => {
       pinChecked.current = true;
 
       const storedPin = localStorage.getItem('pos_pin');
-      
+
       if (!storedPin) {
         alert('Please set up a security PIN first');
         navigate('/security');

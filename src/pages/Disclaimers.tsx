@@ -3,7 +3,7 @@ import { ExactBackButton } from '../components/ExactBackButton';
 
 export function Disclaimers() {
   const navigate = useNavigate();
-  
+
   const handleBack = () => {
     const hasWallet = window.localStorage.getItem("pos:nwcUrl");
     if (hasWallet) {
@@ -20,20 +20,20 @@ export function Disclaimers() {
         <div className="w-full max-w-3xl mx-auto p-4 md:p-6 lg:p-8">
           <div className="prose prose-invert">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-8">Disclaimers & Privacy Information</h1>
-            
+
             <p className="text-gray-400 mb-8">Last Updated: August 15, 2025</p>
-            
+
             <div className="mb-12">
               <p>Please read these disclaimers and privacy information carefully before using the Sats Factory POS application.</p>
             </div>
 
             <h2 className="text-xl md:text-2xl font-bold mb-6">I. Disclaimers</h2>
-            
+
             <p>By using the Sats Factory POS application ("the software"), you acknowledge that you have read, understood, and agree to be bound by the terms outlined below. If you do not agree with these terms, do not use the software.</p>
-            
+
             <h3 className="text-lg font-bold mt-8 mb-4">1. Use At Your Own Risk</h3>
             <p>Your use of the Sats Factory POS software is entirely <strong>AT YOUR OWN RISK</strong>. This software is an open-source project that uses Nostr Wallet Connect (NWC) technology. You are solely responsible for your actions and for any loss or damage that may arise from using this application.</p>
-            
+
             <h3 className="text-lg font-bold mt-8 mb-4">2. Non-Custodial Software</h3>
             <p className="mb-4">
               Sats Factory POS is a <strong>100% non-custodial</strong> application. This means:
@@ -88,12 +88,12 @@ export function Disclaimers() {
             </ul>
 
             <h2 className="text-xl md:text-2xl font-bold mt-12 mb-6">II. Privacy Information</h2>
-            
+
             <p className="mb-6">Effective Date: August 15, 2025</p>
-            
+
             <h3 className="text-lg font-bold mt-8 mb-4">1. Introduction</h3>
             <p>This privacy information describes how Sats Factory POS handles information. We are committed to collecting only the minimum information necessary to provide the service.</p>
-            
+
             <h3 className="text-lg font-bold mt-8 mb-4">2. Information We Do Not Collect</h3>
             <p className="mb-4">We do not collect or store:</p>
             <ul className="list-disc pl-6 mb-6 mt-4">

@@ -22,7 +22,7 @@ export function Navbar() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Handle clicks outside the dropdown to close it
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -30,18 +30,18 @@ export function Navbar() {
         setIsOpen(false);
       }
     }
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  
+
   // Toggle the dropdown
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-  
+
   // Close the dropdown when a menu item is clicked
   const handleMenuItemClick = () => {
     setIsOpen(false);
@@ -53,10 +53,10 @@ export function Navbar() {
       // Clear wallet connection and security PIN
       window.localStorage.removeItem(localStorageKeys.nwcUrl);
       window.localStorage.removeItem('pos_pin');
-      
+
       // APPROACH 1: Completely remove merchant config (will use default on next load)
       window.localStorage.removeItem(localStorageKeys.merchantConfig);
-      
+
       // APPROACH 2: Or reset it to default (keeping the name)
       // const currentConfig = getMerchantConfig();
       // const resetConfig = {
@@ -64,18 +64,18 @@ export function Navbar() {
       //   name: currentConfig.name // Keep just the merchant name
       // };
       // saveMerchantConfig(resetConfig);
-      
+
       handleMenuItemClick();
       navigate('/');
     }
   };
-  
+
   return (
     <div className={`navbar bg-black text-white ${getNavbarHeightClasses()} px-0`} data-theme={config.theme}>
       {/* Left section with menu button */}
       <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-center items-center">
         <div className="relative" ref={dropdownRef}>
-          <button 
+          <button
             onClick={toggleDropdown}
             className="text-gray-400 flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none"
           >
@@ -83,7 +83,7 @@ export function Navbar() {
               <path strokeLinecap="square" strokeLinejoin="miter" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          
+
           {isOpen && (
             <ul className="absolute top-full left-0 mt-1 menu bg-black rounded-box z-[1] w-48 md:w-56 lg:w-64 wide:w-64 p-2 md:p-3 shadow text-white">
               <li key="settings">
@@ -128,17 +128,17 @@ export function Navbar() {
           )}
         </div>
       </div>
-      
+
       {/* Center section with logo */}
       <div className={`flex-1 flex justify-center items-center ${getNavbarMinHeightClasses()}`}>
         <MerchantLogo />
       </div>
-      
+
       {/* Right section with heart icon for Tip Only */}
       <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-center items-center">
         {location.pathname !== "/wallet/tiponly" ? (
-          <Link 
-            to="../tiponly" 
+          <Link
+            to="../tiponly"
             className="group flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none transition-all"
             aria-label="Tip Only"
           >
@@ -150,8 +150,8 @@ export function Navbar() {
         ) : (
           <div className="relative flex items-center justify-center">
             <span className="absolute right-full whitespace-nowrap mr-1.5 text-[10px] md:text-xs lg:text-xs wide:text-sm text-[#ef4445] self-center font-bold">Tip Only</span>
-            <Link 
-              to="../new" 
+            <Link
+              to="../new"
               className="group flex items-center justify-center h-8 w-8 md:h-8 md:w-8 lg:h-10 lg:w-10 wide:h-10 wide:w-10 focus:outline-none transition-all"
               aria-label="Exit Tip Only"
             >
