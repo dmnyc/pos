@@ -49,7 +49,7 @@ Visit the Settings page (`/#/settings`) to configure:
 You can also configure the merchant branding through URL parameters:
 - `?merchant_name=Your%20Store%20Name` - Sets the merchant name
 - `?logo_url=https://example.com/logo.png` - Sets the logo URL
-- `?theme=beehive` - Sets the theme (standard, orangepill, nostrich, beehive, safari, blocktron, industrial)
+- `?theme=beehive` - Sets the theme (standard, orangepill, nostrich, liquidity, beehive, safari, blocktron, industrial)
 - `?description=Best%20coffee%20in%20town` - Sets the description
 - `?currency=USD` - Sets the default currency
 
@@ -63,9 +63,10 @@ The POS app includes multiple themes to match different merchant styles:
 2. **OrangePill** - Bitcoin-inspired orange theme
 3. **Nostrich** - Nostr-inspired purple theme
 4. **Beehive** - Alby-inspired yellow theme
-5. **Safari** - Desert-inspired warm theme
-6. **Blocktron** - Futuristic digital theme
-7. **Industrial** - Bold industrial design
+5. **Liquidity** - A cool blue aquatic theme
+6. **Safari** - Desert-inspired warm theme
+7. **Blocktron** - Futuristic digital theme
+8. **Industrial** - Bold industrial design
 
 Each theme provides a unique visual style while maintaining a consistent layout and functionality.
 
