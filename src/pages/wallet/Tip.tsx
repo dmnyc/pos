@@ -4,6 +4,7 @@ import useStore from '../../state/store';
 import { getMerchantConfig, getTipSettings } from '../../config';
 import { fiat } from "@getalby/lightning-tools";
 import { Navbar } from '../../components/Navbar';
+import { getCurrencySymbol } from '../../utils/currencyUtils';
 
 const CUSTOM_TIP = 'custom';
 const NO_TIP = 'none';
@@ -227,16 +228,26 @@ export function TipPage() {
       // Only include fiat amount in memo if not using SATS currency
       let fiatDisplay = "";
       if (currency !== "SATS" && fiatRate) {
+        const currencySymbol = getCurrencySymbol(currency);
+        let amount = "";
+        
         if (customTipCurrency === "FIAT" && customTipValue) {
           // If user entered amount in fiat, use that directly
-          fiatDisplay = `${currency} ${customTipValue}`;
-          tipMemo += ` (${fiatDisplay})`;
+          amount = customTipValue;
         } else {
           // Otherwise calculate fiat equivalent
           const fiatValue = tipAmount / fiatRate;
-          fiatDisplay = `${currency} ${fiatValue.toFixed(2)}`;
-          tipMemo += ` (${fiatDisplay})`;
+          amount = fiatValue.toFixed(2);
         }
+        
+        // Format: Store Name - Tip (USD $0.01) - with no space between $ and amount
+        if (currencySymbol.isSymbol) {
+          fiatDisplay = `${currency} ${currencySymbol.symbol}${amount}`;
+        } else {
+          fiatDisplay = `${currency} ${amount}`;
+        }
+        
+        tipMemo += ` (${fiatDisplay})`;
       }
 
       const invoice = await provider.makeInvoice({
