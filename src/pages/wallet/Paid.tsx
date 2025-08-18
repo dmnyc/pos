@@ -9,6 +9,9 @@ import { playPaymentChime } from "../../utils/audioUtils";
 import CodepenLightning from "../../components/animations/CodepenLightning";
 import TipGlowButton from "../../components/animations/TipGlowButton";
 
+// Timeout duration in milliseconds (3 minutes = 180,000ms)
+const AUTO_RESET_TIMEOUT = 3 * 60 * 1000;
+
 export function Paid() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,7 +20,18 @@ export function Paid() {
   const [showLightning, setShowLightning] = useState(true);
   const config = getMerchantConfig();
 
-  // Check if we're coming from a tip paymen
+  // Set up automatic reset timer
+  useEffect(() => {
+    // After 3 minutes, automatically navigate back to the new payment screen
+    const autoResetTimer = setTimeout(() => {
+      navigate('../new');
+    }, AUTO_RESET_TIMEOUT);
+
+    // Clean up the timer when component unmounts
+    return () => clearTimeout(autoResetTimer);
+  }, [navigate]);
+
+  // Check if we're coming from a tip payment
   useEffect(() => {
     // If this payment was a tip, don't show the tip button
     const isTipPayment = location.state?.isTipPayment || false;
