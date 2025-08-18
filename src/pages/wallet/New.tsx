@@ -91,7 +91,8 @@ export function New() {
       // Create memo with consistent format: "Store Name - Payment (Currency $amount)"
       let memo = `${config.name} - Payment`;
       if (currency !== "SATS") {
-        const formattedAmount = formatNumber(total);
+        // Get just the number part without currency symbol
+        const formattedAmount = formatNumber(total, true);
         // Format: Store Name - Payment (USD $0.01) - with no space between $ and amount
         const currencySymbol = getCurrencySymbol(currency);
         if (currencySymbol.isSymbol) {
