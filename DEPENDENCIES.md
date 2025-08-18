@@ -23,19 +23,18 @@ These versions have been tested together and are known to work properly. Upgradi
 
 ### ZXing Dependencies
 
-There's a peer dependency conflict between:
-- `@zxing/browser` which requires `@zxing/library@^0.21.0`
-- Our direct dependency on `@zxing/library@^0.20.0`
+The ZXing library dependencies have been updated to compatible versions:
+- `@zxing/browser` version ^0.1.4 (resolves to 0.1.5)
+- `@zxing/library` version ^0.21.0 (resolves to 0.21.3)
 
-This conflict is resolved using `--legacy-peer-deps` during installation.
+These versions are now compatible with each other and the peer dependency requirements have been satisfied.
 
 ## Future Improvements
 
 Consider the following improvements in future updates:
 
-1. Resolve the ZXing library version conflicts by upgrading `@zxing/library` to version 0.21.x
-2. Run `npm audit fix` after resolving these conflicts to address security vulnerabilities
-3. Consider code splitting to reduce bundle size (currently over 500kb)
+1. Run `npm audit fix` to address security vulnerabilities
+2. Consider code splitting to reduce bundle size (currently over 500kb)
 
 ## Security Vulnerabilities
 
