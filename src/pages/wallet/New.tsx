@@ -96,7 +96,8 @@ export function New() {
         // Format: Store Name - Payment (USD $0.01) - with no space between $ and amount
         const currencySymbol = getCurrencySymbol(currency);
         if (currencySymbol.isSymbol) {
-          memo += ` (${currency} ${currencySymbol.symbol}${formattedAmount})`;
+          // No space between currency name and symbol, and no space between symbol and amount
+          memo += ` (${currency}${currencySymbol.symbol}${formattedAmount})`;
         } else {
           memo += ` (${currency} ${formattedAmount})`;
         }
