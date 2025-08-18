@@ -24,3 +24,8 @@ package-lock.json
 *.sln
 *.sw?
 public/version.json
+
+# Utility files
+PR-DESCRIPTION.md
+push-branch.sh
+UPDATE-SUMMARY.md
