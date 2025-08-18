@@ -5,7 +5,7 @@ import { PageContainer } from "../../components/PageContainer";
 import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
 import { localStorageKeys, getMerchantConfig } from "../../config";
-import { formatAmount, formatAmountString } from '../../utils/currencyUtils';
+import { formatAmount, formatAmountString, getCurrencySymbol } from '../../utils/currencyUtils';
 
 export function New() {
   const [amount, setAmount] = React.useState(0); // Current input
@@ -91,8 +91,16 @@ export function New() {
       // Create memo with consistent format: "Store Name - Payment (Currency $amount)"
       let memo = `${config.name} - Payment`;
       if (currency !== "SATS") {
-        const formattedAmount = formatNumber(total);
-        memo += ` (${currency} ${formattedAmount})`;
+        // Get just the number part without currency symbol
+        const formattedAmount = formatNumber(total, true);
+        // Format: Store Name - Payment (USD $0.01) - space after currency code but not after symbol
+        const currencySymbol = getCurrencySymbol(currency);
+        if (currencySymbol.isSymbol) {
+          // Space between currency name and symbol, but no space between symbol and amount
+          memo += ` (${currency} ${currencySymbol.symbol}${formattedAmount})`;
+        } else {
+          memo += ` (${currency} ${formattedAmount})`;
+        }
       }
 
       const invoice = await provider.makeInvoice({
