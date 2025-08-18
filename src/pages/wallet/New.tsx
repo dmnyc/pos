@@ -93,11 +93,11 @@ export function New() {
       if (currency !== "SATS") {
         // Get just the number part without currency symbol
         const formattedAmount = formatNumber(total, true);
-        // Format: Store Name - Payment (USD $0.01) - with no space between $ and amount
+        // Format: Store Name - Payment (USD $0.01) - space after currency code but not after symbol
         const currencySymbol = getCurrencySymbol(currency);
         if (currencySymbol.isSymbol) {
-          // No space between currency name and symbol, and no space between symbol and amount
-          memo += ` (${currency}${currencySymbol.symbol}${formattedAmount})`;
+          // Space between currency name and symbol, but no space between symbol and amount
+          memo += ` (${currency} ${currencySymbol.symbol}${formattedAmount})`;
         } else {
           memo += ` (${currency} ${formattedAmount})`;
         }

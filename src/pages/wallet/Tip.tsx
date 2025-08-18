@@ -240,9 +240,9 @@ export function TipPage() {
           amount = fiatValue.toFixed(2);
         }
         
-        // Format: Store Name - Tip (USD$0.01) - with no space between currency and symbol
+        // Format: Store Name - Tip (USD $0.01) - space after currency code but not after symbol
         if (currencySymbol.isSymbol) {
-          fiatDisplay = `${currency}${currencySymbol.symbol}${amount}`;
+          fiatDisplay = `${currency} ${currencySymbol.symbol}${amount}`;
         } else {
           fiatDisplay = `${currency} ${amount}`;
         }
