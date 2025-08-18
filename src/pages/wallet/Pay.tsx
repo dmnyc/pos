@@ -5,15 +5,16 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar";
 import { PageContainer } from "../../components/PageContainer";
 import useStore from "../../state/store";
-import { getMerchantConfig } from "../../config";
+import { getMerchantConfig, getTipSettings } from "../../config";
 import { fiat } from "@getalby/lightning-tools";
 import { getCurrencySymbol } from '../../utils/currencyUtils';
+import { localStorageKeys } from '../../constants';
 
 export function Pay() {
   const { invoice } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { provider, setLastInvoiceData } = useStore();
+  const { provider, tipProvider, setLastInvoiceData } = useStore();
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
   const [hasCopied, setCopied] = useState(false);
@@ -21,12 +22,17 @@ export function Pay() {
   const [currency, setCurrency] = useState<string>("USD");
   const [calculatedFiatAmount, setCalculatedFiatAmount] = useState<string>("");
   const isTipPayment = location.state?.isTipPayment || false;
+  // Check if using the secondary wallet for this payment
+  const isUsingSecondaryWallet = location.state?.isUsingSecondaryWallet || false;
   // Safely convert passedFiatAmount to string or empty string
   const passedFiatAmount = location.state?.fiatAmount ? String(location.state.fiatAmount) : "";
   const config = getMerchantConfig();
   const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
 
   const [showRawInvoice, setShowRawInvoice] = useState(false);
+
+  // Determine which provider to use for this payment
+  const activeProvider = isUsingSecondaryWallet && tipProvider ? tipProvider : provider;
 
   function copyQr() {
     try {
@@ -68,7 +74,7 @@ export function Pay() {
 
   useEffect(() => {
     // Load currency from localStorage
-    const savedCurrency = localStorage.getItem("pos:currency");
+    const savedCurrency = localStorage.getItem(localStorageKeys.currency);
     if (savedCurrency) {
       setCurrency(savedCurrency);
     }
@@ -96,7 +102,7 @@ export function Pay() {
   }, [amount, currency, fiatAmount]);
 
   useEffect(() => {
-    if (!provider) {
+    if (!activeProvider) {
       return;
     }
     if (invoice) {
@@ -126,7 +132,7 @@ export function Pay() {
       // Save invoice data for potential tip
       if (!isTipPayment) {
         // Get the current currency
-        const currency = localStorage.getItem("pos:currency") || "SATS";
+        const currency = localStorage.getItem(localStorageKeys.currency) || "SATS";
         setLastInvoiceData({
           amount: satoshi,
           description,
@@ -137,7 +143,7 @@ export function Pay() {
       // Check invoice status every 3 seconds
       const paymentCheckInterval = setInterval(async () => {
         try {
-          const response = await provider.lookupInvoice({
+          const response = await activeProvider.lookupInvoice({
             paymentRequest: invoice,
           });
           if (response.paid) {
@@ -169,7 +175,7 @@ export function Pay() {
         clearInterval(countdownInterval);
       };
     }
-  }, [invoice, navigate, provider, setLastInvoiceData, isTipPayment, passedFiatAmount]);
+  }, [invoice, navigate, activeProvider, setLastInvoiceData, isTipPayment, passedFiatAmount]);
 
   if (!invoice) {
     return null;
@@ -209,6 +215,13 @@ export function Pay() {
             <p className="text-sm md:text-base lg:text-base wide:text-xl text-gray-400">
               {merchantName}
             </p>
+            
+            {/* Display badge if using secondary wallet */}
+            {isUsingSecondaryWallet && (
+              <div className="text-xs md:text-sm bg-blue-900 text-blue-200 px-2 py-1 rounded-full mt-2">
+                Using Tip Wallet
+              </div>
+            )}
           </div>
 
           {/* Main content that changes layout in landscape */}
@@ -257,6 +270,13 @@ export function Pay() {
                 <p className="text-base text-gray-400 mt-2 mb-6 lg:landscape:text-left">
                   {merchantName}
                 </p>
+                
+                {/* Display badge if using secondary wallet - landscape mode */}
+                {isUsingSecondaryWallet && (
+                  <div className="text-xs bg-blue-900 text-blue-200 px-2 py-1 rounded-full mb-4 inline-block">
+                    Using Tip Wallet
+                  </div>
+                )}
               </div>
 
               {/* Payment status and countdown timer */}

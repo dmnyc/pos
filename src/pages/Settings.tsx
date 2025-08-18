@@ -14,11 +14,15 @@ import {
 } from '../config';
 import { playPaymentChime } from '../utils/audioUtils';
 import CodepenLightning from '../components/animations/CodepenLightning';
+import { localStorageKeys } from '../constants';
 
 export function Settings() {
   useRequirePin();
   const [merchantConfig, setMerchantConfig] = useState(getMerchantConfig());
   const [tipSettings, setTipSettings] = useState(getTipSettings());
+  const [tipWalletNwcUrl, setTipWalletNwcUrl] = useState(() => {
+    return window.localStorage.getItem(localStorageKeys.tipWalletNwcUrl) || '';
+  });
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('branding');
   const [showLightningPreview, setShowLightningPreview] = useState(false);
@@ -75,6 +79,11 @@ export function Settings() {
       setShowLightningPreview(false);
     }, 1000);
   };
+  
+  const handleClearTipWallet = () => {
+    setTipWalletNwcUrl('');
+    window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
+  };
 
   // Add state for the raw percentage input as a controlled input
   const [tipPercentagesInput, setTipPercentagesInput] = useState(() => {
@@ -122,6 +131,11 @@ export function Settings() {
         description: "Point-of-Sale for bitcoin lightning payments"
       };
 
+      // Save the tip wallet URL to localStorage if it's provided and tips are enabled with secondary wallet
+      if (tipSettings.enabled && tipSettings.useSecondaryWallet && tipWalletNwcUrl) {
+        window.localStorage.setItem(localStorageKeys.tipWalletNwcUrl, tipWalletNwcUrl);
+      }
+
       saveMerchantConfig(updatedConfig);
       saveTipSettings(updatedTipSettings);
       setSaved(true);
@@ -151,6 +165,10 @@ export function Settings() {
 
     // Reset tip percentages input field
     setTipPercentagesInput(defaultTipSettings.defaultPercentages.join(', '));
+    
+    // Clear the tip wallet URL
+    setTipWalletNwcUrl('');
+    window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
 
     // Save changes to localStorage
     saveMerchantConfig({
@@ -354,6 +372,51 @@ export function Settings() {
                         />
                       </label>
                     </div>
+                    
+                    <div className="divider text-gray-500 text-sm">Optional Tip Wallet</div>
+                    
+                    <div className="form-control">
+                      <label className="label py-1 md:py-2 cursor-pointer">
+                        <span className="label-text text-white text-xs md:text-sm lg:text-base">Use Separate Wallet for Tips</span>
+                        <input
+                          type="checkbox"
+                          className="toggle toggle-sm md:toggle-md"
+                          style={{
+                            backgroundColor: tipSettings.useSecondaryWallet ? '#ffcc99' : '#4b5563',
+                            borderColor: tipSettings.useSecondaryWallet ? '#ffcc99' : '#6b7280'
+                          }}
+                          checked={tipSettings.useSecondaryWallet}
+                          onChange={(e) => setTipSettings(prev => ({ ...prev, useSecondaryWallet: e.target.checked }))}
+                        />
+                      </label>
+                    </div>
+                    
+                    {tipSettings.useSecondaryWallet && (
+                      <div>
+                        <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">
+                          Tip Wallet NWC URL
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="password"
+                            className="input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input pr-20"
+                            value={tipWalletNwcUrl || ''}
+                            onChange={(e) => setTipWalletNwcUrl(e.target.value)}
+                            placeholder="nostr+walletconnect://..."
+                          />
+                          <button
+                            type="button"
+                            onClick={handleClearTipWallet}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                        <span className="text-xs md:text-sm text-gray-400 mt-1 md:mt-2 block">
+                          Connect a separate NWC wallet for receiving tips
+                        </span>
+                      </div>
+                    )}
                   </>
                 )}
               </div>
