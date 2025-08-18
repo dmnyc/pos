@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@getalby/bitcoin-connect-react": "^3.9.2",
+    "@getalby/bitcoin-connect": "^3.9.3",
     "@getalby/lightning-tools": "^5.1.2",
     "@getalby/sdk": "^4.1.1",
     "@popicons/react": "0.0.11",
