@@ -268,9 +268,11 @@ export function TipPage() {
       return `${amount} ${amount === 1 ? "sat" : "sats"}`;
     }
 
+    // Use compact spacing between symbol and amount
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: currency
+      currency: currency,
+      currencyDisplay: 'narrowSymbol'
     }).format(amount);
   };
 
@@ -388,14 +390,14 @@ export function TipPage() {
                 </div>
                 <div className="relative">
                   {customTipCurrency === "FIAT" && currency !== "SATS" && (
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs md:text-sm xl:text-sm">
-                      {currency === "USD" ? "$" : currency + " "}
+                    <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs md:text-sm xl:text-sm">
+                      {currency === "USD" ? "$" : currency}
                     </span>
                   )}
                   <input
                     ref={customInputRef}
                     type="text"
-                    className={`input input-bordered w-full bg-gray-900 text-white h-10 md:h-12 xl:h-12 text-sm md:text-base xl:text-base ${customTipCurrency === "FIAT" && currency !== "SATS" ? "pl-8 md:pl-10 xl:pl-10" : ""}`}
+                    className={`input input-bordered w-full bg-gray-900 text-white h-10 md:h-12 xl:h-12 text-sm md:text-base xl:text-base ${customTipCurrency === "FIAT" && currency !== "SATS" ? "pl-6 md:pl-8 xl:pl-8" : ""}`}
                     value={customTipValue}
                     onChange={handleCustomTipChange}
                     placeholder={currency !== "SATS" && customTipCurrency === "FIAT" ? "0.00" : "Enter amount in sats"}

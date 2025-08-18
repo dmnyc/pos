@@ -7,6 +7,7 @@ import { PageContainer } from "../../components/PageContainer";
 import useStore from "../../state/store";
 import { getMerchantConfig } from "../../config";
 import { fiat } from "@getalby/lightning-tools";
+import { getCurrencySymbol } from '../../utils/currencyUtils';
 
 export function Pay() {
   const { invoice } = useParams();
@@ -82,11 +83,9 @@ export function Pay() {
           const satsPerUnit = await fiat.getSatoshiValue({ amount: 1, currency });
           // Convert sats to fiat (amount in sats / sats per unit)
           const fiatValue = amount / satsPerUnit;
-          const formatted = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currency
-          }).format(fiatValue);
-          setCalculatedFiatAmount(formatted);
+          
+          // Store both the formatted string with currency symbol and the numeric value - with tighter spacing
+          setCalculatedFiatAmount(`${getCurrencySymbol(currency).symbol}${fiatValue.toFixed(2)}`);
         } catch (error) {
           console.error("Error calculating fiat amount:", error);
         }

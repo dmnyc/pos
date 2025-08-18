@@ -5,6 +5,7 @@ import { PageContainer } from "../../components/PageContainer";
 import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
 import { localStorageKeys, getMerchantConfig } from "../../config";
+import { formatAmount, formatAmountString } from '../../utils/currencyUtils';
 
 export function New() {
   const [amount, setAmount] = React.useState(0); // Current input
@@ -28,10 +29,10 @@ export function New() {
 
         mappedCurrencies.sort((a, b) => a[1].priority - b[1].priority);
 
-        // Make sure USD and SATS are included, with USD firs
+        // Make sure USD and SATS are included, with USD first, and filter out BTC
         const allCurrencies = ["USD", "SATS", ...mappedCurrencies
           .map((currency) => currency[0].toUpperCase())
-          .filter(curr => curr !== "USD" && curr !== "SATS")];
+          .filter(curr => curr !== "USD" && curr !== "SATS" && curr !== "BTC")];
 
         setCurrencies(allCurrencies);
       } catch (error) {
@@ -141,15 +142,21 @@ export function New() {
     if (currency === "SATS") {
       return num.toString();
     }
-    const result = new Intl.NumberFormat("en-US", { style: "currency", currency: currency }).format(
-      num / 100
-    );
+
+    // Convert cents to dollars (or equivalent for other currencies)
+    const decimalAmount = num / 100;
+
     if (numberOnly) {
-      // For fiat currencies in the main display, remove the currency symbol but add it after the number
-      const numericPart = result.replace(/[^0-9\\.,]/g, "");
-      return numericPart;
+      // For the main display, return just the number part
+      return new Intl.NumberFormat("en-US", { 
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(decimalAmount);
     }
-    return result;
+
+    // Otherwise return the full currency string
+    return formatAmountString(decimalAmount, currency);
   };
 
   // Choose the charge button class based on the theme
@@ -183,9 +190,16 @@ export function New() {
           >
             {/* Amount display section - centered */}
             <div className="flex flex-col mb-4 md:mb-6 lg:mb-8 wide:mb-10 items-center justify-center">
-              <p className="text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white">
-                {formatNumber(amount, true)}
-              </p>
+              <div className="flex items-baseline">
+                <span>
+                  {formatAmount({
+                    amount: amount / 100,
+                    currency: currency,
+                    symbolClass: "text-gray-500",
+                    valueClass: "text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white"
+                  })}
+                </span>
+              </div>
 
               {/* Secondary display showing the sats value when using fiat */}
               <div className="h-5 md:h-7 lg:h-7 wide:h-10 lg:landscape:h-6 mt-1 md:mt-2 wide:mt-4">
