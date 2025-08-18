@@ -94,33 +94,70 @@ export function TipPage() {
 
   // Calculate tip amount based on selected percentage or custom value
   useEffect(() => {
-    if (typeof selectedTip === 'number') {
-      // Percentage-based tip
-      const calculatedTip = Math.round(baseAmount * (selectedTip / 100));
-      setTipAmount(calculatedTip);
-    } else if (selectedTip === CUSTOM_TIP) {
-      // Custom tip - handle based on selected currency forma
-      if (customTipValue) {
-        if (customTipCurrency === "FIAT" && fiatRate && currency !== "SATS") {
-          // Convert fiat value to sats (fiatValue * satsPerUnit)
-          const fiatValue = parseFloat(customTipValue);
-          if (!isNaN(fiatValue)) {
-            const satValue = Math.round(fiatValue * fiatRate);
+    const updateTipAmount = async () => {
+      if (typeof selectedTip === 'number') {
+        // For percentage-based tips 
+        if (currency === "SATS") {
+          // If base currency is SATS, just use percentage of base amount
+          const calculatedTip = Math.round(baseAmount * (selectedTip / 100));
+          setTipAmount(calculatedTip);
+        } else if (baseAmountInFiat > 0) {
+          try {
+            // Calculate the tip amount in fiat
+            const tipFiatAmount = baseAmountInFiat * (selectedTip / 100);
+            // Use direct API call to get satoshi value, matching the Payment logic
+            const satValue = await fiat.getSatoshiValue({ amount: tipFiatAmount, currency });
             setTipAmount(satValue);
-          } else {
-            setTipAmount(0);
+          } catch (error) {
+            console.error("Error converting percentage tip to sats:", error);
+            // Fallback to the old method if API call fails
+            const calculatedTip = Math.round(baseAmount * (selectedTip / 100));
+            setTipAmount(calculatedTip);
           }
         } else {
-          // Using SATS directly
-          setTipAmount(parseInt(customTipValue) || 0);
+          // Fallback if baseAmountInFiat isn't available yet
+          const calculatedTip = Math.round(baseAmount * (selectedTip / 100));
+          setTipAmount(calculatedTip);
         }
-      } else {
+      } else if (selectedTip === CUSTOM_TIP) {
+        // Custom tip - handle based on selected currency format
+        if (customTipValue) {
+          if (customTipCurrency === "FIAT" && currency !== "SATS") {
+            try {
+              // Use the same direct API call method as the Payment component
+              const fiatValue = parseFloat(customTipValue);
+              if (!isNaN(fiatValue)) {
+                // Use direct API call to get satoshi value, matching the Payment logic
+                const satValue = await fiat.getSatoshiValue({ amount: fiatValue, currency });
+                setTipAmount(satValue);
+              } else {
+                setTipAmount(0);
+              }
+            } catch (error) {
+              console.error("Error converting tip to sats:", error);
+              // Fallback to using the stored rate if API call fails
+              if (fiatRate) {
+                const fiatValue = parseFloat(customTipValue);
+                if (!isNaN(fiatValue)) {
+                  const satValue = Math.round(fiatValue * fiatRate);
+                  setTipAmount(satValue);
+                }
+              }
+            }
+          } else {
+            // Using SATS directly
+            setTipAmount(parseInt(customTipValue) || 0);
+          }
+        } else {
+          setTipAmount(0);
+        }
+      } else if (selectedTip === NO_TIP) {
         setTipAmount(0);
       }
-    } else if (selectedTip === NO_TIP) {
-      setTipAmount(0);
-    }
-  }, [selectedTip, baseAmount, customTipValue, fiatRate, currency, customTipCurrency]);
+    };
+
+    updateTipAmount();
+  }, [selectedTip, baseAmount, baseAmountInFiat, customTipValue, currency, customTipCurrency, fiatRate]);
 
   // Handle tip selection - memoized to prevent unnecessary re-renders
   const handleTipSelection = useCallback((tip: number | string) => {
@@ -231,13 +268,24 @@ export function TipPage() {
         const currencySymbol = getCurrencySymbol(currency);
         let amount = "";
         
-        if (customTipCurrency === "FIAT" && customTipValue) {
-          // If user entered amount in fiat, use that directly
+        // Always use the accurate calculated fiat amount from tipAmount
+        if (selectedTip === CUSTOM_TIP && customTipCurrency === "FIAT" && customTipValue) {
+          // For custom tips entered in fiat, use the entered value
           amount = customTipValue;
         } else {
-          // Otherwise calculate fiat equivalent
-          const fiatValue = tipAmount / fiatRate;
-          amount = fiatValue.toFixed(2);
+          // For percentage tips or custom tips in sats, calculate fiat equivalent
+          try {
+            // More accurate way: Calculate the fiat equivalent by getting rate for 1 sat
+            // and then multiplying by tipAmount
+            const oneSat = await fiat.getFiatValue({ satoshi: 1, currency });
+            const fiatValue = oneSat * tipAmount;
+            amount = fiatValue.toFixed(2);
+          } catch (error) {
+            console.error("Error getting fiat value:", error);
+            // Fallback to the less accurate stored rate
+            const fiatValue = tipAmount / fiatRate;
+            amount = fiatValue.toFixed(2);
+          }
         }
         
         // Format: Store Name - Tip (USD $0.01) - space after currency code but not after symbol
@@ -255,7 +303,7 @@ export function TipPage() {
         defaultMemo: tipMemo,
       });
 
-      // Pass state indicating this is a tip payment along with the fiat amoun
+      // Pass state indicating this is a tip payment along with the fiat amount
       navigate(`../pay/${invoice.paymentRequest}`, {
         state: {
           isTipPayment: true,
@@ -286,6 +334,45 @@ export function TipPage() {
       currencyDisplay: 'narrowSymbol'
     }).format(amount);
   };
+
+  // Display format for tip amount that uses the actual conversion rate
+  const [displayFiatTipAmount, setDisplayFiatTipAmount] = useState<string>("");
+  
+  // Update displayed fiat amount when tipAmount changes
+  useEffect(() => {
+    const updateDisplayAmount = async () => {
+      if (tipAmount > 0 && currency !== "SATS") {
+        try {
+          // Get accurate fiat value based on current tip amount
+          const fiatValue = await fiat.getFiatValue({ satoshi: tipAmount, currency });
+          setDisplayFiatTipAmount(
+            new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: currency,
+              currencyDisplay: 'narrowSymbol'
+            }).format(fiatValue)
+          );
+        } catch (error) {
+          console.error("Error updating display amount:", error);
+          // Fallback to calculated value
+          if (fiatRate) {
+            const fiatValue = tipAmount / fiatRate;
+            setDisplayFiatTipAmount(
+              new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: currency,
+                currencyDisplay: 'narrowSymbol'
+              }).format(fiatValue)
+            );
+          }
+        }
+      } else {
+        setDisplayFiatTipAmount("");
+      }
+    };
+    
+    updateDisplayAmount();
+  }, [tipAmount, currency, fiatRate]);
 
   // Button styling based on theme
   const getButtonClass = (isSelected: boolean) => {
@@ -423,12 +510,9 @@ export function TipPage() {
                 <div className="flex items-center justify-center">
                   <span className="text-gray-400 text-sm md:text-base xl:text-base mr-1 md:mr-2">Tip amount:</span>
                   <span className="text-white text-lg md:text-xl xl:text-xl font-medium">
-                    {currency === "SATS" ? `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}`
-                      : selectedTip !== CUSTOM_TIP && fiatRate
-                        ? formatCurrency((baseAmountInFiat * (selectedTip as number)) / 100)
-                        : selectedTip === CUSTOM_TIP && customTipCurrency === "FIAT" && fiatRate
-                          ? formatCurrency(parseFloat(customTipValue) || 0)
-                          : `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}`}
+                    {currency === "SATS" 
+                      ? `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}`
+                      : displayFiatTipAmount || "Calculating..."}
                   </span>
                 </div>
                 {currency !== "SATS" && fiatRate && (
