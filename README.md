@@ -21,6 +21,18 @@ yarn install
 yarn dev
 ```
 
+### Dependencies Installation
+
+This project requires the use of `--legacy-peer-deps` flag when installing dependencies due to peer dependency conflicts. Use:
+
+```bash
+npm install --legacy-peer-deps
+# or 
+yarn install --legacy-peer-deps
+```
+
+For more information about dependencies management, see [DEPENDENCIES.md](DEPENDENCIES.md).
+
 ### Configuration
 
 1. Navigate to the Settings page to configure your merchant details

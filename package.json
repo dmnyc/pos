@@ -7,12 +7,14 @@
     "dev": "vite",
     "update-version": "node scripts/update-version.js",
     "build": "yarn update-version && tsc && vite build",
+    "install-deps": "npm install --legacy-peer-deps",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@getalby/bitcoin-connect-react": "^3.9.2",
+    "@getalby/bitcoin-connect-react": "3.9.2",
+    "@getalby/bitcoin-connect": "3.9.3",
     "@getalby/lightning-tools": "^5.1.2",
     "@getalby/sdk": "^4.1.1",
     "@popicons/react": "0.0.11",
