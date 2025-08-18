@@ -1,4 +1,3 @@
-import React from 'react';
 import { VersionLabel } from './utility/VersionLabel';
 
 export function Footer() {
