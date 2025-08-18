@@ -88,10 +88,17 @@ export const formatAmount = ({
     
   // Special case: for BRL (Brazilian Real), we don't want to add the currency code since it's already in the symbol
   const isBRL = currency === 'BRL';
+  
+  // Special case: For SATS, we need to handle the amount differently - it might be coming in as cents (divided by 100)
+  // For example, if original amount is 1000 sats, it might be passed as 10.00 (1000/100)
+  // We need to convert it back to a whole number to avoid showing decimals
+  const adjustedAmount = currency === "SATS" && amount < 1 && amount > 0 
+    ? amount * 100 
+    : amount;
 
   // Format amount according to the currency's conventions
   const formattedValue = currency === "SATS" 
-    ? amount.toLocaleString()
+    ? Math.round(adjustedAmount).toLocaleString() // Ensure it's a whole number
     : new Intl.NumberFormat('en-US', { 
         style: 'decimal',
         minimumFractionDigits: 2,
@@ -143,7 +150,9 @@ export const formatAmount = ({
  */
 export const formatAmountString = (amount: number, currency: string): string => {
   if (currency === "SATS") {
-    return `${amount.toLocaleString()} SATS`;
+    // For SATS, adjust the amount if it's been divided by 100
+    const adjustedAmount = amount < 1 && amount > 0 ? amount * 100 : amount;
+    return `${Math.round(adjustedAmount).toLocaleString()} SATS`;
   }
 
   const symbolProps = getCurrencySymbol(currency);
