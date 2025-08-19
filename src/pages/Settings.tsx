@@ -15,6 +15,8 @@ import {
 import { playPaymentChime } from '../utils/audioUtils';
 import CodepenLightning from '../components/animations/CodepenLightning';
 import { localStorageKeys } from '../constants';
+import { Button, init, disconnect, closeModal, WebLNProviders } from "@getalby/bitcoin-connect-react";
+import type { WebLNProvider } from "@webbtc/webln-types";
 
 export function Settings() {
   useRequirePin();
@@ -28,6 +30,10 @@ export function Settings() {
   const [activeTab, setActiveTab] = useState('branding');
   const [showLightningPreview, setShowLightningPreview] = useState(false);
   const navigate = useNavigate();
+  
+  // State for bitcoin-connect wallet selection modal
+  const [showWalletSelector, setShowWalletSelector] = useState(false);
+  const [tipWalletConnecting, setTipWalletConnecting] = useState(false);
 
   // Modal states
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
@@ -58,10 +64,38 @@ export function Settings() {
     }
   }, [saved]);
 
-  // Update the theme when changed in settings
   useEffect(() => {
+    // Update the theme when changed in settings
     document.documentElement.setAttribute('data-theme', merchantConfig.theme);
   }, [merchantConfig.theme]);
+  
+  // Initialize bitcoin-connect when showing wallet selector
+  useEffect(() => {
+    if (showWalletSelector) {
+      init({
+        appName: merchantConfig.displayName || "Sats Factory POS",
+        appIcon: merchantConfig.logoUrl,
+        filters: ["nwc"],
+        showBalance: false,
+        providerConfig: {
+          nwc: {
+            authorizationUrlOptions: {
+              requestMethods: ["get_info", "make_invoice", "lookup_invoice"],
+              isolated: true,
+              metadata: {
+                app_store_app_id: "lightningpos",
+              },
+            },
+          },
+        },
+      });
+      
+      // Cleanup on unmount
+      return () => {
+        disconnect();
+      };
+    }
+  }, [showWalletSelector, merchantConfig]);
 
   const handleMerchantConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -87,31 +121,50 @@ export function Settings() {
     window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
   };
   
-  // Validate NWC URL format
-  const validateNwcUrl = (url: string): boolean => {
-    // Must start with nostr+walletconnect:// and have additional content
-    return url.startsWith('nostr+walletconnect://') && url.length > 22;
+  // Function to handle connection to the tip wallet
+  const handleConnectTipWallet = () => {
+    setShowWalletSelector(true);
   };
   
-  // Validate stored NWC URL on component mount
-  useEffect(() => {
-    const storedUrl = window.localStorage.getItem(localStorageKeys.tipWalletNwcUrl);
-    if (storedUrl && storedUrl.trim()) {
-      setTipWalletNwcUrlValid(validateNwcUrl(storedUrl));
-    }
-  }, []);
-  
-  // Handle tip wallet URL change with validation
-  const handleTipWalletChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newUrl = e.target.value;
-    setTipWalletNwcUrl(newUrl);
+  // Function to handle tip wallet provider connection
+  const handleTipProviderConnection = (provider: WebLNProvider) => {
+    setTipWalletConnecting(true);
     
-    // Only validate if there's some input
-    if (newUrl.trim()) {
-      setTipWalletNwcUrlValid(validateNwcUrl(newUrl));
-    } else {
-      setTipWalletNwcUrlValid(null); // Reset validation state when empty
-    }
+    // Immediately start the async work but return void to satisfy the type
+    (async () => {
+      try {
+        if (!(provider instanceof WebLNProviders.NostrWebLNProvider)) {
+          throw new Error("WebLN provider is not an instance of NostrWebLNProvider");
+        }
+
+        const info = await provider.getInfo();
+        if (!info.methods.includes("makeInvoice") || !info.methods.includes("lookupInvoice")) {
+          throw new Error("Missing permissions. Make sure you select make_invoice and lookup_invoice.");
+        }
+
+        closeModal();
+        // Type assertion to access the nostrWalletConnectUrl property
+        const nostrProvider = provider as unknown as { client: { nostrWalletConnectUrl: string } };
+        const nwcUrl = nostrProvider.client.nostrWalletConnectUrl;
+        
+        // Save the NWC URL to state
+        setTipWalletNwcUrl(nwcUrl);
+        setTipWalletNwcUrlValid(true);
+        
+        // Close the wallet selector
+        setShowWalletSelector(false);
+        setTipWalletConnecting(false);
+      } catch (error) {
+        setAlertState({
+          isOpen: true,
+          title: 'Connection Error',
+          message: error instanceof Error ? error.message : 'Failed to connect to wallet. Please try again.'
+        });
+        disconnect();
+        setShowWalletSelector(false);
+        setTipWalletConnecting(false);
+      }
+    })();
   };
 
   // Add state for the raw percentage input as a controlled input
@@ -161,16 +214,7 @@ export function Settings() {
         setAlertState({
           isOpen: true,
           title: 'Missing Tip Wallet URL',
-          message: 'Please enter a Nostr Wallet Connect URL for the tip wallet'
-        });
-        return;
-      }
-      
-      if (!validateNwcUrl(tipWalletNwcUrl)) {
-        setAlertState({
-          isOpen: true,
-          title: 'Invalid Tip Wallet URL',
-          message: 'The tip wallet URL must be a valid Nostr Wallet Connect URL starting with "nostr+walletconnect://"'
+          message: 'Please connect a Nostr Wallet for tips by clicking the "Connect Wallet" button'
         });
         return;
       }
@@ -478,40 +522,69 @@ export function Settings() {
                     {tipSettings.useSecondaryWallet && (
                       <div>
                         <label className="block text-white mb-1 md:mb-2 text-xs md:text-sm lg:text-base">
-                          Tip Wallet NWC URL
+                          Tip Wallet
                         </label>
-                        <div className="relative">
-                          <input
-                            type="password"
-                            className={`input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input pr-20 ${
-                              tipWalletNwcUrlValid === false ? 'border-red-500' : 
-                              tipWalletNwcUrlValid === true ? 'border-green-500' : ''
-                            }`}
-                            value={tipWalletNwcUrl || ''}
-                            onChange={handleTipWalletChange}
-                            placeholder="nostr+walletconnect://..."
-                          />
-                          <button
-                            type="button"
-                            onClick={handleClearTipWallet}
-                            className="absolute right-2 top-1/2 transform -translate-y-1/2 btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
-                          >
-                            Clear
-                          </button>
-                        </div>
-                        {tipWalletNwcUrlValid === false && (
-                          <span className="text-xs md:text-sm text-red-500 mt-1 md:mt-2 block">
-                            Invalid NWC URL format. Must start with "nostr+walletconnect://"
-                          </span>
+                        {tipWalletNwcUrl ? (
+                          <div className="flex flex-col gap-2">
+                            <div className="flex items-center bg-gray-900 text-white rounded-md p-2 border border-gray-700">
+                              <div className="flex-grow">
+                                <div className="font-mono text-xs md:text-sm truncate max-w-full">
+                                  {tipWalletNwcUrl.substring(0, 20)}...{tipWalletNwcUrl.substring(tipWalletNwcUrl.length - 10)}
+                                </div>
+                                <div className="text-green-500 text-xs">
+                                  Wallet connected successfully
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={handleClearTipWallet}
+                                className="btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
+                              >
+                                Clear
+                              </button>
+                            </div>
+                            <span className="text-xs md:text-sm text-gray-400 block">
+                              Connect a separate NWC wallet for receiving tips
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-2">
+                            <div className="w-full">
+                              {showWalletSelector ? (
+                                <div className="flex flex-col items-center justify-center bg-gray-900 p-4 rounded-md border border-gray-700">
+                                  <Button onConnected={handleTipProviderConnection} />
+                                  {tipWalletConnecting && (
+                                    <div className="mt-3 text-sm text-gray-400 flex items-center">
+                                      <span className="loading loading-spinner loading-xs mr-2"></span>
+                                      Connecting...
+                                    </div>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setShowWalletSelector(false);
+                                      disconnect();
+                                    }}
+                                    className="mt-3 btn btn-sm bg-gray-700 hover:bg-gray-600 text-gray-300"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={handleConnectTipWallet}
+                                  className="btn bg-gray-700 hover:bg-gray-600 text-white w-full"
+                                >
+                                  Connect Wallet for Tips
+                                </button>
+                              )}
+                            </div>
+                            <span className="text-xs md:text-sm text-gray-400 block">
+                              Connect a separate NWC wallet for receiving tips
+                            </span>
+                          </div>
                         )}
-                        {tipWalletNwcUrlValid === true && (
-                          <span className="text-xs md:text-sm text-green-500 mt-1 md:mt-2 block">
-                            Valid NWC URL format
-                          </span>
-                        )}
-                        <span className="text-xs md:text-sm text-gray-400 mt-1 md:mt-2 block">
-                          Connect a separate NWC wallet for receiving tips
-                        </span>
                       </div>
                     )}
                   </>
