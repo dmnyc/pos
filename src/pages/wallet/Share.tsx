@@ -1,7 +1,8 @@
 import QRCode from "qrcode.react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { localStorageKeys, getMerchantConfig, getTipSettings } from "../../config";
+import { getMerchantConfig, getTipSettings } from "../../config";
+import { localStorageKeys } from "../../constants";
 import { PopiconsClipboardCheckDuotone, PopiconsClipboardDuotone } from "@popicons/react";
 import { ExactBackButton } from "../../components/ExactBackButton";
 import { useRequirePin } from "../../hooks/useRequirePin";

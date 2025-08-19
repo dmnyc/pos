@@ -4,7 +4,8 @@ import { Navbar } from "../../components/Navbar";
 import { PageContainer } from "../../components/PageContainer";
 import useStore from "../../state/store";
 import { fiat } from "@getalby/lightning-tools";
-import { localStorageKeys, getMerchantConfig } from "../../config";
+import { getMerchantConfig } from "../../config";
+import { localStorageKeys } from "../../constants";
 import { formatAmount, formatAmountString } from '../../utils/currencyUtils';
 
 export function TipOnly() {

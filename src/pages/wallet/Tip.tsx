@@ -13,7 +13,8 @@ const NO_TIP = 'none';
 export function TipPage() {
   const { invoice } = useParams();
   const navigate = useNavigate();
-  const { provider } = useStore();
+  // Not directly using providers here - getting them in handleSubmit
+  const { /* provider, tipProvider */ } = useStore();
   const [baseAmount, setBaseAmount] = useState<number>(0); // Base amount in sats
   const [selectedTip, setSelectedTip] = useState<string | number>(NO_TIP); // Default to No Tip
   const [customTipValue, setCustomTipValue] = useState<string>('');
@@ -257,9 +258,17 @@ export function TipPage() {
     const { provider, tipProvider } = useStore.getState();
     
     // Determine which provider to use for the tip
-    const activeProvider = tipSettings.useSecondaryWallet && tipProvider ? tipProvider : provider;
+    // Only use secondary wallet if explicitly configured AND available
+    const shouldUseTipWallet = tipSettings.useSecondaryWallet && tipProvider;
+    const activeProvider = shouldUseTipWallet ? tipProvider : provider;
     
-    if (!activeProvider || tipAmount <= 0) {
+    if (!activeProvider) {
+      console.error("No wallet provider available for tip");
+      navigate('/wallet/new');
+      return;
+    }
+    
+    if (tipAmount <= 0) {
       navigate('/wallet/new');
       return;
     }

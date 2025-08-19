@@ -254,4 +254,5 @@ function applyCompressedConfig(configObject: CompressedConfig): void {
   }
 }
 
-export const MAX_MEMO_LENGTH = 159;
+// Import MAX_MEMO_LENGTH from constants.ts instead of redefining it
+// export const MAX_MEMO_LENGTH = 159;
