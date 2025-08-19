@@ -13,7 +13,8 @@ import { TipOnly } from "./pages/wallet/TipOnly";
 import Security from "./pages/Security";
 import { Disclaimers } from "./pages/Disclaimers";
 import React, { useEffect, useState } from "react";
-import { localStorageKeys, getMerchantConfig } from "./config";
+import { getMerchantConfig } from "./config";
+import { localStorageKeys } from "./constants";
 import { ErrorBoundary, VersionChecker, RecoveryButton } from "./components/utility";
 
 // Main App wrapper that adds router
@@ -97,7 +98,7 @@ function AppContent() {
   // 2. We're not on the security page
   // 3. No modals are open
   useEffect(() => {
-    // After 5 seconds, check if we should show the recovery button
+    // After 5 seconds for normal recovery button (standard production timeout)
     const timer = setTimeout(() => {
       setShowRecoveryButton(!isAuthenticated() && !isSecurityPage && !isAnyModalOpen);
     }, 5000);
@@ -118,6 +119,8 @@ function AppContent() {
     <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-0 md:py-1">
       {/* Version checker - periodically checks for updates */}
       <VersionChecker checkInterval={30 * 60 * 1000} /> {/* Check every 30 minutes */}
+      
+      {/* Emergency recovery button removed for production */}
       
       <Routes>
         <Route path="/" Component={Home} />

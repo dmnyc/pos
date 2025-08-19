@@ -96,7 +96,14 @@ export function Settings() {
   }, [tipSettings.defaultPercentages]); // Added the missing dependency
 
   const handleTipToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTipSettings(prev => ({ ...prev, enabled: e.target.checked }));
+    const enabled = e.target.checked;
+    setTipSettings(prev => ({ ...prev, enabled }));
+    
+    // If tips are disabled, also clear the tip wallet URL
+    if (!enabled) {
+      setTipWalletNwcUrl('');
+      window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
+    }
   };
 
   const handleCustomTipToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,8 +111,15 @@ export function Settings() {
   };
 
   const handlePercentagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only store the raw input, don't try to parse it yet
-    setTipPercentagesInput(e.target.value);
+    const input = e.target.value;
+    
+    // Only allow numbers and commas
+    const filteredInput = input.replace(/[^0-9,\s]/g, '');
+    
+    // Limit to max 24 characters
+    const truncatedInput = filteredInput.slice(0, 24);
+    
+    setTipPercentagesInput(truncatedInput);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -113,15 +127,19 @@ export function Settings() {
 
     // Parse the tip percentages from the raw input
     try {
+      // Parse and validate the input
       const percentages = tipPercentagesInput
         .split(',')
         .map((p: string) => parseInt(p.trim()))
         .filter((p: number) => !isNaN(p) && p > 0);
+      
+      // Limit to maximum 6 tip presets
+      const limitedPercentages = percentages.slice(0, 6);
 
       // Update the tip settings with the parsed percentages
       const updatedTipSettings = {
         ...tipSettings,
-        defaultPercentages: percentages.length > 0 ? percentages : [10, 15, 20, 25] // fallback to defaults if empty
+        defaultPercentages: limitedPercentages.length > 0 ? limitedPercentages : [10, 15, 20, 25] // fallback to defaults if empty
       };
 
       // Ensure the fixed fields are preserved with their default values
@@ -134,6 +152,9 @@ export function Settings() {
       // Save the tip wallet URL to localStorage if it's provided and tips are enabled with secondary wallet
       if (tipSettings.enabled && tipSettings.useSecondaryWallet && tipWalletNwcUrl) {
         window.localStorage.setItem(localStorageKeys.tipWalletNwcUrl, tipWalletNwcUrl);
+      } else {
+        // If tips are disabled or secondary wallet is not used, remove the tip wallet URL
+        window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
       }
 
       saveMerchantConfig(updatedConfig);
@@ -351,9 +372,10 @@ export function Settings() {
                         value={tipPercentagesInput}
                         onChange={handlePercentagesChange}
                         placeholder="10, 15, 20, 25"
+                        maxLength={24}
                       />
                       <span className="text-xs md:text-sm text-gray-400 mt-1 md:mt-2 block">
-                        Enter percentages separated by commas (e.g., 10, 15, 20, 25)
+                        Enter percentage values separated by commas
                       </span>
                     </div>
 
@@ -386,7 +408,16 @@ export function Settings() {
                             borderColor: tipSettings.useSecondaryWallet ? '#ffcc99' : '#6b7280'
                           }}
                           checked={tipSettings.useSecondaryWallet}
-                          onChange={(e) => setTipSettings(prev => ({ ...prev, useSecondaryWallet: e.target.checked }))}
+                          onChange={(e) => {
+                            const useSecondaryWallet = e.target.checked;
+                            setTipSettings(prev => ({ ...prev, useSecondaryWallet }));
+                            
+                            // If disabling secondary wallet, clear the tip wallet URL
+                            if (!useSecondaryWallet) {
+                              setTipWalletNwcUrl('');
+                              window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
+                            }
+                          }}
                         />
                       </label>
                     </div>
