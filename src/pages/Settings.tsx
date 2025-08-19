@@ -232,6 +232,15 @@ export function Settings() {
         });
         return;
       }
+      
+      if (tipWalletNwcUrlValid !== true) {
+        setAlertState({
+          isOpen: true,
+          title: 'Tip Wallet Not Validated',
+          message: 'Your tip wallet may not be properly connected. Please try connecting it again.'
+        });
+        return;
+      }
     }
 
     // Parse the tip percentages from the raw input
@@ -545,8 +554,8 @@ export function Settings() {
                                 <div className="font-mono text-xs md:text-sm truncate max-w-full">
                                   {tipWalletNwcUrl.substring(0, 20)}...{tipWalletNwcUrl.substring(tipWalletNwcUrl.length - 10)}
                                 </div>
-                                <div className="text-green-500 text-xs">
-                                  Wallet connected successfully
+                                <div className={`text-xs ${tipWalletNwcUrlValid === true ? 'text-green-500' : 'text-yellow-500'}`}>
+                                  {tipWalletNwcUrlValid === true ? 'Wallet connected successfully' : 'Wallet connection status unknown'}
                                 </div>
                               </div>
                               <button
