@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar";
 import { PageContainer } from "../../components/PageContainer";
@@ -7,6 +7,7 @@ import { fiat } from "@getalby/lightning-tools";
 import { getMerchantConfig } from "../../config";
 import { localStorageKeys } from "../../constants";
 import { formatAmount, formatAmountString, getCurrencySymbol } from '../../utils/currencyUtils';
+import { AlertModal } from "../../components/Modals";
 
 export function New() {
   const [amount, setAmount] = React.useState(0); // Current input
@@ -19,6 +20,17 @@ export function New() {
   const location = useLocation(); // Get the current location
   const [currencies, setCurrencies] = React.useState<string[]>(["USD", "SATS"]); // Default list with USD firs
   const config = getMerchantConfig();
+  
+  // State for the alert modal
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
 
   useEffect(() => {
     async function fetchCurrencies() {
@@ -111,7 +123,11 @@ export function New() {
       navigate(`../pay/${invoice.paymentRequest}`);
     } catch (error) {
       console.error(error);
-      alert("Failed to create invoice: " + error);
+      setAlertState({
+        isOpen: true,
+        title: 'Invoice Creation Failed',
+        message: `Failed to create invoice: ${error}`
+      });
       setLoading(false);
     }
   }
@@ -323,6 +339,14 @@ export function New() {
           </form>
         </div>
       </PageContainer>
+      
+      {/* Alert Modal for errors */}
+      <AlertModal
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        title={alertState.title}
+        message={alertState.message}
+      />
     </>
   );
 }

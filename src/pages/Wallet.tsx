@@ -1,12 +1,24 @@
 import { webln } from "@getalby/sdk";
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { localStorageKeys } from "../constants";
 import useStore from "../state/store";
 import { getTipSettings } from "../config";
+import { AlertModal } from "../components/Modals";
 
 export function Wallet() {
   const navigate = useNavigate();
+  
+  // State for the alert modal
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
 
   React.useEffect(() => {
     (async () => {
@@ -55,7 +67,11 @@ export function Wallet() {
         }
       } catch (error) {
         console.error("Main wallet initialization error:", error);
-        alert("Failed to load wallet: " + error);
+        setAlertState({
+          isOpen: true,
+          title: 'Wallet Connection Error',
+          message: `Failed to load wallet: ${error}`
+        });
         navigate("/");
       }
     })();
@@ -64,6 +80,14 @@ export function Wallet() {
   return (
     <div className="flex flex-col w-full h-full p-2">
       <Outlet />
+      
+      {/* Alert Modal for errors */}
+      <AlertModal
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        title={alertState.title}
+        message={alertState.message}
+      />
     </div>
   );
 }

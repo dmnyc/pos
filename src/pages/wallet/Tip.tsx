@@ -6,6 +6,7 @@ import { fiat } from "@getalby/lightning-tools";
 import { Navbar } from '../../components/Navbar';
 import { getCurrencySymbol } from '../../utils/currencyUtils';
 import { localStorageKeys } from '../../constants';
+import { AlertModal } from '../../components/Modals';
 
 const CUSTOM_TIP = 'custom';
 const NO_TIP = 'none';
@@ -28,6 +29,17 @@ export function TipPage() {
   const config = getMerchantConfig();
   const tipSettings = getTipSettings();
   const customInputRef = useRef<HTMLInputElement>(null);
+  
+  // State for the alert modal
+  const [alertState, setAlertState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+  }>({
+    isOpen: false,
+    title: '',
+    message: ''
+  });
 
   // Load currency from localStorage
   useEffect(() => {
@@ -329,7 +341,11 @@ export function TipPage() {
       });
     } catch (error) {
       console.error('Failed to create tip invoice:', error);
-      alert(`Failed to create tip invoice: ${error}`);
+      setAlertState({
+        isOpen: true,
+        title: 'Tip Creation Failed',
+        message: `Failed to create tip invoice: ${error}`
+      });
       setIsLoading(false);
     }
   };
@@ -570,6 +586,14 @@ export function TipPage() {
           <div className="flex-grow"></div>
         </div>
       </div>
+      
+      {/* Alert Modal for errors */}
+      <AlertModal
+        isOpen={alertState.isOpen}
+        onClose={() => setAlertState(prev => ({ ...prev, isOpen: false }))}
+        title={alertState.title}
+        message={alertState.message}
+      />
     </>
   );
 }
