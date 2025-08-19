@@ -227,8 +227,8 @@ export function Settings() {
       if (!tipWalletNwcUrl.trim()) {
         setAlertState({
           isOpen: true,
-          title: 'Missing Tip Wallet URL',
-          message: 'Please connect a Nostr Wallet for tips by clicking the "Connect Wallet" button'
+          title: 'Missing Tip Wallet',
+          message: 'Please connect a NWC-enabled Lightning wallet for tips by clicking the "Connect Separate Wallet for Tips" button'
         });
         return;
       }
@@ -558,7 +558,7 @@ export function Settings() {
                               </button>
                             </div>
                             <span className="text-xs md:text-sm text-gray-400 block">
-                              Connect a separate NWC wallet for receiving tips
+                              Connect a separate NWC-enabled Lightning wallet for receiving tips
                             </span>
                           </div>
                         ) : (
