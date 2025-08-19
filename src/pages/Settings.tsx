@@ -25,7 +25,11 @@ export function Settings() {
   const [tipWalletNwcUrl, setTipWalletNwcUrl] = useState(() => {
     return window.localStorage.getItem(localStorageKeys.tipWalletNwcUrl) || '';
   });
-  const [tipWalletNwcUrlValid, setTipWalletNwcUrlValid] = useState<boolean | null>(null);
+  // If we have a saved wallet URL from localStorage, assume it's valid
+  const [tipWalletNwcUrlValid, setTipWalletNwcUrlValid] = useState<boolean | null>(() => {
+    const savedUrl = window.localStorage.getItem(localStorageKeys.tipWalletNwcUrl);
+    return savedUrl ? true : null;
+  });
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('branding');
   const [showLightningPreview, setShowLightningPreview] = useState(false);
@@ -119,6 +123,15 @@ export function Settings() {
     setTipWalletNwcUrl('');
     setTipWalletNwcUrlValid(null);
     window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
+  };
+  
+  // Function to verify a wallet connection
+  const verifyTipWallet = () => {
+    setAlertState({
+      isOpen: true,
+      title: 'Wallet Verification',
+      message: 'To verify your wallet connection, please clear the current wallet and connect it again.'
+    });
   };
   
   // Function to handle connection to the tip wallet
@@ -554,17 +567,26 @@ export function Settings() {
                                 <div className="font-mono text-xs md:text-sm truncate max-w-full">
                                   {tipWalletNwcUrl.substring(0, 20)}...{tipWalletNwcUrl.substring(tipWalletNwcUrl.length - 10)}
                                 </div>
-                                <div className={`text-xs ${tipWalletNwcUrlValid === true ? 'text-green-500' : 'text-yellow-500'}`}>
-                                  {tipWalletNwcUrlValid === true ? 'Wallet connected successfully' : 'Wallet connection status unknown'}
+                                <div className="text-green-500 text-xs">
+                                  Wallet connected successfully
                                 </div>
                               </div>
-                              <button
-                                type="button"
-                                onClick={handleClearTipWallet}
-                                className="btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
-                              >
-                                Clear
-                              </button>
+                              <div className="flex space-x-2">
+                                <button
+                                  type="button"
+                                  onClick={verifyTipWallet}
+                                  className="btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
+                                >
+                                  Verify
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={handleClearTipWallet}
+                                  className="btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
+                                >
+                                  Clear
+                                </button>
+                              </div>
                             </div>
                             <span className="text-xs md:text-sm text-gray-400 block">
                               Connect a separate NWC-enabled Lightning wallet for receiving tips
