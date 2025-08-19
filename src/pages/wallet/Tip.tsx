@@ -5,6 +5,7 @@ import { getMerchantConfig, getTipSettings } from '../../config';
 import { fiat } from "@getalby/lightning-tools";
 import { Navbar } from '../../components/Navbar';
 import { getCurrencySymbol } from '../../utils/currencyUtils';
+import { localStorageKeys } from '../../constants';
 
 const CUSTOM_TIP = 'custom';
 const NO_TIP = 'none';
@@ -12,7 +13,8 @@ const NO_TIP = 'none';
 export function TipPage() {
   const { invoice } = useParams();
   const navigate = useNavigate();
-  const { provider } = useStore();
+  // Not directly using providers here - getting them in handleSubmit
+  const { /* provider, tipProvider */ } = useStore();
   const [baseAmount, setBaseAmount] = useState<number>(0); // Base amount in sats
   const [selectedTip, setSelectedTip] = useState<string | number>(NO_TIP); // Default to No Tip
   const [customTipValue, setCustomTipValue] = useState<string>('');
@@ -29,7 +31,7 @@ export function TipPage() {
 
   // Load currency from localStorage
   useEffect(() => {
-    const savedCurrency = localStorage.getItem("pos:currency");
+    const savedCurrency = localStorage.getItem(localStorageKeys.currency);
     if (savedCurrency) {
       setCurrency(savedCurrency);
     }
@@ -252,7 +254,21 @@ export function TipPage() {
   };
 
   const handleSubmit = async () => {
-    if (!provider || tipAmount <= 0) {
+    const tipSettings = getTipSettings();
+    const { provider, tipProvider } = useStore.getState();
+    
+    // Determine which provider to use for the tip
+    // Only use secondary wallet if explicitly configured AND available
+    const shouldUseTipWallet = tipSettings.useSecondaryWallet && tipProvider;
+    const activeProvider = shouldUseTipWallet ? tipProvider : provider;
+    
+    if (!activeProvider) {
+      console.error("No wallet provider available for tip");
+      navigate('/wallet/new');
+      return;
+    }
+    
+    if (tipAmount <= 0) {
       navigate('/wallet/new');
       return;
     }
@@ -298,7 +314,7 @@ export function TipPage() {
         tipMemo += ` (${fiatDisplay})`;
       }
 
-      const invoice = await provider.makeInvoice({
+      const invoice = await activeProvider.makeInvoice({
         amount: tipAmount.toString(),
         defaultMemo: tipMemo,
       });
@@ -307,7 +323,8 @@ export function TipPage() {
       navigate(`../pay/${invoice.paymentRequest}`, {
         state: {
           isTipPayment: true,
-          fiatAmount: fiatDisplay
+          fiatAmount: fiatDisplay,
+          isUsingSecondaryWallet: tipSettings.useSecondaryWallet && tipProvider !== undefined
         }
       });
     } catch (error) {

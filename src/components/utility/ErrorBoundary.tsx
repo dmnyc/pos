@@ -1,6 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { RecoveryButton } from './RecoveryButton';
-import { localStorageKeys } from '../../config';
+import { localStorageKeys } from '../../constants';
 
 interface ErrorBoundaryProps {
   children: ReactNode;

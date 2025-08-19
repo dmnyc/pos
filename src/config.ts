@@ -12,7 +12,11 @@ export interface TipSettings {
   enabled: boolean;
   defaultPercentages: number[];
   allowCustom: boolean;
+  useSecondaryWallet: boolean; // New setting to determine which wallet to use for tips
 }
+
+// Import the localStorageKeys from constants
+import { localStorageKeys } from './constants';
 
 // Default configuration
 export const defaultMerchantConfig: MerchantConfig = {
@@ -29,7 +33,8 @@ export const defaultMerchantConfig: MerchantConfig = {
 export const defaultTipSettings: TipSettings = {
   enabled: true,
   defaultPercentages: [10, 15, 20, 25],
-  allowCustom: true
+  allowCustom: true,
+  useSecondaryWallet: false
 };
 
 // Function to load merchant configuration from localStorage
@@ -249,12 +254,5 @@ function applyCompressedConfig(configObject: CompressedConfig): void {
   }
 }
 
-export const localStorageKeys = {
-  nwcUrl: "pos:nwcUrl",
-  currency: "pos:currency",
-  label: "pos:label",
-  merchantConfig: "pos:merchantConfig",
-  tipSettings: "pos:tipSettings",
-};
-
-export const MAX_MEMO_LENGTH = 159;
+// Import MAX_MEMO_LENGTH from constants.ts instead of redefining it
+// export const MAX_MEMO_LENGTH = 159;

@@ -11,10 +11,10 @@ import { MerchantLogo } from "../components/MerchantLogo";
 import { ConfirmModal, AlertModal } from "../components/Modals";
 import QRScanner from "../components/QRScanner";
 import {
-  localStorageKeys,
   getMerchantConfig,
   applyMerchantConfigFromUrl
 } from "../config";
+import { localStorageKeys } from "../constants";
 import { Footer } from "../components/Footer";
 
 // Use the WebLN provider from library

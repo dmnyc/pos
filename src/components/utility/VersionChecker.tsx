@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RecoveryButton } from './RecoveryButton';
-import { localStorageKeys } from '../../config';
+import { localStorageKeys } from '../../constants';
 
 // This should match your package.json version
 // We'll dynamically inject this during the build process

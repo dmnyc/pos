@@ -10,7 +10,8 @@ import {
   PopiconsFileDuotone,
   PopiconsHeartDuotone, // Still needed for the menu item
 } from "@popicons/react";
-import { localStorageKeys, getMerchantConfig } from "../config";
+import { getMerchantConfig } from "../config";
+import { localStorageKeys } from "../constants";
 import { verifyPin } from "../utils/pinUtils";
 import { useState, useRef, useEffect } from "react";
 import { getNavbarHeightClasses, getNavbarMinHeightClasses } from "../utils/layoutConstants";
@@ -51,13 +52,15 @@ export function Navbar() {
   const handleLogout = async () => {
     const verified = await verifyPin();
     if (verified) {
-      // Clear the provider from the store to properly disconnect
+      // Clear the providers from the store to properly disconnect
       useStore.getState().setProvider(undefined);
+      useStore.getState().setTipProvider(undefined);
       // Clear last invoice data
       useStore.getState().setLastInvoiceData(null);
       
-      // Clear wallet connection and security PIN
+      // Clear wallet connections and security PIN
       window.localStorage.removeItem(localStorageKeys.nwcUrl);
+      window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl); // Ensure tip wallet URL is cleared
       window.localStorage.removeItem('pos_pin');
 
       // APPROACH 1: Completely remove merchant config (will use default on next load)
