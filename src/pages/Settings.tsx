@@ -73,7 +73,7 @@ export function Settings() {
   useEffect(() => {
     if (showWalletSelector) {
       init({
-        appName: merchantConfig.displayName || "Sats Factory POS",
+        appName: `${merchantConfig.displayName || "Sats Factory POS"} - Tip Wallet`,
         appIcon: merchantConfig.logoUrl,
         filters: ["nwc"],
         showBalance: false,
@@ -83,7 +83,7 @@ export function Settings() {
               requestMethods: ["get_info", "make_invoice", "lookup_invoice"],
               isolated: true,
               metadata: {
-                app_store_app_id: "lightningpos",
+                app_store_app_id: "lightningpos-tips",
               },
             },
           },
@@ -123,6 +123,14 @@ export function Settings() {
   
   // Function to handle connection to the tip wallet
   const handleConnectTipWallet = () => {
+    // First, ensure any existing connection is disconnected
+    disconnect();
+    
+    // Clear any existing bitcoin-connect state
+    window.localStorage.removeItem("bc-authorize");
+    window.localStorage.removeItem("bc-provider");
+    
+    // Now show the wallet selector
     setShowWalletSelector(true);
   };
   
@@ -146,6 +154,12 @@ export function Settings() {
         // Type assertion to access the nostrWalletConnectUrl property
         const nostrProvider = provider as unknown as { client: { nostrWalletConnectUrl: string } };
         const nwcUrl = nostrProvider.client.nostrWalletConnectUrl;
+        
+        // Check if this is the same as the main wallet URL
+        const mainWalletUrl = window.localStorage.getItem(localStorageKeys.nwcUrl);
+        if (mainWalletUrl === nwcUrl) {
+          throw new Error("The tip wallet must be different from your main wallet. Please connect a different wallet.");
+        }
         
         // Save the NWC URL to state
         setTipWalletNwcUrl(nwcUrl);
@@ -576,12 +590,12 @@ export function Settings() {
                                   onClick={handleConnectTipWallet}
                                   className="btn bg-gray-700 hover:bg-gray-600 text-white w-full"
                                 >
-                                  Connect Wallet for Tips
+                                  Connect Separate Wallet for Tips
                                 </button>
                               )}
                             </div>
                             <span className="text-xs md:text-sm text-gray-400 block">
-                              Connect a separate NWC wallet for receiving tips
+                              Must be different from your main wallet
                             </span>
                           </div>
                         )}
