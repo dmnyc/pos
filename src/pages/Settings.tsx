@@ -23,6 +23,7 @@ export function Settings() {
   const [tipWalletNwcUrl, setTipWalletNwcUrl] = useState(() => {
     return window.localStorage.getItem(localStorageKeys.tipWalletNwcUrl) || '';
   });
+  const [tipWalletNwcUrlValid, setTipWalletNwcUrlValid] = useState<boolean | null>(null);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('branding');
   const [showLightningPreview, setShowLightningPreview] = useState(false);
@@ -82,7 +83,35 @@ export function Settings() {
   
   const handleClearTipWallet = () => {
     setTipWalletNwcUrl('');
+    setTipWalletNwcUrlValid(null);
     window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
+  };
+  
+  // Validate NWC URL format
+  const validateNwcUrl = (url: string): boolean => {
+    // Must start with nostr+walletconnect:// and have additional content
+    return url.startsWith('nostr+walletconnect://') && url.length > 22;
+  };
+  
+  // Validate stored NWC URL on component mount
+  useEffect(() => {
+    const storedUrl = window.localStorage.getItem(localStorageKeys.tipWalletNwcUrl);
+    if (storedUrl && storedUrl.trim()) {
+      setTipWalletNwcUrlValid(validateNwcUrl(storedUrl));
+    }
+  }, []);
+  
+  // Handle tip wallet URL change with validation
+  const handleTipWalletChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newUrl = e.target.value;
+    setTipWalletNwcUrl(newUrl);
+    
+    // Only validate if there's some input
+    if (newUrl.trim()) {
+      setTipWalletNwcUrlValid(validateNwcUrl(newUrl));
+    } else {
+      setTipWalletNwcUrlValid(null); // Reset validation state when empty
+    }
   };
 
   // Add state for the raw percentage input as a controlled input
@@ -102,6 +131,7 @@ export function Settings() {
     // If tips are disabled, also clear the tip wallet URL
     if (!enabled) {
       setTipWalletNwcUrl('');
+      setTipWalletNwcUrlValid(null);
       window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
     }
   };
@@ -124,6 +154,27 @@ export function Settings() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate tip wallet URL if secondary wallet is enabled
+    if (tipSettings.enabled && tipSettings.useSecondaryWallet) {
+      if (!tipWalletNwcUrl.trim()) {
+        setAlertState({
+          isOpen: true,
+          title: 'Missing Tip Wallet URL',
+          message: 'Please enter a Nostr Wallet Connect URL for the tip wallet'
+        });
+        return;
+      }
+      
+      if (!validateNwcUrl(tipWalletNwcUrl)) {
+        setAlertState({
+          isOpen: true,
+          title: 'Invalid Tip Wallet URL',
+          message: 'The tip wallet URL must be a valid Nostr Wallet Connect URL starting with "nostr+walletconnect://"'
+        });
+        return;
+      }
+    }
 
     // Parse the tip percentages from the raw input
     try {
@@ -189,6 +240,7 @@ export function Settings() {
     
     // Clear the tip wallet URL
     setTipWalletNwcUrl('');
+    setTipWalletNwcUrlValid(null);
     window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
 
     // Save changes to localStorage
@@ -415,6 +467,7 @@ export function Settings() {
                             // If disabling secondary wallet, clear the tip wallet URL
                             if (!useSecondaryWallet) {
                               setTipWalletNwcUrl('');
+                              setTipWalletNwcUrlValid(null);
                               window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
                             }
                           }}
@@ -430,9 +483,12 @@ export function Settings() {
                         <div className="relative">
                           <input
                             type="password"
-                            className="input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input pr-20"
+                            className={`input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input pr-20 ${
+                              tipWalletNwcUrlValid === false ? 'border-red-500' : 
+                              tipWalletNwcUrlValid === true ? 'border-green-500' : ''
+                            }`}
                             value={tipWalletNwcUrl || ''}
-                            onChange={(e) => setTipWalletNwcUrl(e.target.value)}
+                            onChange={handleTipWalletChange}
                             placeholder="nostr+walletconnect://..."
                           />
                           <button
@@ -443,6 +499,16 @@ export function Settings() {
                             Clear
                           </button>
                         </div>
+                        {tipWalletNwcUrlValid === false && (
+                          <span className="text-xs md:text-sm text-red-500 mt-1 md:mt-2 block">
+                            Invalid NWC URL format. Must start with "nostr+walletconnect://"
+                          </span>
+                        )}
+                        {tipWalletNwcUrlValid === true && (
+                          <span className="text-xs md:text-sm text-green-500 mt-1 md:mt-2 block">
+                            Valid NWC URL format
+                          </span>
+                        )}
                         <span className="text-xs md:text-sm text-gray-400 mt-1 md:mt-2 block">
                           Connect a separate NWC wallet for receiving tips
                         </span>
