@@ -125,15 +125,6 @@ export function Settings() {
     window.localStorage.removeItem(localStorageKeys.tipWalletNwcUrl);
   };
   
-  // Function to verify a wallet connection
-  const verifyTipWallet = () => {
-    setAlertState({
-      isOpen: true,
-      title: 'Wallet Verification',
-      message: 'To verify your wallet connection, please clear the current wallet and connect it again.'
-    });
-  };
-  
   // Function to handle connection to the tip wallet
   const handleConnectTipWallet = () => {
     // First, ensure any existing connection is disconnected
@@ -571,22 +562,13 @@ export function Settings() {
                                   Wallet connected successfully
                                 </div>
                               </div>
-                              <div className="flex space-x-2">
-                                <button
-                                  type="button"
-                                  onClick={verifyTipWallet}
-                                  className="btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
-                                >
-                                  Verify
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={handleClearTipWallet}
-                                  className="btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
-                                >
-                                  Clear
-                                </button>
-                              </div>
+                              <button
+                                type="button"
+                                onClick={handleClearTipWallet}
+                                className="btn btn-xs bg-gray-700 hover:bg-gray-600 text-gray-300"
+                              >
+                                Clear
+                              </button>
                             </div>
                             <span className="text-xs md:text-sm text-gray-400 block">
                               Connect a separate NWC-enabled Lightning wallet for receiving tips
