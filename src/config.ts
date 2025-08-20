@@ -3,7 +3,7 @@ export interface MerchantConfig {
   displayName: string;
   logoUrl: string;
   description: string;
-  theme: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "liquidity" | "safari" | "blocktron";
+  theme: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "liquidity" | "acidity" | "nutjob" | "safari" | "solidstate" | "blocktron";
   paymentChimeEnabled: boolean;
   paymentEffectEnabled: boolean;
 }
@@ -149,8 +149,8 @@ export function applyMerchantConfigFromUrl(searchParams: URLSearchParams): void 
 
   // Check for theme
   const theme = searchParams.get("theme");
-  if (theme === "standard" || theme === "industrial") {
-    config.theme = theme;
+  if (theme && ["standard", "industrial", "orangepill", "nostrich", "beehive", "liquidity", "acidity", "nutjob", "safari", "solidstate", "blocktron"].includes(theme)) {
+    config.theme = theme as any; // Type assertion needed here
     updated = true;
   }
 
@@ -177,7 +177,7 @@ export function applyMerchantConfigFromUrl(searchParams: URLSearchParams): void 
 interface CompressedConfig {
   name?: string;
   logoUrl?: string;
-  theme?: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "liquidity" | "safari" | "blocktron";
+  theme?: "standard" | "industrial" | "orangepill" | "nostrich" | "beehive" | "liquidity" | "acidity" | "nutjob" | "safari" | "solidstate" | "blocktron";
   paymentChime?: boolean;
   currency?: string;
   tips?: {
@@ -209,7 +209,7 @@ function applyCompressedConfig(configObject: CompressedConfig): void {
     merchantUpdated = true;
   }
 
-  if (configObject.theme && ["standard", "industrial", "orangepill", "nostrich", "beehive", "liquidity", "safari", "blocktron"].includes(configObject.theme)) {
+  if (configObject.theme && ["standard", "industrial", "orangepill", "nostrich", "beehive", "liquidity", "acidity", "nutjob", "safari", "solidstate", "blocktron"].includes(configObject.theme)) {
     newMerchantConfig.theme = configObject.theme;
     merchantUpdated = true;
   }
