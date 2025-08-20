@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { AlertModal } from '../components/Modals'
 import { ExactBackButton } from '../components/ExactBackButton'
 import { verifyPin } from '../utils/pinUtils'
+import { clearSession } from '../utils/sessionUtils'
 
 // Standard class names for consistent styling
 const buttonClasses = "w-full bg-gray-600 hover:bg-gray-500 text-white py-2 rounded-lg transition-colors"
@@ -40,7 +41,7 @@ const Security = () => {
     setAlertState(prev => ({ ...prev, isOpen: false }));
   };
 
-  // Check if PIN already exists in localStorage on component moun
+  // Check if PIN already exists in localStorage on component mount
   React.useEffect(() => {
     const existingPin = localStorage.getItem('pos_pin')
 
@@ -76,6 +77,8 @@ const Security = () => {
     }
 
     localStorage.setItem('pos_pin', pin);
+    // Clear any active session when setting a new PIN
+    clearSession();
     setIsChangingPin(false);
     showAlert('Important: Store Your PIN Safely', 'Please write down or securely store your PIN code. You cannot recover it if forgotten, and you will need to reset the entire POS application if you lose it.');
   }
@@ -88,6 +91,8 @@ const Security = () => {
     const verified = await verifyPin();
     if (verified) {
       localStorage.removeItem('pos_pin');
+      // Clear the session when changing PIN
+      clearSession();
       setPin('');
       setConfirmPin('');
       setIsChangingPin(true);

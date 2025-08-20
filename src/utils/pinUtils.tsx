@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { PinModal } from '../components/PinModal';
 import { AlertModal } from '../components/Modals';
+import { isSessionActive, startSession } from './sessionUtils';
 
 const showAlert = (title: string, message: string): Promise<void> => {
   return new Promise((resolve) => {
@@ -34,6 +35,13 @@ export const verifyPin = (): Promise<boolean> => {
       return;
     }
 
+    // Check if session is active (user verified PIN within the last 5 minutes)
+    if (isSessionActive()) {
+      // If session is active, no need to re-enter PIN
+      resolve(true);
+      return;
+    }
+
     // Create a div for the modal
     const modalContainer = document.createElement('div');
     document.body.appendChild(modalContainer);
@@ -55,6 +63,8 @@ export const verifyPin = (): Promise<boolean> => {
         }}
         onSubmit={async (enteredPin) => {
           if (enteredPin === storedPin) {
+            // Start a new session when PIN is successfully verified
+            startSession();
             cleanup();
             resolve(true);
           } else {

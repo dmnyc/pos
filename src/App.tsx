@@ -16,6 +16,7 @@ import React, { useEffect, useState } from "react";
 import { getMerchantConfig } from "./config";
 import { localStorageKeys } from "./constants";
 import { ErrorBoundary, VersionChecker, RecoveryButton } from "./components/utility";
+import { useSessionManager } from "./hooks/useSessionManager";
 
 // Main App wrapper that adds router
 function App() {
@@ -30,6 +31,9 @@ function App() {
 
 // Main content component that needs router context
 function AppContent() {
+  // Initialize session manager for PIN timeout
+  useSessionManager();
+  
   // State for the recovery button
   const [showRecoveryButton, setShowRecoveryButton] = useState(false);
   const location = useLocation();
