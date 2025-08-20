@@ -65,6 +65,8 @@ const TipGlowButton: React.FC<TipGlowButtonProps> = ({
         return 'btn bg-beehive-yellow text-black hover:bg-beehive-hover';
       case 'liquidity':
         return 'btn bg-liquidity-gradient text-black hover:bg-liquidity-hover';
+      case 'acidity':
+        return 'btn bg-acidity-gradient text-black hover:bg-acidity-hover';
       case 'safari':
         return 'btn bg-safari-gradient text-black hover:bg-safari-hover';
       case 'blocktron':
