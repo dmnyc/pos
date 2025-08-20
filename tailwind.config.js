@@ -203,7 +203,7 @@ export default {
         },
       },
       {
-        solid-state: {
+        "solid-state": {
           // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
           ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
           primary: "#FFFFFF", // White buttons
