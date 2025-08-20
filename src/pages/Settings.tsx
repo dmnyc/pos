@@ -381,12 +381,12 @@ export function Settings() {
                   />
                   {/* Logo preview */}
                   <div className="mt-2 md:mt-3 p-2 md:p-3 bg-gray-800 rounded-lg flex justify-center items-center">
-                    <div className="p-2 md:p-3 bg-black rounded flex justify-center items-center" style={{ minWidth: '200px', minHeight: '80px' }}>
+                    <div className="p-2 md:p-3 bg-black rounded flex justify-center items-center">
                       <img
                         src={merchantConfig.logoUrl}
                         alt="Logo Preview"
                         onError={(e) => { (e.target as HTMLImageElement).src = "/images/satsfactory_logo.svg"; }}
-                        className="h-auto w-auto max-h-[60px] md:max-h-[80px] lg:max-h-[100px] max-w-[180px] md:max-w-[250px] lg:max-w-[300px] object-contain"
+                        className="h-10 md:h-14 lg:h-16 max-w-[200px] md:max-w-[280px] lg:max-w-[320px] object-contain"
                       />
                     </div>
                   </div>
