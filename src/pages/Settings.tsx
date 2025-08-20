@@ -458,6 +458,7 @@ export function Settings() {
                     <option value="nostrich">Nostrich</option>
                     <option value="beehive">Beehive</option>
                     <option value="liquidity">Liquidity</option>
+                    <option value="acidity">Acidity</option>
                     <option value="safari">Safari</option>
                     <option value="blocktron">Blocktron</option>
                   </select>
@@ -659,7 +660,9 @@ export function Settings() {
                           ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
                           : merchantConfig.theme === "liquidity"
                             ? "bg-liquidity-gradient text-black hover:bg-liquidity-hover"
-                            : merchantConfig.theme === "safari"
+                            : merchantConfig.theme === "acidity"
+                              ? "bg-acidity-gradient text-black hover:bg-acidity-hover"
+                              : merchantConfig.theme === "safari"
                             ? "bg-safari-gradient text-black hover:bg-safari-hover"
                             : merchantConfig.theme === "blocktron"
                               ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
