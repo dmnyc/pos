@@ -80,7 +80,7 @@ The POS app includes multiple themes to match different merchant styles:
 7. **Acidity** - An energetic yellow-green and cyan theme
 8. **Nutjob** - Cashu-inspired warm brown tones
 9. **Safari** - Desert-inspired warm theme
-10. **Solid State** - A retro 70s-theme 
+10. **Solid State** - A retro 70s theme 
 11. **Blocktron** - Futuristic digital theme
 
 Each theme provides a unique visual style while maintaining a consistent layout and functionality.
