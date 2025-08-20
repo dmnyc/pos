@@ -43,8 +43,8 @@ export default {
         'safari-hover': 'linear-gradient(to bottom, #3d7c1f, #84a629, #e5a725, #da7819, #c6391b)',
         'liquidity-gradient': 'linear-gradient(to bottom, #4dd0f9, #0682b0)',
         'liquidity-hover': 'linear-gradient(to bottom, #3cc0e9, #0572a0)',
-        'acidity-gradient': 'linear-gradient(100deg, #24BDC2, #0ABFDB, #69C184, #A4CF5A, #A7D056, #B3D44D, #C5DA3D, #D6E030)',
-        'acidity-hover': 'linear-gradient(100deg, #14ADB2, #00AFCB, #59B174, #94BF4A, #97C046, #A3C43D, #B5CA2D, #C6D020)',
+        'acidity-gradient': 'linear-gradient(100deg, #D6E030, #C5DA3D, #B3D44D, #A7D056, #A4CF5A, #69C184, #0ABFDB, #24BDC2)',
+        'acidity-hover': 'linear-gradient(100deg, #C6D020, #B5CA2D, #A3C43D, #97C046, #94BF4A, #59B174, #00AFCB, #14ADB2)',
         'blocktron-gradient': 'linear-gradient(to right, #ff9900, #ff7a30, #ff00aa, #7b00ff, #00FFFF)',
         'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #6b00ef, #00FFFF)',
       },
@@ -161,7 +161,7 @@ export default {
           "primary-content": "#000000", // Black text on primary buttons
           secondary: "#FFFFFF", // White for secondary elements
           "secondary-content": "#000000", // Black text on secondary elements
-          accent: "#24BDC2", // Teal for accent elements
+          accent: "#D6E030", // Yellow-green for accent elements
           "accent-content": "#000000", // Black text on accent elements for better contrast
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background
