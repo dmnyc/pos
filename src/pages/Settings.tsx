@@ -461,7 +461,7 @@ export function Settings() {
                     <option value="acidity">Acidity</option>
                     <option value="nutjob">Nutjob</option>
                     <option value="safari">Safari</option>
-                    <option value="solid-state">Solid State</option>
+                    <option value="solidstate">Solid State</option>
                     <option value="blocktron">Blocktron</option>
                   </select>
                 </div>
@@ -668,8 +668,8 @@ export function Settings() {
                                 ? "bg-nutjob-gradient text-black hover:bg-nutjob-hover"
                                 : merchantConfig.theme === "safari"
                                   ? "bg-safari-gradient text-black hover:bg-safari-hover"
-                                  : merchantConfig.theme === "solid-state"
-                                    ? "bg-solid-state-gradient text-white hover:bg-solid-state-hover"
+                                  : merchantConfig.theme === "solidstate"
+                                    ? "bg-solidstate-gradient text-white hover:bg-solidstate-hover"
                                     : merchantConfig.theme === "blocktron"
                               ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
                               : "btn-industrial-gradient"
