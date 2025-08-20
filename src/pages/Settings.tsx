@@ -459,6 +459,7 @@ export function Settings() {
                     <option value="beehive">Beehive</option>
                     <option value="liquidity">Liquidity</option>
                     <option value="acidity">Acidity</option>
+                    <option value="nutjob">Nutjob</option>
                     <option value="safari">Safari</option>
                     <option value="blocktron">Blocktron</option>
                   </select>
@@ -662,7 +663,9 @@ export function Settings() {
                             ? "bg-liquidity-gradient text-black hover:bg-liquidity-hover"
                             : merchantConfig.theme === "acidity"
                               ? "bg-acidity-gradient text-black hover:bg-acidity-hover"
-                              : merchantConfig.theme === "safari"
+                              : merchantConfig.theme === "nutjob"
+                                ? "bg-nutjob-gradient text-black hover:bg-nutjob-hover"
+                                : merchantConfig.theme === "safari"
                             ? "bg-safari-gradient text-black hover:bg-safari-hover"
                             : merchantConfig.theme === "blocktron"
                               ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
