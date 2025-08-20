@@ -381,7 +381,7 @@ export function Settings() {
                   />
                   {/* Logo preview */}
                   <div className="mt-2 md:mt-3 p-2 md:p-3 bg-gray-800 rounded-lg flex justify-center items-center">
-                    <div className="p-2 md:p-3 bg-black rounded inline-block">
+                    <div className="p-2 md:p-3 bg-black rounded flex justify-center items-center">
                       <img
                         src={merchantConfig.logoUrl}
                         alt="Logo Preview"
@@ -458,7 +458,10 @@ export function Settings() {
                     <option value="nostrich">Nostrich</option>
                     <option value="beehive">Beehive</option>
                     <option value="liquidity">Liquidity</option>
+                    <option value="acidity">Acidity</option>
+                    <option value="nutjob">Nutjob</option>
                     <option value="safari">Safari</option>
+                    <option value="solidstate">Solid State</option>
                     <option value="blocktron">Blocktron</option>
                   </select>
                 </div>
@@ -659,9 +662,15 @@ export function Settings() {
                           ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
                           : merchantConfig.theme === "liquidity"
                             ? "bg-liquidity-gradient text-black hover:bg-liquidity-hover"
-                            : merchantConfig.theme === "safari"
-                            ? "bg-safari-gradient text-black hover:bg-safari-hover"
-                            : merchantConfig.theme === "blocktron"
+                            : merchantConfig.theme === "acidity"
+                              ? "bg-acidity-gradient text-black hover:bg-acidity-hover"
+                              : merchantConfig.theme === "nutjob"
+                                ? "bg-nutjob-gradient text-black hover:bg-nutjob-hover"
+                                : merchantConfig.theme === "safari"
+                                  ? "bg-safari-gradient text-black hover:bg-safari-hover"
+                                  : merchantConfig.theme === "solidstate"
+                                    ? "bg-solidstate-gradient text-white hover:bg-solidstate-hover"
+                                    : merchantConfig.theme === "blocktron"
                               ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
                               : "btn-industrial-gradient"
                   }`}

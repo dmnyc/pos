@@ -43,6 +43,12 @@ export default {
         'safari-hover': 'linear-gradient(to bottom, #3d7c1f, #84a629, #e5a725, #da7819, #c6391b)',
         'liquidity-gradient': 'linear-gradient(to bottom, #4dd0f9, #0682b0)',
         'liquidity-hover': 'linear-gradient(to bottom, #3cc0e9, #0572a0)',
+        'acidity-gradient': 'linear-gradient(100deg, #D6E030, #C5DA3D, #B3D44D, #A7D056, #A4CF5A, #69C184, #0ABFDB, #24BDC2)',
+        'acidity-hover': 'linear-gradient(100deg, #C6D020, #B5CA2D, #A3C43D, #97C046, #94BF4A, #59B174, #00AFCB, #14ADB2)',
+        'nutjob-gradient': 'linear-gradient(to bottom, #e3d3b5, #dcc099, #c6a980, #b08c5b)',
+        'nutjob-hover': 'linear-gradient(to bottom, #d3c3a5, #ccb089, #b69970, #a07c4b)',
+        'solidstate-gradient': 'linear-gradient(to bottom, #e8cd72, #e2a15c, #d7763e, #8f2713, #892333)',
+        'solidstate-hover': 'linear-gradient(to bottom, #d8bd62, #d2914c, #c7662e, #7f1703, #791323)',
         'blocktron-gradient': 'linear-gradient(to right, #ff9900, #ff7a30, #ff00aa, #7b00ff, #00FFFF)',
         'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #6b00ef, #00FFFF)',
       },
@@ -152,6 +158,36 @@ export default {
         },
       },
       {
+        acidity: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#D6E030", // Yellow-green for accent elements
+          "accent-content": "#000000", // Black text on accent elements for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        nutjob: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#b08c5b", // Brown for accent elements
+          "accent-content": "#000000", // Black text on accent elements for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
         safari: {
           // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
           ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
@@ -161,6 +197,21 @@ export default {
           "secondary-content": "#000000", // Black text on secondary elements
           accent: "#4d8c2f", // Green for accent elements (charge button)
           "accent-content": "#000000", // Black text on buttons for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        solidstate: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#e8cd72", // Golden for accent elements
+          "accent-content": "#000000", // Black text on accent elements for better contrast
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background
           "base-content": "#FFFFFF", // White text on base elements

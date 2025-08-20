@@ -52,7 +52,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions on how to deploy th
 Visit the Settings page (`/#/settings`) to configure:
 - Store name and display name
 - Logo URL
-- Theme selection (standard, orangepill, nostrich, beehive, safari, blocktron, industrial)
+- Theme selection (standard, orangepill, nostrich, beehive, liquidity, safari, blocktron, industrial, nutjob, solidstate)
 - Store description
 - Tip settings (percentages, enable/disable, custom tips)
 
@@ -61,7 +61,7 @@ Visit the Settings page (`/#/settings`) to configure:
 You can also configure the merchant branding through URL parameters:
 - `?merchant_name=Your%20Store%20Name` - Sets the merchant name
 - `?logo_url=https://example.com/logo.png` - Sets the logo URL
-- `?theme=beehive` - Sets the theme (standard, orangepill, nostrich, liquidity, beehive, safari, blocktron, industrial)
+- `?theme=beehive` - Sets the theme (standard, orangepill, nostrich, liquidity, beehive, safari, blocktron, industrial, nutjob, solidstate)
 - `?description=Best%20coffee%20in%20town` - Sets the description
 - `?currency=USD` - Sets the default currency
 
@@ -79,6 +79,8 @@ The POS app includes multiple themes to match different merchant styles:
 6. **Safari** - Desert-inspired warm theme
 7. **Blocktron** - Futuristic digital theme
 8. **Industrial** - Bold industrial design
+9. **Nutjob** - Cashu-inspired warm brown tones
+10. **Solid State** - 70s-themed retro design with gold and burgundy gradients
 
 Each theme provides a unique visual style while maintaining a consistent layout and functionality.
 

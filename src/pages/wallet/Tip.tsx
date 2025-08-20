@@ -430,9 +430,15 @@ export function TipPage() {
               ? "btn bg-beehive-yellow text-black hover:bg-beehive-hover w-full"
               : config.theme === "liquidity"
                 ? "btn bg-liquidity-gradient text-black hover:bg-liquidity-hover w-full"
-                : config.theme === "safari"
-                  ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
-                  : config.theme === "blocktron"
+                : config.theme === "acidity"
+                  ? "btn bg-acidity-gradient text-black hover:bg-acidity-hover w-full"
+                  : config.theme === "nutjob"
+                    ? "btn bg-nutjob-gradient text-black hover:bg-nutjob-hover w-full"
+                    : config.theme === "safari"
+                      ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
+                      : config.theme === "solidstate"
+                        ? "btn bg-solidstate-gradient text-white hover:bg-solidstate-hover w-full"
+                        : config.theme === "blocktron"
                     ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
                     : "btn btn-industrial-gradient w-full";
 
