@@ -52,7 +52,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions on how to deploy th
 Visit the Settings page (`/#/settings`) to configure:
 - Store name and display name
 - Logo URL
-- Theme selection (standard, orangepill, nostrich, beehive, liquidity, safari, blocktron, industrial, nutjob, solidstate)
+- Theme selection (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron)
 - Store description
 - Tip settings (percentages, enable/disable, custom tips)
 
@@ -61,7 +61,7 @@ Visit the Settings page (`/#/settings`) to configure:
 You can also configure the merchant branding through URL parameters:
 - `?merchant_name=Your%20Store%20Name` - Sets the merchant name
 - `?logo_url=https://example.com/logo.png` - Sets the logo URL
-- `?theme=beehive` - Sets the theme (standard, orangepill, nostrich, liquidity, beehive, safari, blocktron, industrial, nutjob, solidstate)
+- `?theme=beehive` - Sets the theme (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron)
 - `?description=Best%20coffee%20in%20town` - Sets the description
 - `?currency=USD` - Sets the default currency
 
@@ -72,15 +72,16 @@ Example: `https://your-domain.com/?merchant_name=Coffee%20Shop&theme=orangepill&
 The POS app includes multiple themes to match different merchant styles:
 
 1. **Standard** - Clean, modern look with green accents
-2. **OrangePill** - Bitcoin-inspired orange theme
-3. **Nostrich** - Nostr-inspired purple theme
-4. **Beehive** - Alby-inspired yellow theme
-5. **Liquidity** - A cool blue aquatic theme
-6. **Safari** - Desert-inspired warm theme
-7. **Blocktron** - Futuristic digital theme
-8. **Industrial** - Bold industrial design
-9. **Nutjob** - Cashu-inspired warm brown tones
-10. **Solid State** - 70s-themed retro design with gold and burgundy gradients
+2. **Industrial** - Bold industrial design
+3. **OrangePill** - Bitcoin-inspired orange theme
+4. **Nostrich** - Nostr-inspired purple theme
+5. **Beehive** - Alby-inspired yellow theme
+6. **Liquidity** - A cool blue aquatic theme
+7. **Acidity** - An energetic yellow-green and cyan theme
+8. **Nutjob** - Cashu-inspired warm brown tones
+9. **Safari** - Desert-inspired warm theme
+10. **Solid State** - A retro 70s-theme 
+11. **Blocktron** - Futuristic digital theme
 
 Each theme provides a unique visual style while maintaining a consistent layout and functionality.
 
