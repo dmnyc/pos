@@ -461,6 +461,7 @@ export function Settings() {
                     <option value="acidity">Acidity</option>
                     <option value="nutjob">Nutjob</option>
                     <option value="safari">Safari</option>
+                    <option value="olympian">Olympian</option>
                     <option value="blocktron">Blocktron</option>
                   </select>
                 </div>
@@ -666,8 +667,10 @@ export function Settings() {
                               : merchantConfig.theme === "nutjob"
                                 ? "bg-nutjob-gradient text-black hover:bg-nutjob-hover"
                                 : merchantConfig.theme === "safari"
-                            ? "bg-safari-gradient text-black hover:bg-safari-hover"
-                            : merchantConfig.theme === "blocktron"
+                                  ? "bg-safari-gradient text-black hover:bg-safari-hover"
+                                  : merchantConfig.theme === "olympian"
+                                    ? "bg-olympian-gradient text-white hover:bg-olympian-hover"
+                                    : merchantConfig.theme === "blocktron"
                               ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
                               : "btn-industrial-gradient"
                   }`}

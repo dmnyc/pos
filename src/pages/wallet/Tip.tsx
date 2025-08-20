@@ -435,8 +435,10 @@ export function TipPage() {
                   : config.theme === "nutjob"
                     ? "btn bg-nutjob-gradient text-black hover:bg-nutjob-hover w-full"
                     : config.theme === "safari"
-                  ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
-                  : config.theme === "blocktron"
+                      ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full"
+                      : config.theme === "olympian"
+                        ? "btn bg-olympian-gradient text-white hover:bg-olympian-hover w-full"
+                        : config.theme === "blocktron"
                     ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
                     : "btn btn-industrial-gradient w-full";
 

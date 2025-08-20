@@ -47,6 +47,8 @@ export default {
         'acidity-hover': 'linear-gradient(100deg, #C6D020, #B5CA2D, #A3C43D, #97C046, #94BF4A, #59B174, #00AFCB, #14ADB2)',
         'nutjob-gradient': 'linear-gradient(to bottom, #e3d3b5, #dcc099, #c6a980, #b08c5b)',
         'nutjob-hover': 'linear-gradient(to bottom, #d3c3a5, #ccb089, #b69970, #a07c4b)',
+        'olympian-gradient': 'linear-gradient(to bottom, #eea73b, #e79837, #c15827, #a52b21)',
+        'olympian-hover': 'linear-gradient(to bottom, #de972b, #d78827, #b14817, #952b11)',
         'blocktron-gradient': 'linear-gradient(to right, #ff9900, #ff7a30, #ff00aa, #7b00ff, #00FFFF)',
         'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #6b00ef, #00FFFF)',
       },
@@ -195,6 +197,21 @@ export default {
           "secondary-content": "#000000", // Black text on secondary elements
           accent: "#4d8c2f", // Green for accent elements (charge button)
           "accent-content": "#000000", // Black text on buttons for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        olympian: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#eea73b", // Golden orange for accent elements
+          "accent-content": "#000000", // Black text on accent elements for better contrast
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background
           "base-content": "#FFFFFF", // White text on base elements

@@ -201,8 +201,10 @@ export function TipOnly() {
                   : config.theme === "nutjob"
                     ? "btn bg-nutjob-gradient text-black hover:bg-nutjob-hover w-full h-10 text-base font-bold flex-grow-0"
                     : config.theme === "safari"
-                  ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-10 text-base font-bold flex-grow-0"
-                  : config.theme === "blocktron"
+                      ? "btn bg-safari-gradient text-black hover:bg-safari-hover w-full h-10 text-base font-bold flex-grow-0"
+                      : config.theme === "olympian"
+                        ? "btn bg-olympian-gradient text-white hover:bg-olympian-hover w-full h-10 text-base font-bold flex-grow-0"
+                        : config.theme === "blocktron"
                     ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10 text-base font-bold flex-grow-0"
                     : "btn btn-industrial-gradient w-full h-10 text-base font-bold flex-grow-0";
 
