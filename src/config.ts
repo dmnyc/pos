@@ -184,6 +184,7 @@ interface CompressedConfig {
     enabled?: boolean;
     percentages?: number[];
     allowCustom?: boolean;
+    useSecondaryWallet?: boolean;
   };
 }
 
@@ -240,6 +241,11 @@ function applyCompressedConfig(configObject: CompressedConfig): void {
 
     if (typeof configObject.tips.allowCustom === 'boolean') {
       newTipSettings.allowCustom = configObject.tips.allowCustom;
+      tipUpdated = true;
+    }
+
+    if (typeof configObject.tips.useSecondaryWallet === 'boolean') {
+      newTipSettings.useSecondaryWallet = configObject.tips.useSecondaryWallet;
       tipUpdated = true;
     }
   }
