@@ -71,6 +71,18 @@ export function Home() {
       try {
         const nwcUrl = atob(nwcEncoded);
         window.localStorage.setItem(localStorageKeys.nwcUrl, nwcUrl);
+        
+        // Handle tip wallet NWC URL if present
+        const tipNwcEncoded = params.get("tipnwc");
+        if (tipNwcEncoded) {
+          try {
+            const tipWalletNwcUrl = atob(tipNwcEncoded);
+            window.localStorage.setItem(localStorageKeys.tipWalletNwcUrl, tipWalletNwcUrl);
+          } catch (error) {
+            console.error("Failed to decode tip wallet NWC URL:", error);
+          }
+        }
+        
         // Check for PIN before navigating
         const hasPin = window.localStorage.getItem('pos_pin');
         navigate(hasPin ? '/wallet/new' : '/security');
@@ -191,6 +203,17 @@ export function Home() {
         const nwcUrl = atob(nwcEncoded);
         window.localStorage.setItem(localStorageKeys.nwcUrl, nwcUrl);
 
+        // Handle tip wallet NWC URL if present
+        const tipNwcEncoded = searchParams.get("tipnwc");
+        if (tipNwcEncoded) {
+          try {
+            const tipWalletNwcUrl = atob(tipNwcEncoded);
+            window.localStorage.setItem(localStorageKeys.tipWalletNwcUrl, tipWalletNwcUrl);
+          } catch (error) {
+            console.error("Failed to decode tip wallet NWC URL:", error);
+          }
+        }
+
         // Handle other parameters
         const label = searchParams.get("label") || searchParams.get("name");
         if (label) {
@@ -244,7 +267,7 @@ export function Home() {
             className="btn mt-8 md:mt-10 lg:mt-12 btn-sm md:btn-md lg:btn !bg-gray-800 hover:!bg-gray-300 !text-white hover:!text-black transition-colors duration-300"
             onClick={handleImport}
           >
-            Import wallet URL
+            Import Shared URL
           </button>
         </div>
         <Footer />
@@ -270,7 +293,7 @@ export function Home() {
           setImportUrl('');
           setShowScanner(false);
         }}
-        title="Import Wallet URL"
+        title="Import Shared URL"
         size={showScanner ? 'large' : 'default'}
         message={(
           <div>
@@ -291,7 +314,7 @@ export function Home() {
                     value={importUrl}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setImportUrl(e.target.value)}
                     className="flex-grow p-2 border rounded-l bg-gray-700 border-gray-600 text-white"
-                    placeholder="Paste URL here"
+                    placeholder="Paste shared URL here"
                   />
                   <button
                     type="button"

@@ -31,7 +31,7 @@ export function Share() {
       const tipSettings = getTipSettings();
       const currency = localStorage.getItem(localStorageKeys.currency) || "USD";
 
-      // Create compressed configuration objec
+      // Create compressed configuration object
       const configObject = {
         name: merchantConfig.name,
         logoUrl: merchantConfig.logoUrl,
@@ -41,7 +41,8 @@ export function Share() {
         tips: {
           enabled: tipSettings.enabled,
           percentages: tipSettings.defaultPercentages,
-          allowCustom: tipSettings.allowCustom
+          allowCustom: tipSettings.allowCustom,
+          useSecondaryWallet: tipSettings.useSecondaryWallet
         }
       };
 
@@ -50,7 +51,18 @@ export function Share() {
 
       // Generate URL compatible with HashRouter
       const baseUrl = window.location.origin + window.location.pathname;
-      setShareURI(`${baseUrl}#/?nwc=${nwcEncoded}&config=${configEncoded}`);
+      let shareUrl = `${baseUrl}#/?nwc=${nwcEncoded}&config=${configEncoded}`;
+      
+      // Include tip wallet NWC URL if secondary wallet is enabled for tips
+      if (tipSettings.useSecondaryWallet) {
+        const tipWalletNwcUrl = window.localStorage.getItem(localStorageKeys.tipWalletNwcUrl);
+        if (tipWalletNwcUrl) {
+          const tipWalletNwcEncoded = btoa(tipWalletNwcUrl);
+          shareUrl += `&tipnwc=${tipWalletNwcEncoded}`;
+        }
+      }
+
+      setShareURI(shareUrl);
     }
   }, []);
 
