@@ -147,6 +147,29 @@ export function New() {
     // For SATS currency, directly use the number as is
     const newAmount = parseInt(amount.toString() + num); // Concatenate the new number without leading zero
     
+    // Check if the new amount exceeds the limit (100,000,000 sats = 1 BTC)
+    if (currency === "SATS" && newAmount > 100000000) {
+      // Show an alert for exceeding the limit
+      setAlertState({
+        isOpen: true,
+        title: 'Amount Limit Exceeded',
+        message: 'The maximum amount is 100,000,000 sats (1 BTC)'
+      });
+      return; // Don't update the amount
+    } else if (currency !== "SATS") {
+      // For other currencies, check if the equivalent in sats would exceed the limit
+      // This is a rough estimate since we don't have the exact conversion yet
+      const estimatedSats = newAmount * (totalInSats / total || 0);
+      if (estimatedSats > 100000000) {
+        setAlertState({
+          isOpen: true,
+          title: 'Amount Limit Exceeded',
+          message: 'The maximum amount is equivalent to 100,000,000 sats (1 BTC)'
+        });
+        return; // Don't update the amount
+      }
+    }
+    
     // Log the value to help with debugging
     console.log(`Input: ${amount.toString() + num} -> ${newAmount}`);
     

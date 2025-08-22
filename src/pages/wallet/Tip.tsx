@@ -234,13 +234,39 @@ export function TipPage() {
       if (parts.length === 2 && parts[1].length > 2) {
         value = parts[0] + '.' + parts[1].substring(0, 2);
       }
+      
+      // For FIAT currencies, check the estimated sats value
+      if (value && fiatRate) {
+        const fiatValue = parseFloat(value);
+        if (!isNaN(fiatValue)) {
+          const estimatedSats = Math.round(fiatValue * fiatRate);
+          if (estimatedSats > 100000000) {
+            setAlertState({
+              isOpen: true,
+              title: 'Amount Limit Exceeded',
+              message: 'The maximum tip amount is equivalent to 100,000,000 sats (1 BTC)'
+            });
+            return; // Don't update the value
+          }
+        }
+      }
     } else {
       // For SATS, only allow integers
       value = value.replace(/[^0-9]/g, '');
       
+      // Check if the value exceeds the 100,000,000 sats limit
+      const parsedValue = parseInt(value) || 0;
+      if (parsedValue > 100000000) {
+        setAlertState({
+          isOpen: true,
+          title: 'Amount Limit Exceeded',
+          message: 'The maximum tip amount is 100,000,000 sats (1 BTC)'
+        });
+        return; // Don't update the value
+      }
+      
       // Directly update tipAmount to ensure UI consistency when using SATS
       if (value) {
-        const parsedValue = parseInt(value) || 0;
         console.log(`Direct tipAmount update: ${parsedValue} sats`);
         setTipAmount(parsedValue);
       } else {
@@ -262,6 +288,18 @@ export function TipPage() {
         const fiatValue = parseFloat(customTipValue);
         if (!isNaN(fiatValue) && fiatRate) {
           const satValue = Math.round(fiatValue * fiatRate);
+          
+          // Check if converted value exceeds the limit
+          if (satValue > 100000000) {
+            setAlertState({
+              isOpen: true,
+              title: 'Amount Limit Exceeded',
+              message: 'The converted amount exceeds 100,000,000 sats (1 BTC). Please enter a lower amount.'
+            });
+            // Don't change the currency mode, stay in FIAT
+            return;
+          }
+          
           setCustomTipValue(satValue.toString());
         }
       }
