@@ -9,8 +9,8 @@ import { playPaymentChime } from "../../utils/audioUtils";
 import CodepenLightning from "../../components/animations/CodepenLightning";
 import TipGlowButton from "../../components/animations/TipGlowButton";
 
-// Timeout duration in milliseconds (3 minutes = 180,000ms)
-const AUTO_RESET_TIMEOUT = 3 * 60 * 1000;
+// Timeout duration in milliseconds (5 minutes = 300,000ms)
+const AUTO_RESET_TIMEOUT = 5 * 60 * 1000;
 
 export function Paid() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export function Paid() {
 
   // Set up automatic reset timer
   useEffect(() => {
-    // After 3 minutes, automatically navigate back to the new payment screen
+    // After 5 minutes, automatically navigate back to the new payment screen
     const autoResetTimer = setTimeout(() => {
       navigate('../new');
     }, AUTO_RESET_TIMEOUT);

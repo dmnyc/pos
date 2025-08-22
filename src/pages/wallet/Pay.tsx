@@ -27,7 +27,7 @@ export function Pay() {
   // Safely convert passedFiatAmount to string or empty string
   const passedFiatAmount = location.state?.fiatAmount ? String(location.state.fiatAmount) : "";
   const config = getMerchantConfig();
-  const [countdown, setCountdown] = useState(180); // 3 minutes in seconds
+  const [countdown, setCountdown] = useState(300); // 5 minutes in seconds
 
   const [showRawInvoice, setShowRawInvoice] = useState(false);
 
@@ -110,7 +110,29 @@ export function Pay() {
       const { satoshi, description } = inv;
       // Ensure amount is parsed as a number
       const parsedAmount = parseInt(satoshi.toString(), 10);
-      setAmount(parsedAmount);
+      
+      // Add logging to debug the issue
+      console.log(`Parsed invoice amount: ${satoshi} -> ${parsedAmount} sats`);
+      
+      // For tip payments in SATS, check if there's a potential scaling issue
+      if (isTipPayment && currency === "SATS") {
+        console.log(`Tip payment in SATS: ${parsedAmount}`);
+        
+        // Fix: Check for potential 100x scaling issue in SATS mode
+        if (parsedAmount > 0 && passedFiatAmount === "" && 
+            String(parsedAmount).length > 2 && 
+            parsedAmount % 100 === 0 && 
+            parsedAmount > 10000) {
+          // This is likely a scaling issue - adjust the amount by dividing by 100
+          const correctedAmount = parsedAmount / 100;
+          console.log(`Correcting SATS amount from ${parsedAmount} to ${correctedAmount}`);
+          setAmount(correctedAmount);
+        } else {
+          setAmount(parsedAmount);
+        }
+      } else {
+        setAmount(parsedAmount);
+      }
 
       // Set description and determine fiat amoun
       if (description) {

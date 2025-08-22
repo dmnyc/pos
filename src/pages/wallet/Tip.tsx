@@ -159,8 +159,14 @@ export function TipPage() {
               }
             }
           } else {
-            // Using SATS directly
-            setTipAmount(parseInt(customTipValue) || 0);
+            // Using SATS directly - ensure it's parsed correctly
+            const parsedValue = parseInt(customTipValue) || 0;
+            
+            // Log the parsed value to help debug
+            console.log(`Custom tip SATS value: ${customTipValue} -> ${parsedValue}`);
+            
+            // Don't apply any additional conversion when currency is SATS
+            setTipAmount(parsedValue);
           }
         } else {
           setTipAmount(0);
@@ -326,8 +332,26 @@ export function TipPage() {
         tipMemo += ` (${fiatDisplay})`;
       }
 
+      // Double-check to ensure correct amount for SATS currency
+      let invoiceAmount = tipAmount.toString();
+      
+      // Add logging to debug the issue
+      console.log(`Creating tip invoice with amount: ${invoiceAmount} sats`);
+      
+      // In SATS currency mode, ensure we're not multiplying by 100 unnecessarily
+      if (currency === "SATS" && customTipCurrency === "SATS") {
+        console.log(`Using SATS directly: ${invoiceAmount}`);
+        
+        // Ensure there's no scaling issue by explicitly using the parsed custom value
+        if (selectedTip === CUSTOM_TIP && customTipValue) {
+          const directParsedValue = parseInt(customTipValue) || 0;
+          invoiceAmount = directParsedValue.toString();
+          console.log(`Custom SATS value used directly: ${invoiceAmount}`);
+        }
+      }
+      
       const invoice = await activeProvider.makeInvoice({
-        amount: tipAmount.toString(),
+        amount: invoiceAmount,
         defaultMemo: tipMemo,
       });
 
