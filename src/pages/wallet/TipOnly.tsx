@@ -262,8 +262,13 @@ export function TipOnly() {
               <div className="flex items-baseline">
                 <span>
                   {currency === "SATS" 
-                    ? <span className="text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white">
-                        {amount || 0}
+                    ? <span className="inline-flex items-baseline">
+                        <span className="text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white">
+                          {amount || 0}
+                        </span>
+                        <span className="text-gray-500 ml-2 md:ml-3 lg:ml-3 wide:ml-4 lg:landscape:ml-2 text-xl md:text-2xl lg:text-2xl wide:text-3xl lg:landscape:text-xl font-semibold uppercase tracking-wider">
+                          SATS
+                        </span>
                       </span>
                     : formatAmount({
                         amount: amount / 100,
