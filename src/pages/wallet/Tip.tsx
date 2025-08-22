@@ -237,6 +237,15 @@ export function TipPage() {
     } else {
       // For SATS, only allow integers
       value = value.replace(/[^0-9]/g, '');
+      
+      // Directly update tipAmount to ensure UI consistency when using SATS
+      if (value) {
+        const parsedValue = parseInt(value) || 0;
+        console.log(`Direct tipAmount update: ${parsedValue} sats`);
+        setTipAmount(parsedValue);
+      } else {
+        setTipAmount(0);
+      }
     }
 
     setCustomTipValue(value);
@@ -335,19 +344,14 @@ export function TipPage() {
       // Double-check to ensure correct amount for SATS currency
       let invoiceAmount = tipAmount.toString();
       
-      // Add logging to debug the issue
-      console.log(`Creating tip invoice with amount: ${invoiceAmount} sats`);
-      
-      // In SATS currency mode, ensure we're not multiplying by 100 unnecessarily
-      if (currency === "SATS" && customTipCurrency === "SATS") {
-        console.log(`Using SATS directly: ${invoiceAmount}`);
-        
-        // Ensure there's no scaling issue by explicitly using the parsed custom value
-        if (selectedTip === CUSTOM_TIP && customTipValue) {
-          const directParsedValue = parseInt(customTipValue) || 0;
-          invoiceAmount = directParsedValue.toString();
-          console.log(`Custom SATS value used directly: ${invoiceAmount}`);
-        }
+      // Special handling for custom SATS input to ensure consistency
+      if (currency === "SATS" && customTipCurrency === "SATS" && selectedTip === CUSTOM_TIP && customTipValue) {
+        const directParsedValue = parseInt(customTipValue) || 0;
+        invoiceAmount = directParsedValue.toString();
+        console.log(`Custom SATS value used directly: ${invoiceAmount}`);
+      } else {
+        // Add logging to debug the issue
+        console.log(`Creating tip invoice with amount: ${invoiceAmount} sats`);
       }
       
       const invoice = await activeProvider.makeInvoice({
@@ -573,9 +577,11 @@ export function TipPage() {
                 <div className="flex items-center justify-center">
                   <span className="text-gray-400 text-sm md:text-base xl:text-base mr-1 md:mr-2">Tip amount:</span>
                   <span className="text-white text-lg md:text-xl xl:text-xl font-medium">
-                    {currency === "SATS" 
-                      ? `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}`
-                      : displayFiatTipAmount || "Calculating..."}
+                    {currency === "SATS" && selectedTip === CUSTOM_TIP && customTipValue
+                      ? `${parseInt(customTipValue) || 0} ${parseInt(customTipValue) === 1 ? "sat" : "sats"}`
+                      : currency === "SATS" 
+                        ? `${tipAmount} ${tipAmount === 1 ? "sat" : "sats"}`
+                        : displayFiatTipAmount || "Calculating..."}
                   </span>
                 </div>
                 {currency !== "SATS" && fiatRate && (
@@ -585,7 +591,15 @@ export function TipPage() {
                 )}
 
                 <p className="text-xs md:text-sm xl:text-sm text-gray-400 mt-3">
-                  Total with tip: {baseAmount + tipAmount} {(baseAmount + tipAmount) === 1 ? "sat" : "sats"}
+                  Total with tip: {
+                    currency === "SATS" && selectedTip === CUSTOM_TIP && customTipValue
+                      ? baseAmount + (parseInt(customTipValue) || 0)
+                      : baseAmount + tipAmount
+                  } {(
+                    currency === "SATS" && selectedTip === CUSTOM_TIP && customTipValue
+                      ? (baseAmount + (parseInt(customTipValue) || 0)) === 1
+                      : (baseAmount + tipAmount) === 1
+                  ) ? "sat" : "sats"}
                 </p>
               </div>
             )}
