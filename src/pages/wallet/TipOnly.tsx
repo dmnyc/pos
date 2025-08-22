@@ -108,8 +108,20 @@ export function TipOnly() {
         memo += ` (${currency} ${formattedAmount})`;
       }
 
+      // Choose the correct amount value based on currency
+      let invoiceAmount = "";
+      if (currency === "SATS") {
+        // For SATS, use the direct amount value
+        invoiceAmount = amount.toString();
+        // Log the value for debugging
+        console.log(`Creating SATS tip invoice with amount: ${invoiceAmount}`);
+      } else {
+        // For other currencies, use the calculated totalInSats
+        invoiceAmount = totalInSats.toString();
+      }
+
       const invoice = await provider.makeInvoice({
-        amount: totalInSats.toString(),
+        amount: invoiceAmount,
         defaultMemo: memo,
       });
 
@@ -131,7 +143,12 @@ export function TipOnly() {
   }
 
   const handleNumberClick = (num: string) => {
+    // For SATS currency, directly use the number as is
     const newAmount = parseInt(amount.toString() + num); // Concatenate the new number without leading zero
+    
+    // Log the value to help with debugging
+    console.log(`Input: ${amount.toString() + num} -> ${newAmount}`);
+    
     setAmount(newAmount);
     setTotal(newAmount); // Total is now the same as amount since we removed the "+" feature
   };
@@ -221,12 +238,17 @@ export function TipOnly() {
             <div className="flex flex-col mb-4 md:mb-6 lg:mb-8 wide:mb-10 items-center justify-center">
               <div className="flex items-baseline">
                 <span>
-                  {formatAmount({
-                    amount: amount / 100,
-                    currency: currency,
-                    symbolClass: "text-gray-500",
-                    valueClass: "text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white"
-                  })}
+                  {currency === "SATS" 
+                    ? <span className="text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white">
+                        {amount || 0}
+                      </span>
+                    : formatAmount({
+                        amount: amount / 100,
+                        currency: currency,
+                        symbolClass: "text-gray-500",
+                        valueClass: "text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white"
+                      })
+                  }
                 </span>
               </div>
 
@@ -326,7 +348,7 @@ export function TipOnly() {
                   disabled={isLoading || total <= 0 || totalInSats <= 0}
                 >
                   <span className="text-base md:text-xl lg:text-xl lg:landscape:text-base wide:text-3xl">
-                    Tip {new Intl.NumberFormat().format(totalInSats)} {totalInSats === 1 ? "sat" : "sats"}
+                    Tip {currency === "SATS" ? amount : new Intl.NumberFormat().format(totalInSats)} {totalInSats === 1 ? "sat" : "sats"}
                   </span>
                   {isLoading && <span className="loading loading-spinner loading-xs md:loading-md lg:loading-md lg:landscape:loading-xs wide:loading-lg ml-2"></span>}
                 </button>
