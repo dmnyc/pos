@@ -146,7 +146,7 @@ export function New() {
     if (currency === "SATS") {
       // For SATS, direct comparison
       if (newAmount > MAX_SATS) {
-        showAlert('Amount Too Large', 'Maximum amount is 1 BTC (100,000,000 sats)');
+        showAlert('Amount Too Large', 'Your input exceeds the maximum amount (100,000,000 sats).');
         return;
       }
     } else {
@@ -167,7 +167,7 @@ export function New() {
       
       const limit = fiatLimits[currency] || 100000; // Default to $100k equivalent
       if (decimalAmount > limit) {
-        showAlert('Amount Too Large', 'Maximum amount is equivalent to 1 BTC');
+        showAlert('Amount Too Large', 'Your input exceeds the maximum amount.');
         return;
       }
     }
