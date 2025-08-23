@@ -146,7 +146,7 @@ export function New() {
     if (currency === "SATS") {
       // For SATS, direct comparison
       if (newAmount > MAX_SATS) {
-        showAlert('Amount Too Large', 'Your input exceeds the maximum amount (100,000,000 sats).');
+        showAlert('Amount Too Large', 'Your input exceeds the maximum amount.');
         return;
       }
     } else {
