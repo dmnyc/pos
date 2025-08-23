@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { AlertModal } from '../components/Modals'
 import { ExactBackButton } from '../components/ExactBackButton'
 import { verifyPin } from '../utils/pinUtils'
-import { clearSession } from '../utils/sessionUtils'
+import { clearSession, startSession } from '../utils/sessionUtils'
 
 // Standard class names for consistent styling
 const buttonClasses = "w-full bg-gray-600 hover:bg-gray-500 text-white py-2 rounded-lg transition-colors"
@@ -76,9 +76,19 @@ const Security = () => {
       return;
     }
 
+    const existingPin = localStorage.getItem('pos_pin');
+    const isInitialSetup = !existingPin;
+    
     localStorage.setItem('pos_pin', pin);
-    // Clear any active session when setting a new PIN
-    clearSession();
+    
+    if (isInitialSetup) {
+      // For initial setup, start a 2-minute session so user can use POS immediately
+      startSession();
+    } else {
+      // For PIN changes, clear any active session for security
+      clearSession();
+    }
+    
     setIsChangingPin(false);
     showAlert('Important: Store Your PIN Safely', 'Please write down or securely store your PIN code. You cannot recover it if forgotten, and you will need to reset the entire POS application if you lose it.');
   }

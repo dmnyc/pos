@@ -128,6 +128,18 @@ function AppContent() {
           background: '#333',
           color: '#fff',
         },
+        success: {
+          iconTheme: {
+            primary: '#22c55e',
+            secondary: '#fff',
+          },
+          style: {
+            background: '#333',
+            color: '#fff',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+          },
+        },
       }} />
       
       {/* Version checker - periodically checks for updates */}
