@@ -9,6 +9,7 @@ import {
   PopiconsKeyDuotone,
   PopiconsFileDuotone,
   PopiconsHeartDuotone, // Still needed for the menu item
+  PopiconsLockDuotone, // Added for lock icon
 } from "@popicons/react";
 import { getMerchantConfig } from "../config";
 import { localStorageKeys } from "../constants";
@@ -17,13 +18,24 @@ import { useState, useRef, useEffect } from "react";
 import { getNavbarHeightClasses, getNavbarMinHeightClasses } from "../utils/layoutConstants";
 import useStore from "../state/store";
 import { disconnect } from "@getalby/bitcoin-connect-react";
+import { clearSession, isSessionActive, startSession } from "../utils/sessionUtils";
+import toast from "react-hot-toast";
+import { SessionTimeoutIndicator } from "./SessionTimeoutIndicator";
 
 export function Navbar() {
   const config = getMerchantConfig();
   const [isOpen, setIsOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+  const [sessionActive, setSessionActive] = useState(isSessionActive());
   const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  // Check session status whenever dropdown is opened
+  useEffect(() => {
+    if (isOpen) {
+      setSessionActive(isSessionActive());
+    }
+  }, [isOpen]);
 
   // Handle clicks outside the dropdown to close it
   useEffect(() => {
@@ -88,8 +100,8 @@ export function Navbar() {
 
   return (
     <div className={`navbar bg-black text-white ${getNavbarHeightClasses()} px-0`} data-theme={config.theme}>
-      {/* Left section with menu button */}
-      <div className="w-10 md:w-12 lg:w-16 wide:w-16 flex justify-center items-center">
+      {/* Left section with menu button and session indicator */}
+      <div className="flex items-center justify-start pl-2 md:pl-3 lg:pl-4 wide:pl-4 w-auto min-w-10 md:min-w-12 lg:min-w-16 wide:min-w-16">
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={toggleDropdown}
@@ -107,6 +119,40 @@ export function Navbar() {
                   <PopiconsSettingsDuotone className="h-4 w-4 md:w-5 md:h-5 wide:w-5 wide:h-5 mr-2 md:mr-3" /> Settings
                 </Link>
               </li>
+              <li key="lock">
+                <button
+                  onClick={() => {
+                    if (sessionActive) {
+                      // Lock the POS
+                      clearSession();
+                      toast.success('PIN will be required for the next secure operation.', {
+                        duration: 3000,
+                      });
+                    } else {
+                      // Unlock the POS - start a new session
+                      verifyPin().then(verified => {
+                        if (verified) {
+                          startSession(); // Explicitly start a new session
+                          setSessionActive(true);
+                          toast.success('PIN verified. You can now perform secure operations.', {
+                            duration: 3000,
+                          });
+                        }
+                      });
+                    }
+                    handleMenuItemClick();
+                  }}
+                  className="w-full text-left text-white text-base md:text-lg wide:text-lg py-3 flex items-center"
+                >
+                  <PopiconsLockDuotone className="h-4 w-4 md:w-5 md:h-5 wide:w-5 wide:h-5 mr-2 md:mr-3" /> 
+                  {sessionActive ? 'Require PIN' : 'Verify PIN'}
+                </button>
+              </li>
+              <li key="security">
+                <Link to="/security/status" className="text-white text-base md:text-lg wide:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
+                  <PopiconsKeyDuotone className="h-4 w-4 md:w-5 md:h-5 wide:w-5 wide:h-5 mr-2 md:mr-3" /> Change PIN
+                </Link>
+              </li>
               <li key="share">
                 <Link to="../share" className="text-white text-base md:text-lg wide:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
                   <PopiconsShareDuotone className="w-4 h-4 md:w-5 md:h-5 wide:w-5 wide:h-5 mr-2 md:mr-3" /> Share
@@ -115,11 +161,6 @@ export function Navbar() {
               <li key="tiponly">
                 <Link to="../tiponly" className="text-white text-base md:text-lg wide:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
                   <PopiconsHeartDuotone className="w-4 h-4 md:w-5 md:h-5 wide:w-5 wide:h-5 mr-2 md:mr-3" /> Tip Only
-                </Link>
-              </li>
-              <li key="security">
-                <Link to="/security/status" className="text-white text-base md:text-lg wide:text-lg py-3 flex items-center" onClick={handleMenuItemClick}>
-                  <PopiconsKeyDuotone className="h-4 w-4 md:w-5 md:h-5 wide:w-5 wide:h-5 mr-2 md:mr-3" /> Security
                 </Link>
               </li>
               <li key="about">
@@ -143,6 +184,9 @@ export function Navbar() {
             </ul>
           )}
         </div>
+        
+        {/* Session timeout indicator positioned right of menu button */}
+        <SessionTimeoutIndicator inline className="ml-2" />
       </div>
 
       {/* Center section with logo */}

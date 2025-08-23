@@ -104,7 +104,7 @@ const Security = () => {
       {isStatusView && !isChangingPin && <ExactBackButton onBack={handleBack} />}
       <div className="flex flex-grow flex-col overflow-auto pt-16">
         <div className="w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto p-2 md:p-4">
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Security Settings</h1>
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Change PIN</h1>
 
           <div className="bg-gray-800 p-6 pb-4 rounded-lg">
             <div className="mb-6">
