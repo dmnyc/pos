@@ -224,7 +224,7 @@ export function New() {
               <div className="flex items-baseline">
                 <span>
                   {formatAmount({
-                    amount: amount / 100,
+                    amount: currency === "SATS" ? amount : amount / 100,
                     currency: currency,
                     symbolClass: "text-gray-500",
                     valueClass: "text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white"
