@@ -32,6 +32,10 @@ export function New() {
     message: ''
   });
 
+  const showAlert = (title: string, message: string) => {
+    setAlertState({ isOpen: true, title, message });
+  };
+
   useEffect(() => {
     async function fetchCurrencies() {
       try {
@@ -132,8 +136,42 @@ export function New() {
     }
   }
 
+  // Maximum amount: 1 BTC = 100,000,000 sats
+  const MAX_SATS = 100000000;
+
   const handleNumberClick = (num: string) => {
     const newAmount = parseInt(amount.toString() + num); // Concatenate the new number without leading zero
+    
+    // Check if this would exceed 1 BTC equivalent
+    if (currency === "SATS") {
+      // For SATS, direct comparison
+      if (newAmount > MAX_SATS) {
+        showAlert('Amount Too Large', 'Maximum amount is 1 BTC (100,000,000 sats)');
+        return;
+      }
+    } else {
+      // For fiat currencies, check against reasonable limits to prevent excessive amounts
+      const decimalAmount = newAmount / 100; // Convert from cents
+      
+      // Conservative fiat limits that would typically exceed 1 BTC value
+      const fiatLimits: Record<string, number> = {
+        'USD': 100000, 'EUR': 100000, 'GBP': 100000, 'CAD': 100000, 'AUD': 100000,
+        'JPY': 15000000, 'KRW': 130000000, 'INR': 8000000, 'CNY': 700000,
+        'MXN': 2000000, 'BRL': 500000, 'CHF': 100000, 'NOK': 1000000,
+        'SEK': 1000000, 'DKK': 700000, 'PLN': 400000, 'CZK': 2500000,
+        'HKD': 800000, 'SGD': 140000, 'NZD': 150000, 'ZAR': 1800000,
+        'TRY': 3000000, 'RUB': 9000000, 'THB': 3500000, 'MYR': 450000,
+        'IDR': 1500000000, 'PHP': 5500000, 'VND': 2400000000, 'ILS': 370000,
+        'AED': 370000, 'SAR': 370000
+      };
+      
+      const limit = fiatLimits[currency] || 100000; // Default to $100k equivalent
+      if (decimalAmount > limit) {
+        showAlert('Amount Too Large', 'Maximum amount is equivalent to 1 BTC');
+        return;
+      }
+    }
+    
     setAmount(newAmount);
     setTotal(newAmount); // Total is now the same as amount since we removed the "+" feature
   };
