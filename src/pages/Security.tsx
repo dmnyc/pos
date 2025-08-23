@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { AlertModal } from '../components/Modals'
 import { ExactBackButton } from '../components/ExactBackButton'
 import { verifyPin } from '../utils/pinUtils'
+import { clearSession, startSession } from '../utils/sessionUtils'
 
 // Standard class names for consistent styling
 const buttonClasses = "w-full bg-gray-600 hover:bg-gray-500 text-white py-2 rounded-lg transition-colors"
@@ -40,7 +41,7 @@ const Security = () => {
     setAlertState(prev => ({ ...prev, isOpen: false }));
   };
 
-  // Check if PIN already exists in localStorage on component moun
+  // Check if PIN already exists in localStorage on component mount
   React.useEffect(() => {
     const existingPin = localStorage.getItem('pos_pin')
 
@@ -75,7 +76,19 @@ const Security = () => {
       return;
     }
 
+    const existingPin = localStorage.getItem('pos_pin');
+    const isInitialSetup = !existingPin;
+    
     localStorage.setItem('pos_pin', pin);
+    
+    if (isInitialSetup) {
+      // For initial setup, start a 2-minute session so user can use POS immediately
+      startSession();
+    } else {
+      // For PIN changes, clear any active session for security
+      clearSession();
+    }
+    
     setIsChangingPin(false);
     showAlert('Important: Store Your PIN Safely', 'Please write down or securely store your PIN code. You cannot recover it if forgotten, and you will need to reset the entire POS application if you lose it.');
   }
@@ -88,6 +101,8 @@ const Security = () => {
     const verified = await verifyPin();
     if (verified) {
       localStorage.removeItem('pos_pin');
+      // Clear the session when changing PIN
+      clearSession();
       setPin('');
       setConfirmPin('');
       setIsChangingPin(true);
@@ -99,7 +114,7 @@ const Security = () => {
       {isStatusView && !isChangingPin && <ExactBackButton onBack={handleBack} />}
       <div className="flex flex-grow flex-col overflow-auto pt-16">
         <div className="w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto p-2 md:p-4">
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Security Settings</h1>
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Change PIN</h1>
 
           <div className="bg-gray-800 p-6 pb-4 rounded-lg">
             <div className="mb-6">

@@ -84,7 +84,6 @@ const QRScanner: React.FC<QRScannerProps> = ({ onResult, onClose }) => {
     initializeScanner();
 
     // Cleanup function
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => {
       if (codeReaderRef.current) {
         try {

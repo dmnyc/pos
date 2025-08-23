@@ -32,6 +32,10 @@ export function New() {
     message: ''
   });
 
+  const showAlert = (title: string, message: string) => {
+    setAlertState({ isOpen: true, title, message });
+  };
+
   useEffect(() => {
     async function fetchCurrencies() {
       try {
@@ -143,35 +147,42 @@ export function New() {
     }
   }
 
+  // Maximum amount: 1 BTC = 100,000,000 sats
+  const MAX_SATS = 100000000;
+
   const handleNumberClick = (num: string) => {
     // For SATS currency, directly use the number as is
     const newAmount = parseInt(amount.toString() + num); // Concatenate the new number without leading zero
     
-    // Check if the new amount exceeds the limit (100,000,000 sats = 1 BTC)
-    if (currency === "SATS" && newAmount > 100000000) {
-      // Show an alert for exceeding the limit
-      setAlertState({
-        isOpen: true,
-        title: 'Amount Limit Exceeded',
-        message: 'The maximum amount is 100,000,000 sats (1 BTC)'
-      });
-      return; // Don't update the amount
-    } else if (currency !== "SATS") {
-      // For other currencies, check if the equivalent in sats would exceed the limit
-      // This is a rough estimate since we don't have the exact conversion yet
-      const estimatedSats = newAmount * (totalInSats / total || 0);
-      if (estimatedSats > 100000000) {
-        setAlertState({
-          isOpen: true,
-          title: 'Amount Limit Exceeded',
-          message: 'The maximum amount is equivalent to 100,000,000 sats (1 BTC)'
-        });
-        return; // Don't update the amount
+    // Check if this would exceed 1 BTC equivalent
+    if (currency === "SATS") {
+      // For SATS, direct comparison
+      if (newAmount > MAX_SATS) {
+        showAlert('Amount Too Large', 'Your input exceeds the maximum amount.');
+        return;
+      }
+    } else {
+      // For fiat currencies, check against reasonable limits to prevent excessive amounts
+      const decimalAmount = newAmount / 100; // Convert from cents
+      
+      // Conservative fiat limits that would typically exceed 1 BTC value
+      const fiatLimits: Record<string, number> = {
+        'USD': 100000, 'EUR': 100000, 'GBP': 100000, 'CAD': 100000, 'AUD': 100000,
+        'JPY': 15000000, 'KRW': 130000000, 'INR': 8000000, 'CNY': 700000,
+        'MXN': 2000000, 'BRL': 500000, 'CHF': 100000, 'NOK': 1000000,
+        'SEK': 1000000, 'DKK': 700000, 'PLN': 400000, 'CZK': 2500000,
+        'HKD': 800000, 'SGD': 140000, 'NZD': 150000, 'ZAR': 1800000,
+        'TRY': 3000000, 'RUB': 9000000, 'THB': 3500000, 'MYR': 450000,
+        'IDR': 1500000000, 'PHP': 5500000, 'VND': 2400000000, 'ILS': 370000,
+        'AED': 370000, 'SAR': 370000
+      };
+      
+      const limit = fiatLimits[currency] || 100000; // Default to $100k equivalent
+      if (decimalAmount > limit) {
+        showAlert('Amount Too Large', 'Your input exceeds the maximum amount.');
+        return;
       }
     }
-    
-    // Log the value to help with debugging
-    console.log(`Input: ${amount.toString() + num} -> ${newAmount}`);
     
     setAmount(newAmount);
     setTotal(newAmount); // Total is now the same as amount since we removed the "+" feature
@@ -262,22 +273,12 @@ export function New() {
             <div className="flex flex-col mb-4 md:mb-6 lg:mb-8 wide:mb-10 items-center justify-center">
               <div className="flex items-baseline">
                 <span>
-                  {currency === "SATS" 
-                    ? <span className="inline-flex items-baseline">
-                        <span className="text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white">
-                          {amount || 0}
-                        </span>
-                        <span className="text-gray-500 ml-2 md:ml-3 lg:ml-3 wide:ml-4 lg:landscape:ml-2 text-xl md:text-2xl lg:text-2xl wide:text-3xl lg:landscape:text-xl font-semibold uppercase tracking-wider" style={{ position: 'relative', top: '-0.3em' }}>
-                          SATS
-                        </span>
-                      </span>
-                    : formatAmount({
-                        amount: amount / 100,
-                        currency: currency,
-                        symbolClass: "text-gray-500",
-                        valueClass: "text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white"
-                      })
-                  }
+                  {formatAmount({
+                    amount: currency === "SATS" ? amount : amount / 100,
+                    currency: currency,
+                    symbolClass: "text-gray-500",
+                    valueClass: "text-5xl md:text-6xl lg:text-6xl wide:text-8xl lg:landscape:text-5xl whitespace-nowrap text-center mx-auto text-white"
+                  })}
                 </span>
               </div>
 

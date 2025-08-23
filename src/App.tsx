@@ -16,6 +16,8 @@ import React, { useEffect, useState } from "react";
 import { getMerchantConfig } from "./config";
 import { localStorageKeys } from "./constants";
 import { ErrorBoundary, VersionChecker, RecoveryButton } from "./components/utility";
+import { useSessionManager } from "./hooks/useSessionManager";
+import { Toaster } from 'react-hot-toast';
 
 // Main App wrapper that adds router
 function App() {
@@ -30,6 +32,9 @@ function App() {
 
 // Main content component that needs router context
 function AppContent() {
+  // Initialize session manager for PIN timeout
+  useSessionManager();
+  
   // State for the recovery button
   const [showRecoveryButton, setShowRecoveryButton] = useState(false);
   const location = useLocation();
@@ -117,6 +122,26 @@ function AppContent() {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center font-sans py-0 md:py-1">
+      {/* Toast notifications */}
+      <Toaster position="bottom-center" toastOptions={{
+        style: {
+          background: '#333',
+          color: '#fff',
+        },
+        success: {
+          iconTheme: {
+            primary: '#22c55e',
+            secondary: '#fff',
+          },
+          style: {
+            background: '#333',
+            color: '#fff',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+          },
+        },
+      }} />
+      
       {/* Version checker - periodically checks for updates */}
       <VersionChecker checkInterval={30 * 60 * 1000} /> {/* Check every 30 minutes */}
       
