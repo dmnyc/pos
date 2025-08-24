@@ -12,6 +12,7 @@ import { TipPage } from "./pages/wallet/Tip";
 import { TipOnly } from "./pages/wallet/TipOnly";
 import Security from "./pages/Security";
 import { Disclaimers } from "./pages/Disclaimers";
+import { Template } from "./pages/Template";
 import React, { useEffect, useState } from "react";
 import { getMerchantConfig } from "./config";
 import { localStorageKeys } from "./constants";
@@ -162,6 +163,12 @@ function AppContent() {
         <Route path="/security/*" Component={Security} />
         <Route path="/disclaimers" Component={Disclaimers} />
         <Route path="/about" Component={About} />
+        <Route path="/template" Component={() => (
+          <Template title="Template Page">
+            <p>This is the template page content. It uses the same styling as the About page with a back button in place of the hamburger menu.</p>
+            <p>This template can be used for contact forms and other static pages.</p>
+          </Template>
+        )} />
         <Route path="/*" Component={NotFound} />
       </Routes>
       
