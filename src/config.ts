@@ -32,7 +32,7 @@ export const defaultMerchantConfig: MerchantConfig = {
 // Default tip settings
 export const defaultTipSettings: TipSettings = {
   enabled: true,
-  defaultPercentages: [10, 15, 20, 25],
+  defaultPercentages: [15, 18, 20, 25],
   allowCustom: true,
   useSecondaryWallet: false
 };
