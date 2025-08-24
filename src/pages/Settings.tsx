@@ -261,7 +261,7 @@ export function Settings() {
       // Update the tip settings with the parsed percentages
       const updatedTipSettings = {
         ...tipSettings,
-        defaultPercentages: limitedPercentages.length > 0 ? limitedPercentages : [10, 15, 20, 25] // fallback to defaults if empty
+        defaultPercentages: limitedPercentages.length > 0 ? limitedPercentages : [15, 18, 20, 25] // fallback to defaults if empty
       };
 
       // Ensure the fixed fields are preserved with their default values
@@ -497,7 +497,7 @@ export function Settings() {
                         className="input input-bordered w-full bg-gray-900 text-white h-8 md:h-10 lg:h-12 text-sm md:text-base lg:text-lg settings-input"
                         value={tipPercentagesInput}
                         onChange={handlePercentagesChange}
-                        placeholder="10, 15, 20, 25"
+                        placeholder="15, 18, 20, 25"
                         maxLength={24}
                       />
                       <span className="text-xs md:text-sm text-gray-400 mt-1 md:mt-2 block">
