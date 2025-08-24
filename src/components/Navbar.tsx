@@ -178,6 +178,10 @@ export function Navbar() {
               <li key="logout" className="mt-1 border-t border-gray-800 pt-1">
                 <button
                   onClick={async () => {
+                    // Immediately reset unlocked state when logout is attempted
+                    clearSession();
+                    setSessionActive(false);
+                    
                     // Always require PIN verification before logout confirmation (even if session active)
                     const verified = await verifyPinAlways();
                     if (verified) {

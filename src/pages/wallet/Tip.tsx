@@ -243,8 +243,8 @@ export function TipPage() {
           if (estimatedSats > 100000000) {
             setAlertState({
               isOpen: true,
-              title: 'Amount Limit Exceeded',
-              message: 'The maximum tip amount is equivalent to 100,000,000 sats (1 BTC)'
+              title: 'Amount Too Large',
+              message: 'Your input exceeds the maximum amount.'
             });
             return; // Don't update the value
           }
@@ -259,8 +259,8 @@ export function TipPage() {
       if (parsedValue > 100000000) {
         setAlertState({
           isOpen: true,
-          title: 'Amount Limit Exceeded',
-          message: 'The maximum tip amount is 100,000,000 sats (1 BTC)'
+          title: 'Amount Too Large',
+          message: 'Your input exceeds the maximum amount.'
         });
         return; // Don't update the value
       }
@@ -293,8 +293,8 @@ export function TipPage() {
           if (satValue > 100000000) {
             setAlertState({
               isOpen: true,
-              title: 'Amount Limit Exceeded',
-              message: 'The converted amount exceeds 100,000,000 sats (1 BTC). Please enter a lower amount.'
+              title: 'Amount Too Large',
+              message: 'The converted amount exceeds the maximum amount.'
             });
             // Don't change the currency mode, stay in FIAT
             return;
