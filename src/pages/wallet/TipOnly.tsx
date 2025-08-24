@@ -152,7 +152,7 @@ export function TipOnly() {
       setAlertState({
         isOpen: true,
         title: 'Amount Limit Exceeded',
-        message: 'The maximum tip amount is 100,000,000 sats (1 BTC)'
+        message: 'Your input exceeds the maximum amount.'
       });
       return; // Don't update the amount
     } else if (currency !== "SATS") {
@@ -163,7 +163,7 @@ export function TipOnly() {
         setAlertState({
           isOpen: true,
           title: 'Amount Limit Exceeded',
-          message: 'The maximum tip amount is equivalent to 100,000,000 sats (1 BTC)'
+          message: 'Your input exceeds the maximum amount.'
         });
         return; // Don't update the amount
       }
