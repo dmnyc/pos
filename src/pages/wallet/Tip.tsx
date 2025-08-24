@@ -193,19 +193,8 @@ export function TipPage() {
         setCustomTipCurrency("SATS");
       }
 
-      // Only set a default value if the current value is empty
-      if (!customTipValue) {
-        // Default to 15% tip
-        if (customTipCurrency === "FIAT" && fiatRate && currency !== "SATS") {
-          const defaultTipPercentage = 0.15; // 15%
-          const defaultTip = (baseAmount * defaultTipPercentage) / fiatRate;
-          setCustomTipValue(defaultTip.toFixed(2));
-        } else {
-          // For SATS, default to 15% of the base amoun
-          const defaultTip = Math.round(baseAmount * 0.15);
-          setCustomTipValue(defaultTip.toString());
-        }
-      }
+      // Clear any existing custom tip value when selecting custom tip
+      setCustomTipValue('');
 
       // Focus the input field after a short delay to ensure it's rendered
       setTimeout(() => {
@@ -603,7 +592,11 @@ export function TipPage() {
                     className={`input input-bordered w-full bg-gray-900 text-white h-10 md:h-12 xl:h-12 text-sm md:text-base xl:text-base ${customTipCurrency === "FIAT" && currency !== "SATS" ? "pl-6 md:pl-8 xl:pl-8" : ""}`}
                     value={customTipValue}
                     onChange={handleCustomTipChange}
-                    placeholder={currency !== "SATS" && customTipCurrency === "FIAT" ? "0.00" : "Enter amount in sats"}
+                    placeholder={
+                      currency !== "SATS" && customTipCurrency === "FIAT" 
+                        ? ((baseAmount * 0.15) / (fiatRate || 1)).toFixed(2)
+                        : Math.round(baseAmount * 0.15).toString()
+                    }
                   />
                 </div>
               </div>
