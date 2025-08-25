@@ -1,4 +1,3 @@
-import { getMerchantConfig } from "../config";
 import { getNavbarHeightClasses, getNavbarMinHeightClasses } from "../utils/layoutConstants";
 import { SessionTimeoutIndicator } from "./SessionTimeoutIndicator";
 
@@ -7,7 +6,6 @@ interface TemplateNavbarProps {
 }
 
 export function TemplateNavbar({ onBack }: TemplateNavbarProps) {
-  const config = getMerchantConfig();
 
   return (
     <div className={`navbar text-white ${getNavbarHeightClasses()} px-0 w-full max-w-full overflow-x-hidden`} style={{ marginTop: '8px', marginLeft: '8px', background: 'transparent' }}>
