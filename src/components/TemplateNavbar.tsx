@@ -1,4 +1,3 @@
-import { getMerchantConfig } from "../config";
 import { getNavbarHeightClasses, getNavbarMinHeightClasses } from "../utils/layoutConstants";
 import { SessionTimeoutIndicator } from "./SessionTimeoutIndicator";
 
@@ -7,10 +6,9 @@ interface TemplateNavbarProps {
 }
 
 export function TemplateNavbar({ onBack }: TemplateNavbarProps) {
-  const config = getMerchantConfig();
 
   return (
-    <div className={`navbar bg-black text-white ${getNavbarHeightClasses()} px-0 mt-2 ml-2 w-full max-w-full overflow-x-hidden`} data-theme={config.theme}>
+    <div className={`navbar text-white ${getNavbarHeightClasses()} px-0 w-full max-w-full overflow-x-hidden`} style={{ marginTop: '8px', marginLeft: '8px', background: 'transparent' }}>
       {/* Left section with back button and session indicator - matching exact Navbar structure */}
       <div className="flex items-center justify-start pl-2 md:pl-3 lg:pl-4 wide:pl-4 w-20 md:w-24 lg:w-28 wide:w-28">
         <div className="relative">
