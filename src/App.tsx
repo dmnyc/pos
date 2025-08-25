@@ -11,6 +11,7 @@ import { TipPage } from "./pages/wallet/Tip";
 import { TipOnly } from "./pages/wallet/TipOnly";
 import Security from "./pages/Security";
 import { Template } from "./pages/Template";
+import { TemplateTest } from "./pages/TemplateTest";
 import React, { useEffect, useState } from "react";
 import { getMerchantConfig } from "./config";
 import { localStorageKeys } from "./constants";
@@ -334,27 +335,7 @@ function AppContent() {
             </p>
           </Template>
         )} />
-        <Route path="/template" Component={() => (
-          <Template title="Template Page">
-            <p>This is the template page content. It uses the same styling as the About page with a back button in place of the hamburger menu.</p>
-            <p>This template can be used for contact forms and other static pages.</p>
-            
-            <h3 className="text-lg font-semibold text-white mt-6">More Content</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            
-            <h3 className="text-lg font-semibold text-white mt-6">Even More Content</h3>
-            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            
-            <h3 className="text-lg font-semibold text-white mt-6">Additional Section</h3>
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            
-            <h3 className="text-lg font-semibold text-white mt-6">Final Section</h3>
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
-            <p>Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
-            <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
-          </Template>
-        )} />
+        <Route path="/template" Component={TemplateTest} />
         <Route path="/*" Component={NotFound} />
       </Routes>
       
