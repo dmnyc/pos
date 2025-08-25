@@ -46,7 +46,7 @@ function AppContent() {
   useEffect(() => {
     // Valid themes are "standard" and "industrial" and all other supported themes
     const validTheme = ["standard", "industrial", "orangepill", "nostrich", 
-                        "beehive", "liquidity", "safari", "blocktron"].includes(config.theme)
+                        "beehive", "liquidity", "safari", "blocktron", "surfboard"].includes(config.theme)
       ? config.theme
       : "standard";
 

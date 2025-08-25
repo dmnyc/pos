@@ -494,8 +494,10 @@ export function TipPage() {
                       : config.theme === "solidstate"
                         ? "btn bg-solidstate-gradient text-white hover:bg-solidstate-hover w-full"
                         : config.theme === "blocktron"
-                    ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
-                    : "btn btn-industrial-gradient w-full";
+                          ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full"
+                          : config.theme === "surfboard"
+                            ? "btn bg-surfboard-gradient text-white hover:bg-surfboard-hover w-full"
+                            : "btn btn-industrial-gradient w-full";
 
   return (
     <>

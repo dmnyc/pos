@@ -245,8 +245,10 @@ export function TipOnly() {
                       : config.theme === "solidstate"
                         ? "btn bg-solidstate-gradient text-white hover:bg-solidstate-hover w-full h-10 text-base font-bold flex-grow-0"
                         : config.theme === "blocktron"
-                    ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10 text-base font-bold flex-grow-0"
-                    : "btn btn-industrial-gradient w-full h-10 text-base font-bold flex-grow-0";
+                          ? "btn bg-blocktron-gradient text-white hover:bg-blocktron-hover w-full h-10 text-base font-bold flex-grow-0"
+                          : config.theme === "surfboard"
+                            ? "btn bg-surfboard-gradient text-white hover:bg-surfboard-hover w-full h-10 text-base font-bold flex-grow-0"
+                            : "btn btn-industrial-gradient w-full h-10 text-base font-bold flex-grow-0";
 
   return (
     <>

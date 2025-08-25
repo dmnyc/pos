@@ -451,6 +451,7 @@ export function Settings() {
                     <option value="safari">Safari</option>
                     <option value="solidstate">Solid State</option>
                     <option value="blocktron">Blocktron</option>
+                    <option value="surfboard">Surfboard</option>
                   </select>
                 </div>
               </div>
@@ -659,8 +660,10 @@ export function Settings() {
                                   : merchantConfig.theme === "solidstate"
                                     ? "bg-solidstate-gradient text-white hover:bg-solidstate-hover"
                                     : merchantConfig.theme === "blocktron"
-                              ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
-                              : "btn-industrial-gradient"
+                                      ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
+                                      : merchantConfig.theme === "surfboard"
+                                        ? "bg-surfboard-gradient text-white hover:bg-surfboard-hover"
+                                        : "btn-industrial-gradient"
                   }`}
                 >
                   Save Settings

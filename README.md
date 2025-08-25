@@ -52,7 +52,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions on how to deploy th
 Visit the Settings page (`/#/settings`) to configure:
 - Store name and display name
 - Logo URL
-- Theme selection (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron)
+- Theme selection (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron, surfboard)
 - Store description
 - Tip settings (percentages, enable/disable, custom tips)
 
@@ -61,7 +61,7 @@ Visit the Settings page (`/#/settings`) to configure:
 You can also configure the merchant branding through URL parameters:
 - `?merchant_name=Your%20Store%20Name` - Sets the merchant name
 - `?logo_url=https://example.com/logo.png` - Sets the logo URL
-- `?theme=beehive` - Sets the theme (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron)
+- `?theme=beehive` - Sets the theme (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron, surfboard)
 - `?description=Best%20coffee%20in%20town` - Sets the description
 - `?currency=USD` - Sets the default currency
 
@@ -82,6 +82,7 @@ The POS app includes multiple themes to match different merchant styles:
 9. **Safari** - Desert-inspired warm theme
 10. **Solid State** - A retro 70s theme 
 11. **Blocktron** - Futuristic digital theme
+12. **Surfboard** - Warm summer beach sunset gradient
 
 Each theme provides a unique visual style while maintaining a consistent layout and functionality.
 
@@ -162,6 +163,8 @@ The interface is fully optimized for mobile devices with:
 ## Credits
 
 This project is a fork of [Alby's Lightning POS](https://github.com/getAlby/pos), with added features for merchant customization and tipping.
+
+Developed with Claude Code by Anthropic.
 
 ## License
 

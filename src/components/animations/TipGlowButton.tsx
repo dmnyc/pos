@@ -75,6 +75,8 @@ const TipGlowButton: React.FC<TipGlowButtonProps> = ({
         return 'btn bg-solidstate-gradient text-white hover:bg-solidstate-hover';
       case 'blocktron':
         return 'btn bg-blocktron-gradient text-white hover:bg-blocktron-hover';
+      case 'surfboard':
+        return 'btn bg-surfboard-gradient text-white hover:bg-surfboard-hover';
       default:
         return 'btn btn-industrial-gradient';
     }
