@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useRequirePin } from '../hooks/useRequirePin';
 import { AlertModal, ConfirmModal } from '../components/Modals';
-import { ExactBackButton } from '../components/ExactBackButton';
+import { Template } from './Template';
 import { CheckForUpdates } from '../components/settings';
 import {
   getMerchantConfig,
@@ -33,7 +32,6 @@ export function Settings() {
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState('branding');
   const [showLightningPreview, setShowLightningPreview] = useState(false);
-  const navigate = useNavigate();
   
   // State for bitcoin-connect wallet selection modal
   const [showWalletSelector, setShowWalletSelector] = useState(false);
@@ -51,14 +49,6 @@ export function Settings() {
     message: ''
   });
 
-  const handleBack = () => {
-    const hasWallet = window.localStorage.getItem("pos:nwcUrl");
-    if (hasWallet) {
-      navigate("/wallet/new");
-    } else {
-      navigate("/");
-    }
-  };
 
   useEffect(() => {
     // Reset the saved message after 3 seconds
@@ -327,11 +317,9 @@ export function Settings() {
   };
 
   return (
-    <div className="h-full bg-black text-white" data-theme={merchantConfig.theme}>
-      <ExactBackButton onBack={handleBack} theme={merchantConfig.theme} />
-      <div className="flex flex-grow flex-col overflow-auto pt-16">
-        <div className="w-full max-w-xs md:max-w-md lg:max-w-lg mx-auto p-2 md:p-4">
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4">Merchant Settings</h1>
+    <>
+      <Template title="Merchant Settings">
+        <div className="w-full space-y-4">
 
           <div className="tabs tabs-boxed mb-3 md:mb-4 bg-gray-900">
             <a
@@ -698,7 +686,7 @@ export function Settings() {
             )}
           </form>
         </div>
-      </div>
+      </Template>
 
       <ConfirmModal
         isOpen={resetConfirmOpen}
@@ -718,6 +706,6 @@ export function Settings() {
       />
 
       {showLightningPreview && <CodepenLightning duration={1000} />}
-    </div>
+    </>
   );
 }

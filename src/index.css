@@ -50,3 +50,56 @@ html {
   background-image: linear-gradient(to right, #6d615d, #d6a690, #f0f0f0, #dbb083, #bbbbbb, #757575);
   color: #000000;
 }
+
+/* Template scroll container - handles scrollbars properly on mobile Safari */
+.template-scroll {
+  /* Initial state - will be overridden by JavaScript */
+  overflow-y: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  /* Hide scrollbars on all webkit browsers including Safari */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.template-scroll::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari and Opera - hide completely */
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+.template-scroll::-webkit-scrollbar-thumb {
+  display: none !important;
+  background: transparent !important;
+}
+
+.template-scroll::-webkit-scrollbar-track {
+  display: none !important;
+  background: transparent !important;
+}
+
+/* More aggressive Safari-specific scrollbar and bounce prevention */
+@supports (-webkit-touch-callout: none) {
+  .template-scroll {
+    /* Prevent any scrolling indicators or bounce effects */
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    -webkit-overscroll-behavior: none;
+    /* Disable momentum scrolling when not needed */
+    -webkit-overflow-scrolling: auto;
+  }
+  
+  /* Completely hide any possible scrollbar elements */
+  .template-scroll::-webkit-scrollbar,
+  .template-scroll::-webkit-scrollbar-thumb,
+  .template-scroll::-webkit-scrollbar-track,
+  .template-scroll::-webkit-scrollbar-corner {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
