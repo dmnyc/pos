@@ -53,6 +53,10 @@ export default {
         'blocktron-hover': 'linear-gradient(to right, #ff9900, #ef6a20, #ef009a, #6b00ef, #00FFFF)',
         'surfboard-gradient': 'linear-gradient(to bottom, #ffb643, #f7a13e, #faa262, #f97d63, #ef678f, #d65d86, #cb6690)',
         'surfboard-hover': 'linear-gradient(to bottom, #efa633, #e7912e, #ea9252, #e96d53, #df577f, #c64d76, #bb5680)',
+        'cypher-gradient': 'linear-gradient(to bottom, #00ff41 0%, #00cc33 20%, #009926 40%, #00661a 60%, #00330d 80%, #03170a 100%)',
+        'cypher-hover': 'linear-gradient(to bottom, #00ef31 0%, #00bc23 20%, #008916 40%, #00560a 60%, #002300 80%, #03170a 100%)',
+        'purple-pill-gradient': 'linear-gradient(to bottom, #a855f7, #6b46c1, #553c9a, #4c1d95)',
+        'purple-pill-hover': 'linear-gradient(to bottom, #9333ea, #5b21b6, #4c1d95, #3b0764)',
       },
     },
     screens: {
@@ -109,6 +113,21 @@ export default {
           "secondary-content": "#000000", // Black text on secondary elements
           accent: "#FF9900", // Orange for accent elements (charge button)
           "accent-content": "#000000", // Black text on orange buttons for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        purplepill: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#6b46c1", // Dark purple for accent elements
+          "accent-content": "#FFFFFF", // White text on purple buttons for better contrast
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background
           "base-content": "#FFFFFF", // White text on base elements
@@ -229,6 +248,36 @@ export default {
           "secondary-content": "#000000", // Black text on secondary elements
           accent: "#ff00aa", // Neon pink for accent elements (charge button)
           "accent-content": "#FFFFFF", // White text on buttons for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        cypher: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#00ff41", // Bright green for accent elements
+          "accent-content": "#000000", // Black text on accent elements for better contrast
+          neutral: "#333333", // Dark grey for neutral elements
+          "base-100": "#000000", // Black background
+          "base-content": "#FFFFFF", // White text on base elements
+        },
+      },
+      {
+        bluescreen: {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          ...require("daisyui/src/theming/themes")["dark"], // Use dark as base theme
+          primary: "#FFFFFF", // White buttons
+          "primary-content": "#000000", // Black text on primary buttons
+          secondary: "#FFFFFF", // White for secondary elements
+          "secondary-content": "#000000", // Black text on secondary elements
+          accent: "#0000ff", // Blue for accent elements
+          "accent-content": "#FFFFFF", // White text on accent elements for better contrast
           neutral: "#333333", // Dark grey for neutral elements
           "base-100": "#000000", // Black background
           "base-content": "#FFFFFF", // White text on base elements

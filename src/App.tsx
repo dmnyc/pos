@@ -45,8 +45,8 @@ function AppContent() {
   // Set the theme when the app loads
   useEffect(() => {
     // Valid themes are "standard" and "industrial" and all other supported themes
-    const validTheme = ["standard", "industrial", "orangepill", "nostrich", 
-                        "beehive", "liquidity", "safari", "blocktron", "surfboard"].includes(config.theme)
+    const validTheme = ["standard", "industrial", "orangepill", "purplepill", "nostrich", 
+                        "beehive", "liquidity", "acidity", "nutjob", "cypher", "bluescreen", "safari", "solidstate", "blocktron", "surfboard"].includes(config.theme)
       ? config.theme
       : "standard";
 

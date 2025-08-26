@@ -443,11 +443,14 @@ export function Settings() {
                     <option value="standard">Standard</option>
                     <option value="industrial">Industrial</option>
                     <option value="orangepill">Orange Pill</option>
+                    <option value="purplepill">Purple Pill</option>
                     <option value="nostrich">Nostrich</option>
                     <option value="beehive">Beehive</option>
                     <option value="liquidity">Liquidity</option>
                     <option value="acidity">Acidity</option>
                     <option value="nutjob">Nutjob</option>
+                    <option value="bluescreen">Bluescreen</option>
+                    <option value="cypher">Cypher</option>
                     <option value="safari">Safari</option>
                     <option value="solidstate">Solid State</option>
                     <option value="blocktron">Blocktron</option>
@@ -645,7 +648,9 @@ export function Settings() {
                     ? "bg-charge-green text-white hover:bg-green-500"
                     : merchantConfig.theme === "orangepill"
                       ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
-                      : merchantConfig.theme === "nostrich"
+                      : merchantConfig.theme === "purplepill"
+                        ? "bg-purple-pill-gradient text-white hover:bg-purple-pill-hover"
+                        : merchantConfig.theme === "nostrich"
                         ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
                         : merchantConfig.theme === "beehive"
                           ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
@@ -663,7 +668,11 @@ export function Settings() {
                                       ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
                                       : merchantConfig.theme === "surfboard"
                                         ? "bg-surfboard-gradient text-white hover:bg-surfboard-hover"
-                                        : "btn-industrial-gradient"
+                                        : merchantConfig.theme === "cypher"
+                                          ? "bg-cypher-gradient text-black hover:bg-cypher-hover"
+                                          : merchantConfig.theme === "bluescreen"
+                                            ? "bg-blue-600 text-white hover:bg-blue-700"
+                                            : "btn-industrial-gradient"
                   }`}
                 >
                   Save Settings
