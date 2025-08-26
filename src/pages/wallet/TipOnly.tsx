@@ -251,7 +251,7 @@ export function TipOnly() {
                           : config.theme === "surfboard"
                             ? "btn bg-surfboard-gradient text-white hover:bg-surfboard-hover w-full h-10 text-base font-bold flex-grow-0"
                             : config.theme === "cypher"
-                              ? "btn bg-cypher-gradient text-black hover:bg-cypher-hover w-full h-10 text-base font-bold flex-grow-0"
+                              ? "btn bg-cypher-gradient text-cypher-green hover:bg-cypher-hover w-full h-10 text-base font-bold flex-grow-0"
                               : config.theme === "bluescreen"
                                 ? "btn bg-blue-600 text-white hover:bg-blue-700 w-full h-10 text-base font-bold flex-grow-0"
                                 : "btn btn-industrial-gradient w-full h-10 text-base font-bold flex-grow-0";

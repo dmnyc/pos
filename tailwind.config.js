@@ -11,6 +11,7 @@ export default {
         'charge-orange': '#FF9900', // Define orange color for Orange Pill theme
         'beehive-yellow': '#fce169', // Define yellow color for Beehive theme
         'beehive-hover': '#e5cb5e', // Define darker yellow for hover state
+        'cypher-green': '#02ff41', // Bright green text for Cypher theme
       },
       fontSize: {
         'xs': '0.65rem',    // Further reduced

@@ -669,7 +669,7 @@ export function Settings() {
                                       : merchantConfig.theme === "surfboard"
                                         ? "bg-surfboard-gradient text-white hover:bg-surfboard-hover"
                                         : merchantConfig.theme === "cypher"
-                                          ? "bg-cypher-gradient text-black hover:bg-cypher-hover"
+                                          ? "bg-cypher-gradient text-cypher-green hover:bg-cypher-hover"
                                           : merchantConfig.theme === "bluescreen"
                                             ? "bg-blue-600 text-white hover:bg-blue-700"
                                             : "btn-industrial-gradient"
