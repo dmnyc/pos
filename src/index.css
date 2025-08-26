@@ -51,6 +51,34 @@ html {
   color: #000000;
 }
 
+/* Cypher theme button fixes for rendering artifacts */
+[data-theme="cypher"] .btn.bg-cypher-gradient,
+.btn.bg-cypher-gradient {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  position: relative;
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+[data-theme="cypher"] .btn.bg-cypher-gradient:focus,
+.btn.bg-cypher-gradient:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* WebKit-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  [data-theme="cypher"] .btn.bg-cypher-gradient,
+  .btn.bg-cypher-gradient {
+    -webkit-appearance: none;
+    background-attachment: scroll;
+  }
+}
+
 /* Template scroll container - handles scrollbars properly on mobile Safari */
 .template-scroll {
   /* Initial state - will be overridden by JavaScript */

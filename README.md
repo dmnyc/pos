@@ -52,7 +52,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions on how to deploy th
 Visit the Settings page (`/#/settings`) to configure:
 - Store name and display name
 - Logo URL
-- Theme selection (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron)
+- Theme selection (standard, industrial, orangepill, purplepill, nostrich, beehive, liquidity, acidity, nutjob, bluescreen, cypher, safari, solidstate, blocktron, surfboard)
 - Store description
 - Tip settings (percentages, enable/disable, custom tips)
 
@@ -61,7 +61,7 @@ Visit the Settings page (`/#/settings`) to configure:
 You can also configure the merchant branding through URL parameters:
 - `?merchant_name=Your%20Store%20Name` - Sets the merchant name
 - `?logo_url=https://example.com/logo.png` - Sets the logo URL
-- `?theme=beehive` - Sets the theme (standard, industrial, orangepill, nostrich, beehive, liquidity, acidity, nutjob, safari, solidstate, blocktron)
+- `?theme=beehive` - Sets the theme (standard, industrial, orangepill, purplepill, nostrich, beehive, liquidity, acidity, nutjob, bluescreen, cypher, safari, solidstate, blocktron, surfboard)
 - `?description=Best%20coffee%20in%20town` - Sets the description
 - `?currency=USD` - Sets the default currency
 
@@ -71,17 +71,21 @@ Example: `https://your-domain.com/?merchant_name=Coffee%20Shop&theme=orangepill&
 
 The POS app includes multiple themes to match different merchant styles:
 
-1. **Standard** - Clean, modern look with green accents
+1. **Standard** - Traditional green sale button
 2. **Industrial** - Bold industrial design
-3. **OrangePill** - Bitcoin-inspired orange theme
-4. **Nostrich** - Nostr-inspired purple theme
-5. **Beehive** - Alby-inspired yellow theme
-6. **Liquidity** - A cool blue aquatic theme
-7. **Acidity** - An energetic yellow-green and cyan theme
-8. **Nutjob** - Cashu-inspired warm brown tones
-9. **Safari** - Desert-inspired warm theme
-10. **Solid State** - A retro 70s theme 
-11. **Blocktron** - Futuristic digital theme
+3. **OrangePill** - Bitcoin-pilled bright orange theme
+4. **Purple Pill** - Nostr-pilled deep purple theme
+5. **Nostrich** - Nostr-inspired magenta theme
+6. **Beehive** - A yellow theme inspired by Alby
+7. **Liquidity** - A cool blue aquatic theme
+8. **Acidity** - An energetic yellow-green and cyan theme
+9. **Nutjob** - Cashu-inspired warm brown tones
+10. **Bluescreen** - An homage to 80s computer screens
+11. **Cypher** - Matrix-inspired green hacker aesthetic
+12. **Safari** - Desert-inspired warm theme
+13. **Solid State** - A groovy 70s color palette 
+14. **Blocktron** - Futuristic digital theme
+15. **Surfboard** - Warm summer beach sunset vibe
 
 Each theme provides a unique visual style while maintaining a consistent layout and functionality.
 
@@ -162,6 +166,8 @@ The interface is fully optimized for mobile devices with:
 ## Credits
 
 This project is a fork of [Alby's Lightning POS](https://github.com/getAlby/pos), with added features for merchant customization and tipping.
+
+Developed with Claude Code by Anthropic.
 
 ## License
 

@@ -59,6 +59,8 @@ const TipGlowButton: React.FC<TipGlowButtonProps> = ({
         return 'btn bg-charge-green text-white hover:bg-green-500';
       case 'orangepill':
         return 'btn bg-orange-pill-gradient text-black hover:bg-orange-pill-hover';
+      case 'purplepill':
+        return 'btn bg-purple-pill-gradient text-white hover:bg-purple-pill-hover';
       case 'nostrich':
         return 'btn bg-nostrich-gradient text-white hover:bg-nostrich-hover';
       case 'beehive':
@@ -75,6 +77,12 @@ const TipGlowButton: React.FC<TipGlowButtonProps> = ({
         return 'btn bg-solidstate-gradient text-white hover:bg-solidstate-hover';
       case 'blocktron':
         return 'btn bg-blocktron-gradient text-white hover:bg-blocktron-hover';
+      case 'surfboard':
+        return 'btn bg-surfboard-gradient text-white hover:bg-surfboard-hover';
+      case 'cypher':
+        return 'btn bg-cypher-gradient text-black hover:bg-cypher-hover';
+      case 'bluescreen':
+        return 'btn bg-blue-600 text-white hover:bg-blue-700';
       default:
         return 'btn btn-industrial-gradient';
     }
