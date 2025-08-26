@@ -500,7 +500,7 @@ export function TipPage() {
                           : config.theme === "surfboard"
                             ? "btn bg-surfboard-gradient text-white hover:bg-surfboard-hover w-full"
                             : config.theme === "cypher"
-                              ? "btn bg-cypher-gradient text-black hover:bg-cypher-hover w-full"
+                              ? "btn bg-cypher-gradient text-cypher-green hover:bg-cypher-hover w-full"
                               : config.theme === "bluescreen"
                                 ? "btn bg-blue-600 text-white hover:bg-blue-700 w-full"
                                 : "btn btn-industrial-gradient w-full";

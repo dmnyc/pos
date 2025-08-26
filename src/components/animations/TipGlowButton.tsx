@@ -80,7 +80,7 @@ const TipGlowButton: React.FC<TipGlowButtonProps> = ({
       case 'surfboard':
         return 'btn bg-surfboard-gradient text-white hover:bg-surfboard-hover';
       case 'cypher':
-        return 'btn bg-cypher-gradient text-black hover:bg-cypher-hover';
+        return 'btn bg-cypher-gradient text-cypher-green hover:bg-cypher-hover';
       case 'bluescreen':
         return 'btn bg-blue-600 text-white hover:bg-blue-700';
       default:
