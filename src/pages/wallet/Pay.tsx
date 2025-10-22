@@ -1,6 +1,6 @@
 import { Invoice } from "@getalby/lightning-tools";
 import QRCode from "qrcode.react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Navbar } from "../../components/Navbar";
 import { PageContainer } from "../../components/PageContainer";
@@ -30,6 +30,12 @@ export function Pay() {
   const [countdown, setCountdown] = useState(300); // 5 minutes in seconds
 
   const [showRawInvoice, setShowRawInvoice] = useState(false);
+  const [showTimeoutModal, setShowTimeoutModal] = useState(false);
+
+  // Use refs to store interval IDs so we can clear and restart them
+  const paymentCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const modalTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Determine which provider to use for this payment
   const activeProvider = isUsingSecondaryWallet && tipProvider ? tipProvider : provider;
@@ -72,6 +78,53 @@ export function Pay() {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
+  // Handler for extending time - restarts the timer
+  const handleExtendTime = () => {
+    if (!activeProvider) return;
+
+    setCountdown(300); // Reset to 5 minutes
+    setShowTimeoutModal(false);
+
+    // Restart the countdown interval
+    if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+    const countdownInterval = setInterval(() => {
+      setCountdown(prevCountdown => {
+        if (prevCountdown <= 1) {
+          if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+          if (paymentCheckIntervalRef.current) clearInterval(paymentCheckIntervalRef.current);
+          setShowTimeoutModal(true);
+          return 0;
+        }
+        return prevCountdown - 1;
+      });
+    }, 1000);
+    countdownIntervalRef.current = countdownInterval;
+
+    // Restart the payment check interval
+    if (paymentCheckIntervalRef.current) clearInterval(paymentCheckIntervalRef.current);
+    const paymentCheckInterval = setInterval(async () => {
+      try {
+        const response = await activeProvider.lookupInvoice({
+          paymentRequest: invoice || "",
+        });
+        if (response.paid) {
+          if (paymentCheckIntervalRef.current) clearInterval(paymentCheckIntervalRef.current);
+          if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+          navigate("../paid", { state: { isTipPayment } });
+        }
+      } catch (error) {
+        // Silent fail - will retry on next interval
+      }
+    }, 3000);
+    paymentCheckIntervalRef.current = paymentCheckInterval;
+  };
+
+  // Handler for canceling payment - closes modal and navigates to new payment
+  const handleCancelPayment = () => {
+    setShowTimeoutModal(false);
+    navigate("../new");
+  };
+
   useEffect(() => {
     // Load currency from localStorage
     const savedCurrency = localStorage.getItem(localStorageKeys.currency);
@@ -79,6 +132,24 @@ export function Pay() {
       setCurrency(savedCurrency);
     }
   }, []);
+
+  // Handle 2-minute timeout for the "Need more time?" dialog
+  useEffect(() => {
+    if (showTimeoutModal) {
+      // Start a 2-minute timer when modal opens
+      modalTimeoutRef.current = setTimeout(() => {
+        setShowTimeoutModal(false);
+        navigate("../new");
+      }, 120000); // 2 minutes in milliseconds
+
+      return () => {
+        // Clean up timeout if modal closes before 2 minutes
+        if (modalTimeoutRef.current) {
+          clearTimeout(modalTimeoutRef.current);
+        }
+      };
+    }
+  }, [showTimeoutModal, navigate]);
 
   useEffect(() => {
     // Calculate fiat amount if using fiat currency and no fiat amount from description
@@ -169,7 +240,8 @@ export function Pay() {
             paymentRequest: invoice,
           });
           if (response.paid) {
-            clearInterval(paymentCheckInterval);
+            if (paymentCheckIntervalRef.current) clearInterval(paymentCheckIntervalRef.current);
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
             navigate("../paid", { state: { isTipPayment } });
           }
         } catch (error) {
@@ -177,24 +249,30 @@ export function Pay() {
         }
       }, 3000);
 
+      // Store interval ID in ref
+      paymentCheckIntervalRef.current = paymentCheckInterval;
+
       // Countdown timer
       const countdownInterval = setInterval(() => {
         setCountdown(prevCountdown => {
           if (prevCountdown <= 1) {
             // Clear both intervals when countdown ends
-            clearInterval(countdownInterval);
-            clearInterval(paymentCheckInterval);
-            // Navigate back to new payment screen
-            navigate("../new");
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+            if (paymentCheckIntervalRef.current) clearInterval(paymentCheckIntervalRef.current);
+            // Show the "Need more time?" dialog instead of navigating
+            setShowTimeoutModal(true);
             return 0;
           }
           return prevCountdown - 1;
         });
       }, 1000);
 
+      // Store interval ID in ref
+      countdownIntervalRef.current = countdownInterval;
+
       return () => {
-        clearInterval(paymentCheckInterval);
-        clearInterval(countdownInterval);
+        if (paymentCheckIntervalRef.current) clearInterval(paymentCheckIntervalRef.current);
+        if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
       };
     }
   }, [invoice, navigate, activeProvider, setLastInvoiceData, isTipPayment, passedFiatAmount]);
@@ -205,6 +283,38 @@ export function Pay() {
 
   // Simplify the description to just show the merchant name
   const merchantName = description.split(' -')[0] || config.name;
+
+  // Extend time button class based on theme
+  const extendTimeButtonClass =
+    config.theme === "standard"
+      ? "bg-charge-green text-white hover:bg-green-500"
+      : config.theme === "orangepill"
+        ? "bg-orange-pill-gradient text-black hover:bg-orange-pill-hover"
+        : config.theme === "purplepill"
+          ? "bg-purple-pill-gradient text-white hover:bg-purple-pill-hover"
+          : config.theme === "nostrich"
+            ? "bg-nostrich-gradient text-white hover:bg-nostrich-hover"
+            : config.theme === "beehive"
+              ? "bg-beehive-yellow text-black hover:bg-beehive-hover"
+              : config.theme === "liquidity"
+                ? "bg-liquidity-gradient text-black hover:bg-liquidity-hover"
+                : config.theme === "acidity"
+                  ? "bg-acidity-gradient text-black hover:bg-acidity-hover"
+                  : config.theme === "nutjob"
+                    ? "bg-nutjob-gradient text-black hover:bg-nutjob-hover"
+                    : config.theme === "safari"
+                      ? "bg-safari-gradient text-black hover:bg-safari-hover"
+                      : config.theme === "solidstate"
+                        ? "bg-solidstate-gradient text-white hover:bg-solidstate-hover"
+                        : config.theme === "blocktron"
+                          ? "bg-blocktron-gradient text-white hover:bg-blocktron-hover"
+                          : config.theme === "surfboard"
+                            ? "bg-surfboard-gradient text-white hover:bg-surfboard-hover"
+                            : config.theme === "cypher"
+                              ? "bg-cypher-gradient text-cypher-green hover:bg-cypher-hover"
+                              : config.theme === "bluescreen"
+                                ? "bg-blue-600 text-white hover:bg-blue-700"
+                                : "btn-industrial-gradient text-black";
 
   return (
     <>
@@ -358,6 +468,29 @@ export function Pay() {
           )}
         </div>
       </PageContainer>
+
+      {/* Timeout modal - "Need more time?" */}
+      {showTimeoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded-lg p-6 mx-4 relative w-full max-w-sm">
+            <h2 className="text-xl font-semibold mb-4 text-white text-center">Need more time?</h2>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={handleExtendTime}
+                className={`w-full py-3 px-4 ${extendTimeButtonClass} rounded-lg transition-colors font-medium text-base`}
+              >
+                Extend time
+              </button>
+              <button
+                onClick={handleCancelPayment}
+                className="w-full py-3 px-4 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors font-medium text-base"
+              >
+                Cancel payment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
